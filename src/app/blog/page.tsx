@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
@@ -195,10 +195,12 @@ export default async function LandingOneBlogPage() {
               </p>
             </div>
 
-            <LandingOneBlogFilter
-              initialArticles={articles}
-              categories={categories}
-            />
+            <Suspense fallback={null}>
+              <LandingOneBlogFilter
+                initialArticles={articles}
+                categories={categories}
+              />
+            </Suspense>
           </section>
         )}
 

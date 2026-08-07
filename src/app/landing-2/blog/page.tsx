@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
@@ -154,10 +154,12 @@ export default async function PersonalBlogPage() {
             </section>
 
             {/* INTERACTIVE DYNAMIC BLOG FILTER CLIENT (ACME THEME) */}
-            <LandingTwoBlogFilter
-              initialArticles={articles}
-              categories={categories}
-            />
+            <Suspense fallback={null}>
+              <LandingTwoBlogFilter
+                initialArticles={articles}
+                categories={categories}
+              />
+            </Suspense>
           </>
         )}
       </main>
