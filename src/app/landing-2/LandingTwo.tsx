@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -64,7 +64,9 @@ export default function LandingTwo({ fractionRules, tax, faqs: faqsProp }: Landi
 
   return (
     <div className={styles.page}>
-      <AnalyticsTracker />
+      <Suspense fallback={null}>
+        <AnalyticsTracker />
+      </Suspense>
 
       {/* NAVBAR (Acme Style Clean Header with Offcanvas Drawer) */}
       <LandingTwoHeader />

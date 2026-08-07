@@ -7,6 +7,7 @@ import AnalyticsTracker from '@/components/analytics/AnalyticsTracker';
 import DynamicDisclaimer from '@/components/layout/DynamicDisclaimer';
 import WebsiteBrand from '@/components/layout/WebsiteBrand';
 import AutoUsagePromoTrigger from '@/components/feedback/AutoUsagePromoTrigger';
+import { Suspense } from 'react';
 import {
   getCachedFaqs,
   getCachedFractionRules,
@@ -22,7 +23,9 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-page text-main transition-colors duration-300">
-      <AnalyticsTracker />
+      <Suspense fallback={null}>
+        <AnalyticsTracker />
+      </Suspense>
       <AutoUsagePromoTrigger />
       <Navbar />
 
