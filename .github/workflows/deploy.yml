@@ -87,9 +87,9 @@ jobs:
             cd "apps/$APP_NAME"
             printf 'APP_NAME=%s\nIMAGE_TAG=%s\nOWNER_LC=%s\nDB_USER=%s\nDB_NAME=%s\nAPP_PORT=%s\nDB_PASSWORD=%s\nSESSION_SECRET=%s\nGOOGLE_CLIENT_ID=%s\nGOOGLE_CLIENT_SECRET=%s\nNEXT_PUBLIC_APP_URL=%s\n' \
               "$APP_NAME" "$IMAGE_TAG" "$OWNER_LC" "$DB_USER" "$DB_NAME" "$APP_PORT" "$DB_PASSWORD" "$SESSION_SECRET" "$GOOGLE_CLIENT_ID" "$GOOGLE_CLIENT_SECRET" "$NEXT_PUBLIC_APP_URL" > .env
-            printf '%s' "$GHCR_PAT" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
-            docker compose -p "$APP_NAME" pull app
-            docker compose -p "$APP_NAME" up -d --wait postgres
-            docker compose -p "$APP_NAME" run --rm app npx prisma migrate deploy
-            docker compose -p "$APP_NAME" up -d --no-deps app
-            docker compose -p "$APP_NAME" ps
+            printf '%s' "$GHCR_PAT" | sudo docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
+            sudo docker compose -p "$APP_NAME" pull app
+            sudo docker compose -p "$APP_NAME" up -d --wait postgres
+            sudo docker compose -p "$APP_NAME" run --rm app npx prisma migrate deploy
+            sudo docker compose -p "$APP_NAME" up -d --no-deps app
+            sudo docker compose -p "$APP_NAME" ps
