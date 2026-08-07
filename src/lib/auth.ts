@@ -1,10 +1,15 @@
 import { cookies } from 'next/headers';
 import crypto from 'crypto';
 
-const SECRET_KEY = process.env.SESSION_SECRET;
+function getSecretKey(): string {
+  const secret = process.env.SESSION_SECRET;
+  if (secret) return secret;
 
-if (!SECRET_KEY && process.env.NODE_ENV === 'production') {
-  throw new Error('SESSION_SECRET must be configured in production');
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('SESSION_SECRET must be configured in production');
+  }
+
+  return 'development-only-secret';
 }
 
 export interface UserSessionPayload {
@@ -18,7 +23,7 @@ export interface UserSessionPayload {
 function signToken(payload: object): string {
   const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
   const body = Buffer.from(JSON.stringify({ ...payload, exp: Date.now() + 30 * 86400 * 1000 })).toString('base64url'); // 30 hari
-  const signature = crypto.createHmac('sha256', SECRET_KEY || 'development-only-secret').update(`${header}.${body}`).digest('base64url');
+  const signature = crypto.createHmac('sha256', getSecretKey()).update(`${header}.${body}`).digest('base64url');
   return `${header}.${body}.${signature}`;
 }
 
@@ -27,7 +32,7 @@ function verifyToken<T>(token: string): T | null {
     const parts = token.split('.');
     if (parts.length !== 3) return null;
     const [header, body, signature] = parts;
-    const expectedSig = crypto.createHmac('sha256', SECRET_KEY || 'development-only-secret').update(`${header}.${body}`).digest('base64url');
+    const expectedSig = crypto.createHmac('sha256', getSecretKey()).update(`${header}.${body}`).digest('base64url');
     if (signature !== expectedSig) return null;
     const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8'));
     if (payload.exp && payload.exp < Date.now()) return null;
