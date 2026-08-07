@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { prisma } from '@/lib/db';
 import { verifySession } from '@/lib/auth';
 
@@ -83,6 +84,8 @@ export async function POST(request: Request) {
       },
     });
 
+    revalidateTag('faqs');
+
     return NextResponse.json({ success: true, faq: newFaq });
   } catch (error) {
     return NextResponse.json(
@@ -115,6 +118,8 @@ export async function PUT(request: Request) {
       },
     });
 
+    revalidateTag('faqs');
+
     return NextResponse.json({ success: true, faq: updatedFaq });
   } catch (error) {
     return NextResponse.json(
@@ -141,6 +146,8 @@ export async function DELETE(request: Request) {
     await prisma.faqItem.delete({
       where: { id },
     });
+
+    revalidateTag('faqs');
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -12,16 +12,19 @@ import {
   LogOut,
   Menu,
   X,
-  ArrowLeft,
-  Sun,
-  Moon,
   ChevronDown,
   RefreshCw,
   HelpCircle,
+  BookOpen,
+  Tag,
 } from 'lucide-react';
+import ThemeToggle from '@/components/layout/ThemeToggle';
+import AppLogo from '@/components/layout/AppLogo';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: BarChart3 },
+  { href: '/admin/articles', label: 'Kelola Artikel & Blog', icon: BookOpen },
+  { href: '/admin/categories', label: 'Kategori Artikel', icon: Tag },
   { href: '/admin/fractions', label: 'Fraksi Harga BEI', icon: ListRestart },
   { href: '/admin/ara-arb', label: 'Aturan ARA / ARB', icon: Percent },
   { href: '/admin/faqs', label: 'Kelola FAQ', icon: HelpCircle },
@@ -36,18 +39,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-      if (savedTheme) return savedTheme;
-    }
-    return 'dark';
-  });
-
   useEffect(() => {
-    // Synchronize DOM dark mode class with state
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-
     // Verify session
     let isMounted = true;
     fetch('/api/auth/me')
@@ -65,14 +57,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return () => {
       isMounted = false;
     };
-  }, [router, theme]);
-
-  const toggleTheme = () => {
-    const nextTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(nextTheme);
-    localStorage.setItem('theme', nextTheme);
-    document.documentElement.classList.toggle('dark', nextTheme === 'dark');
-  };
+  }, [router]);
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -107,11 +92,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* SIDEBAR FOR DESKTOP */}
       <aside className="hidden md:flex flex-col w-64 h-screen sticky top-0 shrink-0 bg-card border-r border-border-custom transition-colors duration-300">
         {/* Brand Logo */}
-        <div className="h-16 flex items-center gap-2.5 px-6  shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-acc-blue text-white flex items-center justify-center font-bold">
-            KS
-          </div>
-          <span className="font-extrabold text-sm tracking-wider uppercase">Kalkulator Saham</span>
+        <div className="h-16 flex items-center gap-2.5 px-6 shrink-0">
+          <AppLogo size={30} />
+          <span className="font-extrabold text-sm tracking-wider">Hitungsaham</span>
         </div>
 
         {/* Master Menu Label */}
@@ -130,7 +113,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 href={item.href}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all duration-200 ${
                   isActive
-                    ? 'bg-acc-blue text-white shadow-md shadow-acc-blue/20'
+                    ? 'bg-acc-blue text-white  shadow-acc-blue/20'
                     : 'text-sub hover:bg-sub-slate hover:text-main'
                 }`}
               >
@@ -146,12 +129,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {mobileSidebarOpen && (
         <div className="fixed inset-0 z-50 flex md:hidden bg-black/50 backdrop-blur-sm">
           <div className="w-64 bg-card h-full flex flex-col border-r border-border-custom animate-slide-in">
-            <div className="h-16 flex items-center justify-between px-6  shrink-0">
+            <div className="h-16 flex items-center justify-between px-6 shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-acc-blue text-white flex items-center justify-center font-bold">
-                  KS
-                </div>
-                <span className="font-extrabold text-sm tracking-wider uppercase">Kalkulator Saham</span>
+                <AppLogo size={30} />
+                <span className="font-extrabold text-sm tracking-wider uppercase">Hitungsaham</span>
               </div>
               <button onClick={() => setMobileSidebarOpen(false)} className="text-main">
                 <X size={20} />
@@ -173,7 +154,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     onClick={() => setMobileSidebarOpen(false)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all duration-200 ${
                       isActive
-                        ? 'bg-acc-blue text-white shadow-md'
+                        ? 'bg-acc-blue text-white '
                         : 'text-sub hover:bg-sub-slate'
                     }`}
                   >
@@ -204,13 +185,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           <div className="flex items-center gap-4">
-            <button
-              onClick={toggleTheme}
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-main hover:text-acc-blue cursor-pointer transition-colors"
-              title="Ganti Tema"
-            >
-              {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
-            </button>
+            <ThemeToggle />
 
             <div className="relative">
               <button

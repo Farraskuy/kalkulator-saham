@@ -9,8 +9,10 @@ export async function GET() {
   }
 
   try {
-    // 1. Total traffic counts
+    // 1. Total traffic & user counts
     const totalTraffic = await prisma.trafficLog.count().catch(() => 0);
+    const totalUsers = await prisma.user.count().catch(() => 0);
+    const totalCalculations = await prisma.calculationHistory.count().catch(() => 0);
 
     // 2. Total action counts
     const totalDownloads = await prisma.actionLog.count({ where: { action: 'download' } }).catch(() => 0);
@@ -67,6 +69,8 @@ export async function GET() {
     return NextResponse.json({
       summary: {
         totalTraffic,
+        totalUsers,
+        totalCalculations,
         totalDownloads,
         totalShares,
       },

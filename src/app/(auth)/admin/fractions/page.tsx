@@ -117,7 +117,7 @@ export default function AdminFractionsPage() {
                     <td className="py-2.5 text-right">
                       <button
                         onClick={() => setFractions(fractions.filter((_, i) => i !== idx))}
-                        className="bg-sub-pink border border-acc-pink text-acc-pink w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer hover:bg-acc-pink hover:text-white transition-colors ml-auto"
+                        className="bg-sub-pink text-acc-pink w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer hover:bg-acc-pink hover:text-white transition-colors ml-auto"
                       >
                         <Trash2 size={14} />
                       </button>

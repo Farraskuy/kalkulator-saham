@@ -1,78 +1,38 @@
-import Navbar from '@/components/Navbar';
-import AraArbSection from '@/components/AraArbSection';
-import AvgUpDownSection from '@/components/AvgUpDownSection';
-import PredictionSection from '@/components/PredictionSection';
-import FaqSection, { FaqItemData } from '@/components/FaqSection';
-import AnalyticsTracker from '@/components/AnalyticsTracker';
-import DynamicDisclaimer from '@/components/DynamicDisclaimer';
-import WebsiteBrand from '@/components/WebsiteBrand';
-import { Metadata } from 'next';
-import { prisma } from '@/lib/db';
-
-export const metadata: Metadata = {
-  title: 'Kalkulator Saham BEI - Hitung ARA, ARB, Average & Target Untung Rugi',
-  description:
-    'Kalkulator Saham Bursa Efek Indonesia terlengkap untuk menghitung batas harga ARA/ARB, simulasi average up/down, serta prediksi target jual beli dan stop loss secara akurat.',
-  keywords: [
-    'kalkulator saham',
-    'kalkulator ARA ARB',
-    'average up down saham',
-    'prediksi profit saham',
-    'fraksi harga BEI',
-    'saham bursa efek indonesia',
-  ],
-};
+import Navbar from '@/components/layout/Navbar';
+import AraArbSection from '@/features/calculators/components/AraArbSection';
+import AvgUpDownSection from '@/features/calculators/components/AvgUpDownSection';
+import PredictionSection from '@/features/calculators/components/PredictionSection';
+import FaqSection from '@/features/faq/components/FaqSection';
+import AnalyticsTracker from '@/components/analytics/AnalyticsTracker';
+import DynamicDisclaimer from '@/components/layout/DynamicDisclaimer';
+import WebsiteBrand from '@/components/layout/WebsiteBrand';
+import AutoUsagePromoTrigger from '@/components/feedback/AutoUsagePromoTrigger';
+import {
+  getCachedFaqs,
+  getCachedFractionRules,
+  getCachedTaxSetting,
+} from '@/lib/cached-data';
 
 export default async function HomePage() {
-  let fractionRules = undefined;
-  let tax = 0.0;
-  let faqs: FaqItemData[] = [];
-
-  try {
-    const rules = await prisma.fractionRule.findMany({
-      orderBy: { minPrice: 'asc' },
-    });
-    if (rules && rules.length > 0) {
-      fractionRules = rules;
-    }
-  } catch (err) {
-    console.error('Failed to load fraction rules:', err);
-  }
-
-  try {
-    const settingTax = await prisma.systemSetting.findUnique({
-      where: { key: 'tax' },
-    });
-    if (settingTax) {
-      tax = parseFloat(settingTax.value) || 0.0;
-    }
-  } catch (err) {
-    console.error('Failed to load tax setting:', err);
-  }
-
-  try {
-    const dbFaqs = await prisma.faqItem.findMany({
-      orderBy: { order: 'asc' },
-    });
-    if (dbFaqs && dbFaqs.length > 0) {
-      faqs = dbFaqs;
-    }
-  } catch (err) {
-    console.error('Failed to load faqs:', err);
-  }
+  const [fractionRules, tax, faqs] = await Promise.all([
+    getCachedFractionRules(),
+    getCachedTaxSetting(),
+    getCachedFaqs(),
+  ]);
 
   return (
     <div className="flex flex-col min-h-screen bg-page text-main transition-colors duration-300">
       <AnalyticsTracker />
+      <AutoUsagePromoTrigger />
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full grow space-y-16">
-        {/* HERO SECTION */}
-        <section className="text-center max-w-3xl mx-auto mt-8 mb-10 space-y-4">
+        {/* HERO SECTION LANDING 1 */}
+        <section className="max-w-3xl mt-8 mb-10 space-y-4 px-4 md:px-0 pt-8 pb-16">
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-main">
             Kalkulator Penghitung <span className="text-acc-blue">Saham BEI</span>
           </h1>
-          <p className="text-base sm:text-lg text-muted max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-muted max-w-2xl">
             Alat bantu analisis untuk menghitung batas auto rejection (ARA/ARB), simulasi pembelian rata-rata (average up/down), serta estimasi target profit dan batas stop loss sesuai ketentuan bursa.
           </p>
         </section>
@@ -86,8 +46,8 @@ export default async function HomePage() {
         {/* SECTION 3: PREDIKSI TARGET JUAL / BELI */}
         <PredictionSection fractionRules={fractionRules} tax={tax} />
 
-        {/* SECTION 4: FAQ ACCORDION */}
-        <FaqSection faqs={faqs} />
+        {/* SECTION 4: FAQ ACCORDION (Cached via Server Cache) */}
+        <FaqSection faqs={faqs} showHeader={true} />
       </main>
 
       <footer className="border-t border-border-custom bg-card/50 py-8 text-center mt-auto px-4">

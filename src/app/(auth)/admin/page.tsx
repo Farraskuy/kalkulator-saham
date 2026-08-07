@@ -4,11 +4,7 @@ import React, { useEffect, useState } from 'react';
 import {
   User,
   Download,
-  Share2,
   ArrowUpRight,
-  Activity,
-  TrendingUp,
-  RefreshCw,
   Clock,
 } from 'lucide-react';
 import { formatNumber } from '@/lib/calculations';
@@ -16,6 +12,8 @@ import { formatNumber } from '@/lib/calculations';
 interface AnalyticsData {
   summary: {
     totalTraffic: number;
+    totalUsers: number;
+    totalCalculations: number;
     totalDownloads: number;
     totalShares: number;
   };
@@ -31,10 +29,8 @@ interface AnalyticsData {
 
 export default function AdminDashboardPage() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
-  const [loading, setLoading] = useState(true);
 
   const loadAnalytics = async () => {
-    setLoading(true);
     try {
       const res = await fetch('/api/analytics/dashboard');
       if (res.ok) {
@@ -43,8 +39,6 @@ export default function AdminDashboardPage() {
       }
     } catch (err) {
       console.error('Failed to load analytics:', err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -56,127 +50,123 @@ export default function AdminDashboardPage() {
     <div className="space-y-6 animate-fade-in">
       {/* Analytics Header Title */}
       <div>
-        <div className="text-[10px] font-bold text-acc-blue uppercase tracking-widest">Analytics Overview</div>
-        <h2 className="text-xl sm:text-2xl font-extrabold text-main mt-0.5">Pemantauan Trafik & Aktivitas Pengguna</h2>
+        <div className="text-[10px] font-bold text-acc-blue uppercase tracking-widest">Analytics & Performance Overview</div>
+        <h2 className="text-xl sm:text-2xl font-extrabold text-main mt-0.5">Pemantauan Trafik, Pengguna & Aktivitas</h2>
       </div>
 
-      {/* STATS CARD GRID (Matching Gambar 1 & Gambar 3 100%) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* CARD 1: USERS (TRAFFIC) */}
-        <div className="bg-card rounded-3xl p-6 space-y-4 transition-all">
+      {/* STATS CARD GRID - 4 Grid Columns */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        {/* CARD 1: TRAFFIC / VISITORS */}
+        <div className="bg-card rounded-2xl p-5 space-y-3 border border-border-custom/50">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-sub-blue text-acc-blue flex items-center justify-center">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-sub-blue text-acc-blue flex items-center justify-center">
                 <User size={16} />
               </div>
-              <span className="font-extrabold text-sm text-main">Users</span>
+              <span className="font-extrabold text-xs text-main">Trafik Kunjungan</span>
             </div>
-            <div className="w-7 h-7 rounded-full bg-sub-blue text-acc-blue flex items-center justify-center">
-              <ArrowUpRight size={14} />
+            <div className="w-6 h-6 rounded-full bg-sub-blue text-acc-blue flex items-center justify-center">
+              <ArrowUpRight size={13} />
             </div>
           </div>
 
-          <div className="bg-blue-600 text-white rounded-2xl p-5 shadow-blue-600/20 flex items-center justify-between">
+          <div className="bg-blue-600 text-white rounded-xl p-4 flex items-center justify-between">
             <div>
-              <span className="text-[10px] font-extrabold uppercase tracking-wider opacity-85 block">Total Users</span>
-              <span className="text-3xl font-extrabold mt-1 block">{formatNumber(analytics?.summary.totalTraffic || 0)}</span>
+              <span className="text-[9px] font-extrabold uppercase tracking-wider opacity-85 block">Total Kunjungan</span>
+              <span className="text-2xl font-extrabold mt-0.5 block">{formatNumber(analytics?.summary.totalTraffic || 0)}</span>
             </div>
-            <User size={28} className="opacity-90" />
+            <User size={24} className="opacity-90" />
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-1">
-            <div className="bg-sub-slate/60 p-3 rounded-2xl/30">
-              <span className="text-[9px] font-extrabold uppercase tracking-wider text-muted block">Active Now</span>
-              <span className="text-base font-extrabold text-main mt-0.5 block">1</span>
-            </div>
-            <div className="bg-sub-slate/60 p-3 rounded-2xl/30">
-              <span className="text-[9px] font-extrabold uppercase tracking-wider text-muted block">Daily Active</span>
-              <span className="text-base font-extrabold text-main mt-0.5 block">1</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 text-[10px] font-bold text-muted pt-1">
-            <span className="flex items-center gap-1 text-acc-blue"><Activity size={12} /> Realtime</span>
-            <span>•</span>
-            <span className="flex items-center gap-1"><TrendingUp size={12} /> Avg / day</span>
+          <div className="flex items-center justify-between text-[10px] font-semibold text-muted pt-0.5">
+            <span>Log Kunjungan Website</span>
+            <span className="text-acc-blue font-bold">Realtime</span>
           </div>
         </div>
 
-        {/* CARD 2: DOWNLOADS */}
-        <div className="bg-card rounded-3xl p-6 space-y-4 transition-all">
+        {/* CARD 2: REGISTERED USERS (GOOGLE OAUTH) */}
+        <div className="bg-card rounded-2xl p-5 space-y-3 border border-border-custom/50">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+                <User size={16} />
+              </div>
+              <span className="font-extrabold text-xs text-main">User Terdaftar</span>
+            </div>
+            <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+              <ArrowUpRight size={13} />
+            </div>
+          </div>
+
+          <div className="bg-emerald-600 text-white rounded-xl p-4 flex items-center justify-between">
+            <div>
+              <span className="text-[9px] font-extrabold uppercase tracking-wider opacity-85 block">Akun Google User</span>
+              <span className="text-2xl font-extrabold mt-0.5 block">{formatNumber(analytics?.summary.totalUsers || 0)}</span>
+            </div>
+            <User size={24} className="opacity-90" />
+          </div>
+
+          <div className="flex items-center justify-between text-[10px] font-semibold text-muted pt-0.5">
+            <span>Login Terdaftar (OAuth)</span>
+            <span className="text-emerald-600 font-bold">Terverifikasi</span>
+          </div>
+        </div>
+
+        {/* CARD 3: SAVED CALCULATIONS */}
+        <div className="bg-card rounded-2xl p-5 space-y-3 border border-border-custom/50">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center">
+                <Clock size={16} />
+              </div>
+              <span className="font-extrabold text-xs text-main">Histori Kalkulasi</span>
+            </div>
+            <div className="w-6 h-6 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center">
+              <ArrowUpRight size={13} />
+            </div>
+          </div>
+
+          <div className="bg-amber-600 text-white rounded-xl p-4 flex items-center justify-between">
+            <div>
+              <span className="text-[9px] font-extrabold uppercase tracking-wider opacity-85 block">Total Dihitung & Disimpan</span>
+              <span className="text-2xl font-extrabold mt-0.5 block">{formatNumber(analytics?.summary.totalCalculations || 0)}</span>
+            </div>
+            <Clock size={24} className="opacity-90" />
+          </div>
+
+          <div className="flex items-center justify-between text-[10px] font-semibold text-muted pt-0.5">
+            <span>Riwayat Simulasi User</span>
+            <span className="text-amber-600 font-bold">Database</span>
+          </div>
+        </div>
+
+        {/* CARD 4: DOWNLOADS & SHARES */}
+        <div className="bg-card rounded-2xl p-5 space-y-3 border border-border-custom/50">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-600 flex items-center justify-center">
                 <Download size={16} />
               </div>
-              <span className="font-extrabold text-sm text-main">Unduh PNG</span>
+              <span className="font-extrabold text-xs text-main">Ekspor PNG</span>
             </div>
-            <div className="w-7 h-7 rounded-full bg-purple-500/10 text-purple-600 flex items-center justify-center">
-              <ArrowUpRight size={14} />
+            <div className="w-6 h-6 rounded-full bg-purple-500/10 text-purple-600 flex items-center justify-center">
+              <ArrowUpRight size={13} />
             </div>
           </div>
 
-          <div className="bg-purple-600 text-white rounded-2xl p-5 shadow-purple-600/20 flex items-center justify-between">
+          <div className="bg-purple-600 text-white rounded-xl p-4 flex items-center justify-between">
             <div>
-              <span className="text-[10px] font-extrabold uppercase tracking-wider opacity-85 block">Total Unduh PNG</span>
-              <span className="text-3xl font-extrabold mt-1 block">{formatNumber(analytics?.summary.totalDownloads || 0)}</span>
+              <span className="text-[9px] font-extrabold uppercase tracking-wider opacity-85 block">Total Unduh / Bagikan</span>
+              <span className="text-2xl font-extrabold mt-0.5 block">
+                {formatNumber((analytics?.summary.totalDownloads || 0) + (analytics?.summary.totalShares || 0))}
+              </span>
             </div>
-            <Download size={28} className="opacity-90" />
+            <Download size={24} className="opacity-90" />
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-1">
-            <div className="bg-sub-slate/60 p-3 rounded-2xl/30">
-              <span className="text-[9px] font-extrabold uppercase tracking-wider text-muted block">Aksi Unduh</span>
-              <span className="text-base font-extrabold text-main mt-0.5 block">{analytics?.summary.totalDownloads || 0}</span>
-            </div>
-            <div className="bg-sub-slate/60 p-3 rounded-2xl/30">
-              <span className="text-[9px] font-extrabold uppercase tracking-wider text-muted block">Kalkulator Aktif</span>
-              <span className="text-base font-extrabold text-main mt-0.5 block">3</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 text-[10px] font-bold text-muted pt-1">
-            <Activity size={12} className="text-purple-600" />
-            <span>Performa Ekspor PNG Pengguna</span>
-          </div>
-        </div>
-
-        {/* CARD 3: SHARES */}
-        <div className="bg-card rounded-3xl p-6 space-y-4 transition-all">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
-                <Share2 size={16} />
-              </div>
-              <span className="font-extrabold text-sm text-main">Bagikan PNG</span>
-            </div>
-            <div className="w-7 h-7 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
-              <ArrowUpRight size={14} />
-            </div>
-          </div>
-
-          <div className="bg-emerald-600 text-white rounded-2xl p-5 shadow-emerald-600/20 flex items-center justify-between">
-            <div>
-              <span className="text-[10px] font-extrabold uppercase tracking-wider opacity-85 block">Total Bagikan PNG</span>
-              <span className="text-3xl font-extrabold mt-1 block">{formatNumber(analytics?.summary.totalShares || 0)}</span>
-            </div>
-            <Share2 size={28} className="opacity-90" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 pt-1">
-            <div className="bg-sub-slate/60 p-3 rounded-2xl/30">
-              <span className="text-[9px] font-extrabold uppercase tracking-wider text-muted block">Aksi Bagikan</span>
-              <span className="text-base font-extrabold text-main mt-0.5 block">{analytics?.summary.totalShares || 0}</span>
-            </div>
-            <div className="bg-sub-slate/60 p-3 rounded-2xl/30">
-              <span className="text-[9px] font-extrabold uppercase tracking-wider text-muted block">Status Revenue</span>
-              <span className="text-base font-extrabold text-emerald-600 mt-0.5 block">Rp 0</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 text-[10px] font-bold text-muted pt-1">
-            <Activity size={12} className="text-emerald-600" />
-            <span>Interaksi Sosial & Share Link</span>
+          <div className="flex items-center justify-between text-[10px] font-semibold text-muted pt-0.5">
+            <span>Unduh: {analytics?.summary.totalDownloads || 0}</span>
+            <span>Bagikan: {analytics?.summary.totalShares || 0}</span>
           </div>
         </div>
       </div>

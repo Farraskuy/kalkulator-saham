@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, Lock, Mail, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { Lock, Mail } from 'lucide-react';
+import AppLogo from '@/components/layout/AppLogo';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -39,10 +39,10 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-page px-4 sm:px-6 transition-colors duration-300">
-      <div className="w-full max-w-[420px] bg-card  rounded-3xl p-8 shadow-md">
+      <div className="w-full max-w-[420px] bg-card  rounded-3xl p-8 ">
         <div>
-          <div className="w-12 h-12 rounded-xl bg-acc-blue text-white flex items-center justify-center shadow-md shadow-acc-blue/20 mb-4">
-            <ShieldCheck size={28} />
+          <div className="mb-4">
+            <AppLogo size={44} />
           </div>
 
           <h1 className="text-xl sm:text-2xl font-extrabold text-main">
@@ -53,7 +53,7 @@ export default function LoginPage() {
           </p>
 
           {error && (
-            <div className="bg-sub-pink border border-acc-pink text-acc-pink p-3.5 rounded-xl text-xs font-bold mb-4">
+            <div className="bg-sub-pink text-acc-pink p-3.5 rounded-xl text-xs font-bold mb-4">
               {error}
             </div>
           )}
@@ -104,9 +104,9 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-1.5 bg-acc-blue hover:bg-acc-blue/90 text-white font-bold py-3 px-6 rounded-2xl text-sm transition-all duration-200 shadow-md shadow-acc-blue/15 cursor-pointer disabled:opacity-50 mt-2"
+              className="w-full flex items-center justify-center gap-1.5 bg-acc-blue hover:bg-acc-blue/90 text-white font-bold py-3 px-6 rounded-2xl text-sm transition-all duration-200  shadow-acc-blue/15 cursor-pointer disabled:opacity-50 mt-2"
             >
-              {loading ? 'Memproses...' : 'Masuk ke Admin CMS'}
+              {loading ? 'Memproses...' : 'Masuk'}
             </button>
           </form>
         </div>

@@ -262,7 +262,7 @@ export default function AdminFaqPage() {
             {faqs.map((faq, idx) => (
               <div
                 key={faq.id}
-                className="bg-page rounded-2xl p-4 border border-border-custom/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                className="bg-page rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
               >
                 <div className="space-y-1 min-w-0">
                   <div className="flex items-center gap-2">

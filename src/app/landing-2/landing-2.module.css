@@ -1,0 +1,612 @@
+.page {
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  color: #1c1d1a;
+  background-color: #f7f7f5;
+  font-family: var(--font-sans), sans-serif;
+}
+
+/* HEADER NAVBAR (Clean Minimalist Acme Style) */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+  height: 76px;
+  padding: 0 clamp(20px, 4vw, 64px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(247, 247, 245, 0.95);
+  backdrop-filter: blur(12px);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #111210;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+  text-decoration: none;
+}
+
+.logoMark {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1.8px solid #111210;
+  background: transparent;
+  color: #111210;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav a {
+  color: #52534e;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.nav a:hover {
+  color: #111210;
+}
+
+.navWithIcon {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.loginButton {
+  border-radius: 8px;
+  padding: 9px 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #111210;
+  background: #ebebeb;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.loginButton:hover {
+  background: #e0e0e0;
+}
+
+.menuButton {
+  display: none;
+  border: 0;
+  color: #111210;
+  background: transparent;
+  cursor: pointer;
+}
+
+.mobileNav {
+  position: absolute;
+  top: 76px;
+  right: 16px;
+  width: 220px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.mobileNav a {
+  padding: 10px 12px;
+  color: #333430;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.mobileNav a:hover {
+  background: #f0f0ed;
+}
+
+/* HERO SECTION (Acme Layout 2-Kolom Presisi) */
+.hero {
+  padding: 56px clamp(20px, 4vw, 64px) 36px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.breadcrumb {
+  margin: 0 0 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #3a3b37;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.heroContentGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: end;
+}
+
+.heroLeft h1 {
+  margin: 0;
+  color: #111210;
+  font-size: clamp(38px, 4.2vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -2.5px;
+  font-weight: 600;
+}
+
+.heroRightCopy {
+  margin-top: 6px;
+  color: #52534e;
+  font-size: 14px;
+  line-height: 1.65;
+  font-weight: 400;
+}
+
+/* BANNER IMAGE HERO */
+.bannerWrap {
+  max-width: 1200px;
+  margin: 16px auto 0;
+  padding: 0 clamp(20px, 4vw, 64px);
+}
+
+.heroImageContainer {
+  position: relative;
+  width: 100%;
+  height: clamp(320px, 32vw, 480px);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #111210;
+}
+
+.heroImageContainer img {
+  object-fit: cover;
+  object-position: center 40%;
+}
+
+.imageOverlay {
+  position: absolute;
+  z-index: 2;
+  left: clamp(24px, 4vw, 48px);
+  bottom: 36px;
+  display: flex;
+  flex-direction: column;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.imageOverlay span {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.imageOverlay strong {
+  margin-top: 4px;
+  font-size: clamp(20px, 2.4vw, 32px);
+  font-weight: 500;
+  letter-spacing: -0.5px;
+}
+
+/* CALCULATOR SECTION - ACME FORM CARD (Kuning Gading / Warm Off-White) */
+.calculatorSection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 56px clamp(20px, 4vw, 64px) 72px;
+}
+
+.calculatorContainer {
+  background: #f2f2ef; /* Warm Cream Tone khas Acme Card */
+  border-radius: 16px;
+  padding: 36px 32px;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+/* Acme Segmented Tab Pill Controller */
+.calculatorTabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #e6e6e2;
+  padding: 6px;
+  border-radius: 12px;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 36px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.calculatorTabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  min-height: 44px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #52534e;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  color: #111210;
+}
+
+.activeTab {
+  background: #ffffff;
+  color: #111210;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.tabIcon {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  display: grid;
+  place-items: center;
+  background: #d8d8d4;
+  color: #111210;
+  transition: all 0.2s ease;
+}
+
+.activeTab .tabIcon {
+  background: #111210;
+  color: #ffffff;
+}
+
+.activeCalculator {
+  width: 100%;
+}
+
+.activeCalculator :global(section) {
+  scroll-margin-top: 100px;
+}
+
+/* Sembunyikan redundant header judul kalkulator bawaan */
+.activeCalculator :global(section > div:first-child) {
+  display: none;
+}
+
+/* Styling internal card agar menyatu dengan warna warm cream khas Acme */
+.activeCalculator :global(section > div:last-child) {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.activeCalculator :global(input),
+.activeCalculator :global(select) {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  color: #111210 !important;
+}
+
+.activeCalculator :global(button) {
+  border-radius: 8px !important;
+}
+
+/* ACME FEATURE GRID SECTION ("Better Energy" 3-Column Grid) */
+.featureSection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 64px clamp(20px, 4vw, 64px);
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.featureCard {
+  background: #f2f2ef;
+  border-radius: 14px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: transform 0.2s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-2px);
+}
+
+.featureIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #e2e2dd;
+  color: #111210;
+  display: grid;
+  place-items: center;
+}
+
+.featureTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111210;
+  letter-spacing: -0.4px;
+  margin: 0;
+}
+
+.featureDesc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #52534e;
+  margin: 0;
+}
+
+/* ACME BENTO SERVICES GRID ("Our Services") */
+.bentoSection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px clamp(20px, 4vw, 64px) 80px;
+}
+
+.bentoHeader {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.bentoHeader h2 {
+  font-size: 36px;
+  font-weight: 600;
+  color: #111210;
+  letter-spacing: -1.2px;
+  margin: 0 0 8px;
+}
+
+.bentoHeader p {
+  font-size: 14px;
+  color: #52534e;
+  margin: 0;
+}
+
+.bentoGrid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+}
+
+.bentoMainCard {
+  position: relative;
+  height: 380px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #111210;
+}
+
+.bentoMainCard img {
+  object-fit: cover;
+}
+
+.bentoSideGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.bentoSideCard {
+  background: #f2f2ef;
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+/* FAQ SECTION */
+.faqWrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 64px) 80px;
+}
+
+/* FOOTER ACME CLEAN STYLE */
+.footer {
+  width: 100%;
+  background: #ffffff;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 56px clamp(20px, 4vw, 64px) 32px;
+}
+
+.footerContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footerGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 40px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.footerColBrand {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.footerBrandLogo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #111210;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.footerBrandDesc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #52534e;
+  max-width: 320px;
+}
+
+.footerColTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111210;
+  margin-bottom: 16px;
+}
+
+.footerNavList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footerNavList a {
+  font-size: 13px;
+  color: #52534e;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.footerNavList a:hover {
+  color: #111210;
+}
+
+.newsWidgetList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.newsWidgetItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+}
+
+.newsWidgetItemTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #111210;
+  line-height: 1.4;
+}
+
+.newsWidgetItemMeta {
+  font-size: 10px;
+  color: #82837e;
+}
+
+.footerBottom {
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  text-align: center;
+}
+
+.footerCopyText {
+  font-size: 12px;
+  font-weight: 600;
+  color: #52534e;
+}
+
+.footerDisclaimerBox {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #82837e;
+  max-width: 800px;
+}
+
+/* RESPONSIVE LAYOUT */
+@media (max-width: 960px) {
+  .heroContentGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .featureGrid {
+    grid-template-columns: 1fr;
+  }
+  .bentoGrid {
+    grid-template-columns: 1fr;
+  }
+  .footerGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    height: 64px;
+    padding: 0 16px;
+  }
+  .nav,
+  .loginButton {
+    display: none;
+  }
+  .menuButton {
+    display: block;
+  }
+  .hero {
+    padding: 36px 16px 20px;
+  }
+  .heroLeft h1 {
+    font-size: 32px;
+    letter-spacing: -1.5px;
+  }
+  .calculatorTabs {
+    width: 100%;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 6px;
+  }
+  .tab {
+    padding: 0 16px;
+    font-size: 11.5px;
+  }
+  .footerGrid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}

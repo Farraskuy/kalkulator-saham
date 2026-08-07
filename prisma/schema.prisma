@@ -7,6 +7,55 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String               @id @default(cuid())
+  name          String?
+  email         String               @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role                 @default(USER)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  accounts      Account[]
+  histories     CalculationHistory[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model CalculationHistory {
+  id             String   @id @default(cuid())
+  userId         String
+  calculatorType String   // "ara-arb" | "average" | "prediction"
+  title          String   // Ticker / ringkasan nama
+  inputs         Json     // Parameter input kalkulasi
+  results        Json     // Hasil hitung kalkulasi
+  createdAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 model AdminUser {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -55,5 +104,30 @@ model FaqItem {
   order     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Article {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  excerpt     String
+  content     String   @db.Text
+  category    String   // "Jurnal " | "Edukasi Saham" | "Analisis Pasar" | "Tips & Trik" | "Pengalaman"
+  type        String   @default("BLOG") // "ARTICLE" (Edukasi/Panduan) | "BLOG" (Berita/Blog Portal)
+  coverImage  String?
+  author      String?  @default("Tim Redaksi")
+  source      String?  @default("HitungSaham NEWS")
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
