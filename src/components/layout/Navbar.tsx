@@ -78,7 +78,7 @@ export default function Navbar() {
     },
     {
       title: 'Auto Rejection (ARA / ARB)',
-      desc: 'Batas atas & bawah pergerakan harga saham simetris BEI.',
+      desc: 'Batas atas & bawah pergerakan harga saham simetris.',
       href: '/#ara-arb',
       icon: ShieldAlert,
       color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
@@ -92,7 +92,7 @@ export default function Navbar() {
     },
     {
       title: 'Semua Alat Kalkulasi',
-      desc: 'Ringkasan lengkap suite kalkulator analisis saham BEI.',
+      desc: 'Ringkasan lengkap suite kalkulator analisis saham.',
       href: '/#calculator',
       icon: LayoutGrid,
       color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',

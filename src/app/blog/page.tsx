@@ -1,11 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { BookOpen } from 'lucide-react';
 import { Metadata } from 'next';
 import Navbar from '@/components/layout/Navbar';
-import DynamicDisclaimer from '@/components/layout/DynamicDisclaimer';
-import AppLogo from '@/components/layout/AppLogo';
+import Footer from '@/components/layout/Footer';
 import LandingOneBlogFilter from '@/features/blog/components/LandingOneBlogFilter';
 import { getCachedArticles, getCachedCategories } from '@/lib/cached-data';
 
@@ -75,9 +73,6 @@ export default async function LandingOneBlogPage() {
         {/* DATABASE INTEGRATED BENTO HERO OR EMPTY STATE */}
         {articles.length === 0 ? (
           <section className="flex flex-col items-center justify-center py-20 px-4 text-center bg-sub-slate/50 rounded-3xl border border-dashed border-border-custom space-y-4 my-6">
-            <div className="w-16 h-16 rounded-full bg-sub-blue text-acc-blue flex items-center justify-center text-2xl font-bold">
-              <BookOpen size={30} />
-            </div>
             <div className="space-y-1.5 max-w-md">
               <h1 className="text-2xl font-extrabold text-main">Belum Ada Artikel Dipublikasikan</h1>
               <p className="text-xs text-muted leading-relaxed">
@@ -207,49 +202,10 @@ export default async function LandingOneBlogPage() {
           </section>
         )}
 
-        {/* FOOTER */}
-        <footer className="bg-[#18181b] text-white rounded-2xl p-8 sm:p-10 space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-            <div className="md:col-span-6 space-y-3">
-              <div className="flex items-center gap-2.5 font-black text-xl text-white">
-                <AppLogo size={28} variant="white-icon" />
-                <span>HitungSaham</span>
-              </div>
-              <p className="text-xs text-gray-400 max-w-sm leading-relaxed">
-                Platform personal berisi blog artikel opini pribadi serta kalkulator simulasi matematis saham.
-              </p>
-            </div>
-
-            <div className="md:col-span-6 grid grid-cols-2 gap-6 text-xs">
-              <div>
-                <div className="font-extrabold text-white uppercase tracking-wider mb-3 text-[11px]">Kalkulator Saham</div>
-                <ul className="space-y-2 text-gray-400 font-semibold">
-                  <li><Link href="/#ara-arb" className="hover:text-white transition-colors">Batas ARA / ARB</Link></li>
-                  <li><Link href="/#avg-up-down" className="hover:text-white transition-colors">Average Up / Down</Link></li>
-                  <li><Link href="/#prediction" className="hover:text-white transition-colors">Target Profit &amp; Loss</Link></li>
-                  <li><Link href="/faq" className="hover:text-white transition-colors">Pertanyaan Umum (FAQ)</Link></li>
-                </ul>
-              </div>
-
-              <div>
-                <div className="font-extrabold text-white uppercase tracking-wider mb-3 text-[11px]">Jurnal &amp; Sistem</div>
-                <ul className="space-y-2 text-gray-400 font-semibold">
-                  <li><Link href="/blog" className="hover:text-white transition-colors">Catatan Jurnal </Link></li>
-                  <li><Link href="/faq" className="hover:text-white transition-colors">Pusat Bantuan BEI</Link></li>
-                  <li><Link href="/admin" className="hover:text-white transition-colors">Admin Panel CMS</Link></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-gray-400">
-            <div>&copy; {new Date().getFullYear()} HitungSaham.com • Catatan  &amp; Alat Analisis Saham BEI</div>
-            <div className="max-w-md text-center sm:text-right text-[10px]">
-              <DynamicDisclaimer />
-            </div>
-          </div>
-        </footer>
       </main>
+
+      {/* UNIFIED FOOTER */}
+      <Footer />
     </div>
   );
 }

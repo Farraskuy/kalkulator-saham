@@ -18,9 +18,32 @@ export default function FaqSection({ faqs, showHeader = false, theme = 'default'
     setOpenId(openId === id ? null : id);
   };
 
-  if (!faqs || faqs.length === 0) return null;
-
   const isAcme = theme === 'acme';
+
+  if (!faqs || faqs.length === 0) {
+    return (
+      <section id="faq" className="space-y-4 scroll-m-50 w-full">
+        {showHeader && (
+          <div className="pb-2 text-center max-w-3xl mx-auto space-y-2">
+            <div className={`text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 ${isAcme ? 'text-[#111210]' : 'text-acc-blue'}`}>
+              <HelpCircle size={16} /> FAQ
+            </div>
+            <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${isAcme ? 'text-[#111210]' : 'text-main'}`}>
+              Frequently Asked Questions (FAQ)
+            </h2>
+          </div>
+        )}
+        <div className={`max-w-4xl mx-auto text-center p-8 py-40 rounded-2xl border e ? 'bg-[#f2f2ef] border-black/8 text-[#52534e]' : 'bg-card border-border-custom/40 text-muted'}`}>
+          <h3 className={`text-base font-bold mb-1 ${isAcme ? 'text-[#111210]' : 'text-main'}`}>
+            Belum Ada Pertanyaan FAQ
+          </h3>
+          <p className="text-xs max-w-md mx-auto leading-relaxed">
+            Saat ini belum ada pertanyaan FAQ yang dipublikasikan di database. Silakan kembali lagi nanti.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="faq" className="space-y-4 scroll-mt-20 w-full">

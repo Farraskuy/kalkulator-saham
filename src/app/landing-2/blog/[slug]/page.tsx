@@ -5,9 +5,8 @@ import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import { ArrowLeft, Calendar, Calculator, ChevronRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import DynamicDisclaimer from '@/components/layout/DynamicDisclaimer';
+import Footer from '@/components/layout/Footer';
 import LandingTwoHeader from '../../components/LandingTwoHeader';
-import AppLogo from '@/components/layout/AppLogo';
 import TrackBlogView from '@/features/blog/components/TrackBlogView';
 import styles from '../blog-acme.module.css';
 
@@ -22,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${article.title} | HitungSaham Blog`,
     description: article.excerpt,
-    keywords: [article.category, 'jurnal trading', 'saham bei', 'kalkulator saham'],
+    keywords: [article.category, 'jurnal ', 'saham bei', 'kalkulator saham'],
     openGraph: {
       title: `${article.title} | HitungSaham Blog`,
       description: article.excerpt,
@@ -167,61 +166,8 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
       </main>
 
       {/* FOOTER ACME CLEAN STYLE */}
-      <footer className={styles.footer}>
-        <div className={styles.footerContainer}>
-          <div className={styles.footerGrid}>
-            {/* BRAND COLUMN */}
-            <div className={styles.footerColBrand}>
-              <div className={styles.footerBrandLogo}>
-                <AppLogo size={26} variant="dark-icon" />
-                <span>HitungSaham</span>
-              </div>
-              <p className={styles.footerBrandDesc}>
-                Platform personal berisi kalkulator analisis dan catatan jurnal trading saham bursa efek Indonesia (BEI).
-              </p>
-            </div>
-
-            {/* QUICK LINKS */}
-            <div>
-              <div className={styles.footerColTitle}>Kalkulator Saham</div>
-              <ul className={styles.footerNavList}>
-                <li><Link href="/landing-2#calculator">Prediksi Target Jual/Beli</Link></li>
-                <li><Link href="/landing-2#calculator">Auto Rejection (ARA/ARB)</Link></li>
-                <li><Link href="/landing-2#calculator">Average Up / Down</Link></li>
-                <li><Link href="/landing-2#faq">Pertanyaan Umum (FAQ)</Link></li>
-              </ul>
-            </div>
-
-            {/* JURNAL & NAVIGASI */}
-            <div>
-              <div className={styles.footerColTitle}>Jurnal &amp; Navigasi</div>
-              <ul className={styles.footerNavList}>
-                <li><Link href="/landing-2/blog">Jurnal  &amp; Catatan</Link></li>
-                <li><Link href="/landing-2/faq">Pusat Bantuan &amp; FAQ</Link></li>
-                <li><Link href="/admin">Admin Panel CMS</Link></li>
-              </ul>
-            </div>
-
-            {/* PROFIL PENGELOLA */}
-            <div>
-              <div className={styles.footerColTitle}>Profil Pengelola</div>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                Dikelola secara mandiri sebagai ruang berbagi catatan pengalaman transaksi dan penyedia alat kalkulasi matematis saham ritel.
-              </p>
-            </div>
-          </div>
-
-          {/* FOOTER BOTTOM */}
-          <div className={styles.footerBottom}>
-            <div className={styles.footerCopyText}>
-              &copy; {new Date().getFullYear()} HitungSaham.com • Catatan  &amp; Alat Analisis Saham BEI
-            </div>
-            <div className={styles.footerDisclaimerBox}>
-              <DynamicDisclaimer />
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* UNIFIED ACME FOOTER */}
+      <Footer variant="acme" />
     </div>
   );
 }

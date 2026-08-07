@@ -4,8 +4,7 @@ import AvgUpDownSection from '@/features/calculators/components/AvgUpDownSection
 import PredictionSection from '@/features/calculators/components/PredictionSection';
 import FaqSection from '@/features/faq/components/FaqSection';
 import AnalyticsTracker from '@/components/analytics/AnalyticsTracker';
-import DynamicDisclaimer from '@/components/layout/DynamicDisclaimer';
-import WebsiteBrand from '@/components/layout/WebsiteBrand';
+import Footer from '@/components/layout/Footer';
 import AutoUsagePromoTrigger from '@/components/feedback/AutoUsagePromoTrigger';
 import { Suspense } from 'react';
 import {
@@ -33,7 +32,7 @@ export default async function HomePage() {
         {/* HERO SECTION LANDING 1 */}
         <section className="max-w-3xl mt-8 mb-10 space-y-4 px-4 md:px-0 pt-8 pb-16">
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-main">
-            Kalkulator Penghitung <span className="text-acc-blue">Saham BEI</span>
+            Kalkulator Penghitung <span className="text-acc-blue">Saham</span>
           </h1>
           <p className="text-base sm:text-lg text-muted max-w-2xl">
             Alat bantu analisis untuk menghitung batas auto rejection (ARA/ARB), simulasi pembelian rata-rata (average up/down), serta estimasi target profit dan batas stop loss sesuai ketentuan bursa.
@@ -53,14 +52,8 @@ export default async function HomePage() {
         <FaqSection faqs={faqs} showHeader={true} />
       </main>
 
-      <footer className="border-t border-border-custom bg-card/50 py-8 text-center mt-auto px-4">
-        <div className="max-w-7xl mx-auto">
-          <p className="font-bold text-main mb-1.5">
-            <WebsiteBrand /> • Alat Analisis Saham BEI
-          </p>
-          <DynamicDisclaimer />
-        </div>
-      </footer>
+      {/* UNIFIED FOOTER */}
+      <Footer />
     </div>
   );
 }

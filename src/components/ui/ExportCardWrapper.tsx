@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Download, Check } from 'lucide-react';
+import { Download, Share2, Check } from 'lucide-react';
 import { toPng, toBlob } from 'html-to-image';
 
 interface ExportCardWrapperProps {
@@ -39,58 +39,78 @@ export default function ExportCardWrapper({
     }
   };
 
-  const handleCopyImage = async () => {
+  const handleShare = async () => {
     if (!cardRef.current) return;
     try {
       const blob = await toBlob(cardRef.current, { cacheBust: true });
       if (!blob) return;
 
-      await navigator.clipboard.write([
-        new ClipboardItem({ 'image/png': blob }),
-      ]);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      const file = new File([blob], `${fileName}.png`, { type: 'image/png' });
+      if (typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: 'Hasil Kalkulasi HitungSaham',
+          text: 'Lihat hasil kalkulasi saham saya di HitungSaham.com',
+          files: [file],
+        });
+        return;
+      }
+
+      // Fallback if Web Share is not supported for files: copy image to clipboard
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.write([
+          new ClipboardItem({ 'image/png': blob }),
+        ]);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+      }
     } catch (err) {
-      console.error('Failed to copy PNG card image:', err);
+      if ((err as Error).name !== 'AbortError') {
+        console.error('Failed to share PNG image:', err);
+      }
     }
   };
 
   return (
     <div className={`relative ${embedded ? '' : 'bg-card border border-border-custom/50 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6'}`}>
-      <div className="flex items-center justify-between pb-3 border-b border-border-custom/40">
+      {/* CARD TOP HEADER */}
+      <div className="pb-3 border-b border-border-custom/40">
         <div className="text-xs font-extrabold uppercase tracking-wider text-muted">
-          Hasil Kalkulasi BEI
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleCopyImage}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-sub-slate text-main hover:bg-sub-blue hover:text-acc-blue transition-all cursor-pointer border border-border-custom/40"
-            title="Salin Gambar ke Clipboard"
-          >
-            {copied ? <Check size={14} className="text-acc-green" /> : <Download size={14} />}
-            <span>{copied ? 'Tersalin!' : 'Salin PNG'}</span>
-          </button>
-
-          <button
-            onClick={handleDownloadImage}
-            disabled={downloading}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-acc-blue text-white hover:bg-acc-blue/90 transition-all cursor-pointer shadow-xs disabled:opacity-50"
-            title="Unduh Hasil Perhitungan Sebagai PNG"
-          >
-            <Download size={14} />
-            <span>{downloading ? 'Mengunduh...' : 'Unduh PNG'}</span>
-          </button>
+          Hasil Kalkulasi
         </div>
       </div>
 
+      {/* EXPORTABLE CARD CONTAINER */}
       <div ref={cardRef} className="p-2 sm:p-3 bg-card rounded-xl space-y-4">
         {children}
 
         <div className="pt-3 border-t border-border-custom/30 flex items-center justify-between text-[10px] text-muted font-medium">
-          <span>Kalkulator Saham BEI • HitungSaham</span>
+          <span>Kalkulator Saham • HitungSaham.com</span>
           <span>{new Date().toLocaleDateString('id-ID', { dateStyle: 'medium' })}</span>
         </div>
+      </div>
+
+      {/* ACTION BUTTONS AT BOTTOM (PILL STYLED: UNDUH GAMBAR PNG & BAGIKAN) */}
+      <div className="flex items-center gap-3 pt-3 w-full">
+        <button
+          type="button"
+          onClick={handleDownloadImage}
+          disabled={downloading}
+          className="flex-1 h-11 sm:h-12 bg-acc-blue hover:bg-acc-blue/90 text-white rounded-full font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
+          title="Unduh Hasil Perhitungan Sebagai PNG"
+        >
+          <Download size={16} />
+          <span>{downloading ? 'Mengunduh...' : 'Unduh Gambar PNG'}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={handleShare}
+          className="h-11 sm:h-12 px-5 sm:px-6 bg-sub-slate hover:bg-sub-blue hover:text-acc-blue text-main rounded-full font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer border border-border-custom/40 shrink-0"
+          title="Bagikan Gambar Hasil Perhitungan"
+        >
+          {copied ? <Check size={16} className="text-acc-green" /> : <Share2 size={16} />}
+          <span>{copied ? 'Tersalin!' : 'Bagikan'}</span>
+        </button>
       </div>
     </div>
   );

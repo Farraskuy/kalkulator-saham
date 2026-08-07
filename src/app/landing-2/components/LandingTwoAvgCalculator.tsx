@@ -207,25 +207,25 @@ export default function LandingTwoAvgCalculator() {
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="average" embedded>
-          {/* Main Avg Price Card */}
-          <div className="bg-slate-900 text-white rounded-xl p-5 flex items-center justify-between shadow-sm">
+          {/* Main Avg Price Card (Solid Purple, No Gradient, No Shadow, No Border) */}
+          <div className="bg-[#7c3aed] text-white rounded-xl p-5 flex items-center justify-between">
             <div>
-              <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300">Harga Rata-Rata per Lembar (Avg Price)</div>
+              <div className="text-[10px] font-extrabold uppercase tracking-wider text-purple-100">Harga Rata-Rata per Lembar (Avg Price)</div>
               <div className="text-2xl sm:text-3xl font-extrabold mt-1 text-white">{formatIDR(result.avgPrice)}</div>
             </div>
-            <div className="text-white opacity-90">
+            <div className="text-white opacity-95">
               <Layers size={26} />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-slate-500">Total Lembar Saham</span>
-              <span className="text-base font-extrabold block text-slate-900 wrap-break-word">{formatNumber(result.totalLembar)} Lembar</span>
+            <div className="bg-[#f5f3ff] rounded-xl p-3.5 space-y-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-[#6d28d9]">Total Lembar Saham</span>
+              <span className="text-base font-extrabold block text-[#4c1d95] wrap-break-word">{formatNumber(result.totalLembar)} Lembar</span>
             </div>
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-slate-500">Total Investasi Pembelian</span>
-              <span className="text-base font-extrabold block text-slate-900 wrap-break-word">{formatIDR(result.totalInvestment)}</span>
+            <div className="bg-[#f5f3ff] rounded-xl p-3.5 space-y-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-[#6d28d9]">Total Investasi Pembelian</span>
+              <span className="text-base font-extrabold block text-[#4c1d95] wrap-break-word">{formatIDR(result.totalInvestment)}</span>
             </div>
           </div>
         </ExportCardWrapper>

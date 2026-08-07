@@ -1,6 +1,32 @@
+const fs = require('fs');
+const path = require('path');
+
+// Auto-load .env file into process.env BEFORE PrismaClient is imported
+if (fs.existsSync(path.resolve(__dirname, '../.env'))) {
+  const envConfig = fs.readFileSync(path.resolve(__dirname, '../.env'), 'utf8');
+  for (const line of envConfig.split('\n')) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
+      const [key, ...valueParts] = trimmed.split('=');
+      const val = valueParts.join('=').trim().replace(/^["']|["']$/g, '');
+      if (key.trim() && !process.env[key.trim()]) {
+        process.env[key.trim()] = val;
+      }
+    }
+  }
+}
+
+if (!process.env.DATABASE_URL) {
+  const user = process.env.DB_USER || 'kalkulator_app';
+  const pass = process.env.DB_PASSWORD || '9SMvEgRQIhYkk3YqTMALrAoXZETm7SjU';
+  const name = process.env.DB_NAME || 'kalkulator_saham';
+  const host = process.env.DB_HOST || 'localhost';
+  const port = process.env.DB_PORT || '5432';
+  process.env.DATABASE_URL = `postgresql://${user}:${pass}@${host}:${port}/${name}?schema=public`;
+}
+
 const { PrismaClient } = require('@prisma/client');
 const crypto = require('crypto');
-
 const prisma = new PrismaClient();
 
 function hashPassword(password) {
@@ -30,7 +56,7 @@ async function main() {
     console.log('✔ Akun Admin default sudah ada.');
   }
 
-  // 2. Seed Default BEI Fractions
+  // 2. Seed Default Fractions
   const defaultFractions = [
     { minPrice: 1, maxPrice: 200, tick: 1 },
     { minPrice: 201, maxPrice: 500, tick: 2 },
@@ -46,9 +72,9 @@ async function main() {
         data: f,
       });
     }
-    console.log('✔ Aturan Fraksi BEI default berhasil disimpan.');
+    console.log('✔ Aturan Fraksi Saham default berhasil disimpan.');
   } else {
-    console.log('✔ Aturan Fraksi BEI sudah terisi.');
+    console.log('✔ Aturan Fraksi Saham sudah terisi.');
   }
 
   // 3. Seed Default ARA/ARB Rules
@@ -80,7 +106,7 @@ async function main() {
     await prisma.systemSetting.create({
       data: {
         key: 'terms',
-        value: 'Website ini merupakan wadah berbagi catatan trading dan alat bantu kalkulasi matematis saham BEI berdasarkan parameter input pengguna. Isi konten di website ini bukan merupakan instruksi atau rekomendasi beli/jual saham baku.',
+        value: 'Website ini merupakan wadah berbagi catatan opini pribadi dan alat bantu kalkulasi matematis saham berdasarkan parameter input pengguna. Isi konten di website ini bukan merupakan instruksi atau rekomendasi beli/jual saham baku.',
       },
     });
     console.log('✔ Syarat dan Ketentuan default berhasil disimpan.');
@@ -93,20 +119,32 @@ async function main() {
     {
       id: 'faq-1',
       question: 'Apa itu Hitungsaham.com?',
-      answer: 'Hitungsaham.com adalah platform personal berisi kalkulator analisis saham BEI dan kumpulan catatan jurnal trading harian. Platform ini dibuat untuk membantu rekan-rekan investor dan trader dalam menghitung ARA/ARB, Average Down, serta mengelola manajemen risiko.',
+      answer: 'Hitungsaham.com adalah alat bantu kalkulasi yang dirancang khusus untuk perhitungan matematis saham. Platform ini menyediakan fitur kalkulator instan untuk menghitung batas Auto Rejection Atas (ARA) dan Auto Rejection Bawah (ARB), simulasi average up/down posisi portofolio, serta penentuan titik take profit dan cut loss.',
       order: 1,
     },
     {
       id: 'faq-2',
-      question: 'Bagaimana cara menghitung Average Down secara aman?',
-      answer: 'Average down dilakukan dengan menambah porsi saham ketika harga mengalami penurunan. Penggunaan kalkulator Average Down di web ini membantu Anda menghitung berapa lot tambahan yang dibutuhkan untuk mencapai target harga rata-rata tertentu tanpa melampaui alokasi modal maksimal.',
+      question: 'Bagaimana cara memberikan masukan atau melaporkan kendala (feedback)?',
+      answer: 'Kami sangat menghargai masukan untuk terus menyempurnakan alat ini. Jika Anda menemukan ketidaksesuaian perhitungan, memiliki ide fitur baru, atau ingin melaporkan kendala, silakan hubungi tim kami melalui email di admin@hitungsaham.com.',
       order: 2,
     },
     {
       id: 'faq-3',
-      question: 'Apakah perhitungan ARA dan ARB di website ini sudah simetris?',
-      answer: 'Ya, kalkulator kami diperbarui mengikuti aturan bursa terbaru untuk papan Utama, Pengembangan, Akselerasi, dan Pemantauan Khusus (FCA).',
+      question: 'Bagaimana Aturan Fraksi Harga & Papan Perdagangan Saham Terbaru?',
+      answer: 'Kalkulator kami selalu diperbarui mengikuti regulasi bursa. Pergerakan harga saham dibatasi oleh fraksi harga berdasarkan rentang harga saham (misal: Rp1 untuk harga di bawah Rp200, Rp2 untuk harga Rp200-Rp500, dan seterusnya). Selain itu, batas ARA dan ARB berbeda bergantung pada papan pencatatan:\n\n- Papan Utama & Pengembangan: ARA hingga maksimal 20% - 35% dan ARB hingga maksimal 15%.\n- Papan Akselerasi: ARA dan ARB simetris di angka 10%.\n- Papan Pemantauan Khusus (FCA/Watchlist): ARA dan ARB dibatasi sebesar 10% untuk perdagangan Full Call Auction.\n- Pada rentang harga Rp 1-10: ARA dan ARB dibatasi simetris 1 papan tick.',
       order: 3,
+    },
+    {
+      id: 'faq-4',
+      question: 'Bagaimana Strategi Aman Melakukan Average Down pada Saham Volatil?',
+      answer: 'Saham berkapitalisasi kecil memiliki tingkat volatilitas yang sangat tinggi. Melakukan average down secara membabi buta saat harga turun berisiko menggerus modal secara signifikan. Strategi yang lebih aman adalah mengombinasikan simulasi lot di kalkulator ini dengan konfirmasi teknikal. Pastikan Anda hanya menambah porsi (average down) ketika tekanan jual sudah mereda.',
+      order: 4,
+    },
+    {
+      id: 'faq-5',
+      question: 'Bagaimana Mengatur Risk/Reward Ratio dengan Kalkulator Ini?',
+      answer: 'Manajemen risiko adalah kunci bertahan di pasar modal untuk menghindari kerugian modal yang dalam. Sebelum mengeksekusi analisis, gunakan fitur Prediksi Jual/Beli. Masukkan harga pembelian dan batas toleransi risiko yang siap diterima (misalnya maksimal cut loss 3%). Kalkulator dibuat untuk menjadi batasan Anda. Pasangkan angka tersebut dengan target take profit yang terukur.',
+      order: 5,
     },
   ];
 
@@ -121,7 +159,7 @@ async function main() {
 
   // 6. Seed Default Categories
   const defaultCategories = [
-    { name: 'Jurnal ', slug: 'jurnal-trading', order: 1 },
+    { name: 'Catatan & Artikel', slug: 'catatan-artikel', order: 1 },
     { name: 'Edukasi Saham', slug: 'edukasi-saham', order: 2 },
     { name: 'Analisis Pasar', slug: 'analisis-pasar', order: 3 },
     { name: 'Tips & Trik', slug: 'tips-trik', order: 4 },
@@ -137,21 +175,21 @@ async function main() {
   }
   console.log('✔ Default Categories berhasil disimpan.');
 
-  // 6. Seed Personal Stock Blog Posts & Educational Articles
+  // 7. Seed Personal Stock Blog Posts & Educational Articles
   await prisma.article.deleteMany({});
   console.log('✔ Artikel lama dibersihkan.');
 
   const defaultArticles = [
     {
       id: 'art-1',
-      slug: 'catatan-pengalaman-trading-5-tahun-bei',
-      title: 'Catatan Pengalaman  5 Tahun di BEI: Dari Loss Hingga Konsisten Profit',
-      category: 'Jurnal ',
+      slug: 'catatan-pengalaman-5-tahun-di-pasar-saham',
+      title: 'Catatan Pengalaman 5 Tahun di Pasar Saham: Dari Loss Hingga Konsisten',
+      category: 'Catatan & Artikel',
       type: 'BLOG',
       author: 'HitungSaham',
       source: 'Pengalaman Pribadi',
-      excerpt: 'Sharing perjalanan 5 tahun bertransaksi di bursa saham Indonesia. Mengenali kesalahan awal pemula, pentingnya jurnal trading, hingga membentuk sistem bertransaksi disiplin.',
-      content: 'Selama 5 tahun bertransaksi di pasar saham BEI, satu pelajaran terbesar yang saya dapatkan adalah bahwa **psikologi dan manajemen posisi jauh lebih penting daripada sekadar menebak arah harga saham**.\n\n### 1. Fase Pemula: Terjebak FOMO dan HAKA\nDi awal perjalanan pada tahun 2021, saya sering terjebak membeli saham di harga pucuk hanya karena melihat antrean *bid* yang mendadak tebal. Hasilnya, modal tergerus signifikan saat saham balik arah kena ARB.\n\n### 2. Membangun Jurnal  dan Aturan Risk/Reward\nTitik balik terjadi ketika saya mulai mencatat setiap transaksi dalam jurnal dan menetapkan batas *stop loss* maksimal 3-5%. Menggunakan kalkulator prediksi target jual/beli membantu saya menghitung *risk/reward ratio* secara objektif sebelum menekan tombol order.\n\n### 3. Kesimpulan\nPasar saham adalah maraton, bukan lari cepat. Disiplin pada sistem transaksi jauh lebih menjamin keberlanjutan modal dibanding mencoba untung instan.',
+      excerpt: 'Sharing perjalanan 5 tahun bertransaksi di bursa saham. Mengenali kesalahan awal pemula, pentingnya catatan personal, hingga membentuk sistem analisis yang disiplin.',
+      content: 'Selama 5 tahun bertransaksi di pasar saham, satu pelajaran terbesar yang saya dapatkan adalah bahwa **psikologi dan manajemen posisi jauh lebih penting daripada sekadar menebak arah harga saham**.\n\n### 1. Fase Pemula: Terjebak Impulsif\nDi awal perjalanan pada tahun 2021, saya sering terjebak membeli saham di harga pucuk hanya karena melihat pergerakan mendadak. Hasilnya, modal tergerus signifikan saat saham balik arah kena ARB.\n\n### 2. Membangun Catatan & Aturan Risk/Reward\nTitik balik terjadi ketika saya mulai mencatat setiap evaluasi posisi dan menetapkan batas *stop loss* maksimal 3-5%. Menggunakan kalkulator prediksi target jual/beli membantu saya menghitung *risk/reward ratio* secara objektif sebelum melakukan keputusan.\n\n### 3. Kesimpulan\nPasar saham adalah maraton, bukan lari cepat. Disiplin pada sistem analisis jauh lebih menjamin keberlanjutan modal dibanding mencoba untung instan.',
     },
     {
       id: 'art-2',
@@ -160,45 +198,34 @@ async function main() {
       category: 'Pengalaman',
       type: 'BLOG',
       author: 'HitungSaham',
-      source: 'Catatan Trader',
+      source: 'Catatan Opini Pribadi',
       excerpt: 'Bagaimana menjaga ketenangan emosi dan alokasi dana ketika posisi saham yang dipegang terkena Auto Rejection Bawah berturut-turut.',
-      content: 'Melihat portofolio merah akibat saham terkunci ARB berjilid-jilid pasti menimbulkan kepanikan. Berikut adalah langkah yang biasa saya lakukan untuk mengamankan psikologi dan modal:\n\n1. **Jangan Langsung Average Down**: Menambah posisi pada saham yang masih terkunci ARB tanpa konfirmasi volume reversal hanya akan memperbesar risiko kerugian.\n2. **Ukur Batas Maksimal Kerugian**: Gunakan kalkulator untuk mengetahui nilai absolut penurunan dan evaluasi apakah skenario *cut loss* pada pembukaan gembok lebih bijak daripada menahan terus.\n3. **Fokus Pada Cash Flow**: Selalu sisakan *cash ratio* minimal 30% dari total portofolio agar tidak panik saat pasar mengalami volatilitas ekstrem.',
+      content: 'Melihat portofolio merah akibat saham terkunci ARB berjilid-jilid pasti menimbulkan kepanikan. Berikut adalah langkah yang biasa saya lakukan untuk mengamankan psikologi dan modal:\n\n1. **Jangan Langsung Average Down**: Menambah posisi pada saham yang masih terkunci ARB tanpa konfirmasi volume reversal hanya akan memperbesar risiko kerugian.\n2. **Ukur Batas Maksimal Kerugian**: Gunakan kalkulator untuk mengetahui nilai absolut penurunan dan evaluasi apakah skenario *cut loss* lebih bijak daripada menahan terus.\n3. **Fokus Pada Cash Flow**: Selalu sisakan *cash ratio* minimal 30% dari total portofolio agar tidak panik saat pasar mengalami volatilitas ekstrem.',
     },
     {
       id: 'art-3',
-      slug: 'analisa-papan-pemantauan-khusus-fca',
-      title: 'Pandangan Saya Tentang Papan Pemantauan Khusus (FCA) dan Strategi Menghadapinya',
-      category: 'Analisis Pasar',
-      type: 'BLOG',
-      author: 'HitungSaham',
-      source: 'Analisa Pasar',
-      excerpt: 'Ulasan personal mengenai mekanisme Full Call Auction (FCA) di BEI dan bagaimana menyesuaikan metode transaksi pada saham-saham watchlist.',
-      content: 'Skema perdagangan Full Call Auction (FCA) membawa dinamika baru dalam transaksi saham di papan pemantauan khusus.\n\n### Ciri Khas Perdagangan FCA:\n- Pembentukan harga terjadi pada sesi *matching* indikatif (*IE/IEP*).\n- Batas persentase ARA dan ARB dibatasi simetris 10%.\n\n### Strategi Bertransaksi:\nSebagai trader ritel, saya memilih untuk mengurangi porsi transaksi pada saham berstatus FCA dan mengalokasikan modal lebih banyak pada saham papan Utama & Pengembangan dengan transaksi reguler yang transparan.',
-    },
-    {
-      id: 'art-4',
       slug: 'kesalahan-fatal-pemula-saat-average-down',
       title: '5 Kesalahan Fatal Pemula Saat Average Down Saham yang Sedang Downtrend',
       category: 'Tips & Trik',
       type: 'BLOG',
       author: 'HitungSaham',
       source: 'Tips & Trik',
-      excerpt: 'Jangan asal menambah lot! Pelajari kesalahan umum trader saat melakukan average down dan cara mengkalkulasi lot yang rasional.',
-      content: 'Banyak trader terjebak dengan ilusi bahwa *average down* selalu menyelesaikan masalah harga saham yang turun. Padahal tanpa perhitungan presisi, *average down* justru mempercepat habisnya modal.\n\nBerikut 5 kesalahan yang wajib dihindari:\n1. Membeli tanpa memperhitungkan target harga rata-rata baru.\n2. Kehabisan amunisi di tahap awal penurunan.\n3. Mengabaikan *support level* teknikal.\n4. Mengabaikan biaya komisi sekuritas.\n5. Tidak memiliki rencana *stop loss* cadangan.',
+      excerpt: 'Jangan asal menambah lot! Pelajari kesalahan umum saat melakukan average down dan cara mengkalkulasi lot yang rasional.',
+      content: 'Banyak orang terjebak dengan ilusi bahwa *average down* selalu menyelesaikan masalah harga saham yang turun. Padahal tanpa perhitungan presisi, *average down* justru mempercepat habisnya modal.\n\nBerikut 5 kesalahan yang wajib dihindari:\n1. Membeli tanpa memperhitungkan target harga rata-rata baru.\n2. Kehabisan amunisi di tahap awal penurunan.\n3. Mengabaikan *support level* teknikal.\n4. Mengabaikan biaya komisi sekuritas.\n5. Tidak memiliki rencana *stop loss* cadangan.',
     },
     {
-      id: 'art-5',
-      slug: 'ketentuan-baru-jam-perdagangan-bei-2026',
-      title: 'Ketentuan Jam Perdagangan BEI & Mekanisme ARA ARB Simetris 2026',
+      id: 'art-4',
+      slug: 'ketentuan-baru-jam-perdagangan-dan-fraksi-harga',
+      title: 'Ketentuan Jam Perdagangan & Mekanisme ARA ARB Simetris',
       category: 'Edukasi Saham',
       type: 'ARTICLE',
       author: 'Tim Analis',
       source: 'HitungSaham Edu',
-      excerpt: 'Penjelasan ringkas mengenai fraksi harga resmi BEI, rentang pergerakan tick, serta persentase batas auto rejection terbaru.',
-      content: 'Bursa Efek Indonesia (BEI) memberlakukan ketentuan fraksi harga dan batasan Auto Rejection Atas (ARA) serta Auto Rejection Bawah (ARB) untuk menjaga ketertiban perdagangan.\n\n### Tabel Fraksi Harga BEI:\n- **Harga < Rp 200**: Kelipatan Rp 1\n- **Harga Rp 200 - Rp 500**: Kelipatan Rp 2\n- **Harga Rp 500 - Rp 2.000**: Kelipatan Rp 5\n- **Harga Rp 2.000 - Rp 5.000**: Kelipatan Rp 10\n- **Harga > Rp 5.000**: Kelipatan Rp 25',
+      excerpt: 'Penjelasan ringkas mengenai fraksi harga resmi bursa, rentang pergerakan tick, serta persentase batas auto rejection terbaru.',
+      content: 'Bursa Efek memberlakukan ketentuan fraksi harga dan batasan Auto Rejection Atas (ARA) serta Auto Rejection Bawah (ARB) untuk menjaga ketertiban transaksi.\n\n### Tabel Fraksi Harga:\n- **Harga < Rp 200**: Kelipatan Rp 1\n- **Harga Rp 200 - Rp 500**: Kelipatan Rp 2\n- **Harga Rp 500 - Rp 2.000**: Kelipatan Rp 5\n- **Harga Rp 2.000 - Rp 5.000**: Kelipatan Rp 10\n- **Harga > Rp 5.000**: Kelipatan Rp 25',
     },
     {
-      id: 'art-6',
+      id: 'art-5',
       slug: 'tips-menghitung-lot-pembelian-rata-rata-saat-saham-arb',
       title: 'Tips Menghitung Lot Pembelian Rata-Rata Saat Saham ARB',
       category: 'Tips & Trik',

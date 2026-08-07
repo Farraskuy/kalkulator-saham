@@ -59,8 +59,8 @@ export default function AraArbSection({ fractionRules }: Props) {
           </div>
           Batas Auto Rejection (ARA / ARB)
         </h2>
-        <p className="mt-3 max-w-3xl text-sm leading-6 text-muted">
-          Cari harga tertinggi dan terendah yang dapat diperdagangkan pada sesi berikutnya berdasarkan harga penutupan, papan pencatatan, dan fraksi harga BEI.
+        <p className="text-sm text-muted">
+          Cari harga tertinggi dan terendah yang dapat diperdagangkan pada sesi berikutnya berdasarkan harga penutupan, papan pencatatan, dan fraksi harga bursa.
         </p>
         <div className="mt-3 inline-flex rounded-xl bg-sub-blue px-3 py-2 text-xs font-semibold text-acc-blue">
           Rumus: harga penutupan x (1 +/- batas auto rejection), lalu disesuaikan ke fraksi harga.
@@ -131,7 +131,7 @@ export default function AraArbSection({ fractionRules }: Props) {
 
             <div className="bg-sub-blue text-acc-blue rounded-xl p-3.5 space-y-1 mt-4 text-xs">
               <div className="flex items-center gap-1.5 font-bold">
-                <HelpCircle size={15} /> Aturan Pembulatan BEI:
+                <HelpCircle size={15} /> Aturan Pembulatan Fraksi:
               </div>
               <span className="text-sub text-[11px] leading-relaxed block">
                 ARA dibulatkan ke bawah (Math.floor) ke tick terdekat untuk mencegah harga melebihi batas persentase maksimal. ARB dibulatkan ke atas (Math.ceil) agar penurunan tidak melewati batas maksimal.
@@ -153,10 +153,10 @@ export default function AraArbSection({ fractionRules }: Props) {
           {/* Right Output Card */}
           <div id="ara-arb-result" className={`${showMobileResult ? 'block' : 'hidden'} scroll-mt-20 border-t border-border-custom p-6 sm:p-8 lg:block lg:border-l lg:border-t-0`}>
             <ExportCardWrapper fileName={cleanFileName} calculatorType="ara-arb" embedded>
-              {/* ARA Box */}
-              <div className="bg-gradient-to-r from-acc-blue to-acc-blue/90 text-white rounded-xl p-4 flex items-center justify-between">
+              {/* ARA Box (Solid Emerald) */}
+              <div className="bg-[#059669] text-white rounded-xl p-4 flex items-center justify-between">
                 <div>
-                  <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-85">Batas Auto Rejection Atas (ARA)</div>
+                  <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-90">Batas Auto Rejection Atas (ARA)</div>
                   <div className="text-xl sm:text-2xl font-extrabold mt-1">{formatIDR(result.ara)}</div>
                 </div>
                 <div>
@@ -177,10 +177,10 @@ export default function AraArbSection({ fractionRules }: Props) {
                 </div>
               </div>
 
-              {/* ARB Box */}
-              <div className="bg-gradient-to-r from-acc-pink to-acc-pink/90 text-white rounded-xl p-4 sm:p-5 flex items-center justify-between gap-3">
+              {/* ARB Box (Solid Rose) */}
+              <div className="bg-[#e11d48] text-white rounded-xl p-4 sm:p-5 flex items-center justify-between gap-3">
                 <div>
-                  <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-85">Batas Auto Rejection Bawah (ARB)</div>
+                  <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-90">Batas Auto Rejection Bawah (ARB)</div>
                   <div className="text-lg sm:text-2xl font-extrabold mt-1 break-words">{formatIDR(result.arb)}</div>
                 </div>
                 <div className="shrink-0">
@@ -191,7 +191,7 @@ export default function AraArbSection({ fractionRules }: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-4">
                 <div className="bg-sub-pink text-acc-pink rounded-xl p-3.5 space-y-1">
                   <span className="text-[10px] font-extrabold uppercase tracking-wider block text-muted">Persentase ARB</span>
-                  <span className="text-sm sm:text-base font-extrabold block text-acc-red break-words">-{result.arbPercent.toFixed(2)}%</span>
+                  <span className="text-sm sm:text-base font-extrabold block text-acc-red break-words">-${Math.abs(result.arbPercent).toFixed(2)}%</span>
                 </div>
                 <div className="bg-sub-slate text-sub rounded-xl p-3.5 space-y-1">
                   <span className="text-[10px] font-extrabold uppercase tracking-wider block text-muted leading-tight">Harga Mentah ARB ({result.arbLimitLabel})</span>

@@ -3,8 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
-import DynamicDisclaimer from '@/components/layout/DynamicDisclaimer';
-import AppLogo from '@/components/layout/AppLogo';
+import Footer from '@/components/layout/Footer';
 import TrackBlogView from '@/features/blog/components/TrackBlogView';
 import { prisma } from '@/lib/db';
 import { Calendar, ArrowLeft, User, Share2, Bookmark } from 'lucide-react';
@@ -21,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${article.title} | HitungSaham.com`,
     description: article.excerpt,
-    keywords: [article.category, 'jurnal trading', 'saham bei', 'kalkulator saham'],
+    keywords: [article.category, 'jurnal ', 'saham bei', 'kalkulator saham'],
     openGraph: {
       title: `${article.title} | HitungSaham.com`,
       description: article.excerpt,
@@ -163,50 +162,8 @@ export default async function LandingOneBlogDetailPage({ params }: { params: Pro
         </article>
       </main>
 
-      {/* FOOTER */}
-      <footer className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 mb-8 mt-10">
-        <div className="bg-[#18181b] text-white rounded-2xl p-8 sm:p-10 space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-            <div className="md:col-span-6 space-y-3">
-              <div className="flex items-center gap-2.5 font-black text-xl text-white">
-                <AppLogo size={28} variant="white-icon" />
-                <span>HitungSaham</span>
-              </div>
-              <p className="text-xs text-gray-400 max-w-sm leading-relaxed">
-                Platform personal berisi catatan jurnal trading, analisis pasar, serta kalkulator analisis saham BEI.
-              </p>
-            </div>
-
-            <div className="md:col-span-6 grid grid-cols-2 gap-6 text-xs">
-              <div>
-                <div className="font-extrabold text-white uppercase tracking-wider mb-3 text-[11px]">Kalkulator Saham</div>
-                <ul className="space-y-2 text-gray-400 font-semibold">
-                  <li><Link href="/#ara-arb" className="hover:text-white transition-colors">Batas ARA / ARB</Link></li>
-                  <li><Link href="/#avg-up-down" className="hover:text-white transition-colors">Average Up / Down</Link></li>
-                  <li><Link href="/#prediction" className="hover:text-white transition-colors">Target Profit &amp; Loss</Link></li>
-                  <li><Link href="/faq" className="hover:text-white transition-colors">Pertanyaan Umum (FAQ)</Link></li>
-                </ul>
-              </div>
-
-              <div>
-                <div className="font-extrabold text-white uppercase tracking-wider mb-3 text-[11px]">Jurnal &amp; Sistem</div>
-                <ul className="space-y-2 text-gray-400 font-semibold">
-                  <li><Link href="/blog" className="hover:text-white transition-colors">Catatan Jurnal </Link></li>
-                  <li><Link href="/faq" className="hover:text-white transition-colors">Pusat Bantuan BEI</Link></li>
-                  <li><Link href="/admin" className="hover:text-white transition-colors">Admin Panel CMS</Link></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-gray-400">
-            <div>&copy; {new Date().getFullYear()} HitungSaham.com • Catatan  &amp; Alat Analisis Saham BEI</div>
-            <div className="max-w-md text-center sm:text-right text-[10px]">
-              <DynamicDisclaimer />
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* UNIFIED FOOTER */}
+      <Footer />
     </div>
   );
 }

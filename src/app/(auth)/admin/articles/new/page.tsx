@@ -143,7 +143,7 @@ export default function NewArticlePage() {
                   ))
                 ) : (
                   <>
-                    <option value="Jurnal Trading">Jurnal Trading</option>
+                    <option value="Catatan & Artikel">Catatan &amp; Artikel</option>
                     <option value="Edukasi Saham">Edukasi Saham</option>
                     <option value="Analisis Pasar">Analisis Pasar</option>
                     <option value="Tips & Trik">Tips &amp; Trik</option>

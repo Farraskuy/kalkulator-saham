@@ -1,8 +1,7 @@
 import React from 'react';
 import Navbar from '@/components/layout/Navbar';
 import FaqSection from '@/features/faq/components/FaqSection';
-import DynamicDisclaimer from '@/components/layout/DynamicDisclaimer';
-import WebsiteBrand from '@/components/layout/WebsiteBrand';
+import Footer from '@/components/layout/Footer';
 import { Metadata } from 'next';
 import { HelpCircle } from 'lucide-react';
 import { getCachedFaqs } from '@/lib/cached-data';
@@ -37,14 +36,8 @@ export default async function FaqPage() {
         <FaqSection faqs={faqs} showHeader={false} />
       </main>
 
-      <footer className="border-t border-border-custom bg-card/50 py-8 text-center mt-auto px-4">
-        <div className="max-w-4xl mx-auto space-y-3">
-          <p className="font-bold text-main text-sm">
-            <WebsiteBrand /> • Catatan  &amp; Alat Analisis Saham BEI
-          </p>
-          <DynamicDisclaimer />
-        </div>
-      </footer>
+      {/* UNIFIED FOOTER */}
+      <Footer />
     </div>
   );
 }

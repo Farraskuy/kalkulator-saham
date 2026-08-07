@@ -214,8 +214,8 @@ export default function LandingTwoPredictionCalculator({ fractionRules, tax = 0.
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="prediction" embedded>
-          {/* Total Modal Banner */}
-          <div className="bg-slate-900 text-white rounded-xl p-4 flex items-center justify-between gap-3 shadow-sm">
+          {/* Total Modal Banner (Solid Dark Slate, No Shadow, No Border) */}
+          <div className="bg-slate-900 text-white rounded-xl p-4 flex items-center justify-between gap-3">
             <div className="min-w-0">
               <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300">Total Modal (+ Fee Beli)</div>
               <div className="text-base sm:text-2xl font-extrabold mt-1 text-white wrap-break-word">{formatIDR(result.rincian.totalModal)}</div>
@@ -225,62 +225,62 @@ export default function LandingTwoPredictionCalculator({ fractionRules, tax = 0.
             </div>
           </div>
 
-          {/* Skenario Untung Box */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 sm:p-4 mt-4 mb-3">
-            <div className="flex items-start justify-between mb-3 gap-2 pb-2 border-b border-slate-200">
-              <div className="flex items-start gap-1.5 font-bold text-xs text-slate-900 min-w-0 pr-2">
-                <TrendingUp size={16} className="shrink-0 mt-0.5 text-emerald-600" />
+          {/* Skenario Untung Box (Solid Emerald Light, No Border, No Shadow) */}
+          <div className="bg-[#ecfdf5] rounded-xl p-3.5 sm:p-4 mt-4 mb-3">
+            <div className="flex items-start justify-between mb-3 gap-2 pb-2 border-b border-[#d1fae5]">
+              <div className="flex items-start gap-1.5 font-bold text-xs text-[#065f46] min-w-0 pr-2">
+                <TrendingUp size={16} className="shrink-0 mt-0.5 text-[#047857]" />
                 <span className="leading-tight wrap-break-word">TARGET UNTUNG (TAKE PROFIT)</span>
               </div>
-              <span className="shrink-0 font-bold text-emerald-700 text-xs bg-emerald-100 px-2 py-0.5 rounded-md whitespace-nowrap">
+              <span className="shrink-0 font-bold text-[#047857] text-xs bg-[#d1fae5] px-2 py-0.5 rounded-md whitespace-nowrap">
                 +{result.skenarioUntung.persentase}%
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider block text-slate-500">Harga Jual BEI</span>
-                <div className="text-sm sm:text-base font-extrabold text-slate-900 wrap-break-word">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider block text-[#047857]">Harga Jual Fraksi</span>
+                <div className="text-sm sm:text-base font-extrabold text-[#065f46] wrap-break-word">
                   {formatIDR(result.skenarioUntung.hargaBEI)}
                 </div>
-                <div className="text-[10px] text-slate-500 mt-0.5 wrap-break-word">
+                <div className="text-[10px] text-[#047857] mt-0.5 wrap-break-word">
                   Harga Exact: {formatIDR(result.skenarioUntung.hargaExact)}
                 </div>
               </div>
               <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider block text-slate-500">Profit Bersih</span>
-                <div className="text-sm sm:text-base font-extrabold text-emerald-600 wrap-break-word">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider block text-[#047857]">Profit Bersih</span>
+                <div className="text-sm sm:text-base font-extrabold text-[#047857] wrap-break-word">
                   +{formatIDR(result.skenarioUntung.labaBersihReal)}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Skenario Rugi Box */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 sm:p-4">
-            <div className="flex items-start justify-between mb-3 gap-2 pb-2 border-b border-slate-200">
-              <div className="flex items-start gap-1.5 font-bold text-xs text-slate-900 min-w-0 pr-2">
-                <TrendingDown size={16} className="shrink-0 mt-0.5 text-red-600" />
+          {/* Skenario Rugi Box (Solid Rose Light, No Border, No Shadow) */}
+          <div className="bg-[#fff1f2] rounded-xl p-3.5 sm:p-4">
+            <div className="flex items-start justify-between mb-3 gap-2 pb-2 border-b border-[#ffe4e6]">
+              <div className="flex items-start gap-1.5 font-bold text-xs text-[#9f1239] min-w-0 pr-2">
+                <TrendingDown size={16} className="shrink-0 mt-0.5 text-[#be123c]" />
                 <span className="leading-tight wrap-break-word">BATAS RUGI (STOP LOSS)</span>
               </div>
-              <div className="shrink-0 font-bold text-red-700 text-xs bg-red-100 px-2 py-0.5 rounded-md whitespace-nowrap">
+              <div className="shrink-0 font-bold text-[#be123c] text-xs bg-[#ffe4e6] px-2 py-0.5 rounded-md whitespace-nowrap">
                 -{result.skenarioRugi.persentase}%
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider block text-slate-500">Harga Jual BEI</span>
-                <div className="text-sm sm:text-base font-extrabold text-slate-900 wrap-break-word">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider block text-[#be123c]">Harga Jual Fraksi</span>
+                <div className="text-sm sm:text-base font-extrabold text-[#9f1239] wrap-break-word">
                   {formatIDR(result.skenarioRugi.hargaBEI)}
                 </div>
-                <div className="text-[10px] text-slate-500 mt-0.5 wrap-break-word">
+                <div className="text-[10px] text-[#be123c] mt-0.5 wrap-break-word">
                   Harga Exact: {formatIDR(result.skenarioRugi.hargaExact)}
                 </div>
               </div>
               <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider block text-slate-500">Rugi Bersih</span>
-                <div className="text-sm sm:text-base font-extrabold text-red-600 wrap-break-word">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider block text-[#be123c]">Rugi Bersih</span>
+                <div className="text-sm sm:text-base font-extrabold text-[#be123c] wrap-break-word">
                   -{formatIDR(result.skenarioRugi.rugiBersihReal)}
                 </div>
               </div>

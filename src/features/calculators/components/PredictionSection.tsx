@@ -59,7 +59,7 @@ export default function PredictionSection({ fractionRules, tax = 0.0 }: Props) {
           Prediksi Jual / Beli & Target Untung Rugi
         </h2>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-muted">
-          Estimasikan harga jual minimum untuk target profit dan harga stop loss untuk batas kerugian, termasuk fee beli, fee jual, pajak, serta fraksi harga BEI.
+          Estimasikan harga jual minimum untuk target profit dan harga stop loss untuk batas kerugian, termasuk fee beli, fee jual, pajak, serta fraksi harga bursa.
         </p>
         <div className="mt-3 inline-flex rounded-xl bg-sub-green px-3 py-2 text-xs font-semibold text-acc-green">
           Rumus: profit/rugi bersih = hasil jual setelah fee dikurangi total modal setelah fee beli.
@@ -244,7 +244,7 @@ export default function PredictionSection({ fractionRules, tax = 0.0 }: Props) {
 
                 <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-3">
                   <div>
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider block text-muted">Harga Jual BEI</span>
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider block text-muted">Harga Jual Fraksi</span>
                     <div className="text-sm sm:text-base font-extrabold text-main break-words">
                       {formatIDR(result.skenarioUntung.hargaBEI)}
                     </div>
@@ -275,7 +275,7 @@ export default function PredictionSection({ fractionRules, tax = 0.0 }: Props) {
 
                 <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-3">
                   <div>
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider block text-muted">Harga Jual BEI</span>
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider block text-muted">Harga Jual Fraksi</span>
                     <div className="text-sm sm:text-base font-extrabold text-main break-words">
                       {formatIDR(result.skenarioRugi.hargaBEI)}
                     </div>

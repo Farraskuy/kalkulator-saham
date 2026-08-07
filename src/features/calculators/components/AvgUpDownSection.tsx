@@ -211,8 +211,8 @@ export default function AvgUpDownSection() {
           {/* Right Output Card */}
           <div id="average-result" className={`${showMobileResult ? 'block' : 'hidden'} scroll-mt-20 border-t border-border-custom/50 p-6 sm:p-8 lg:block lg:border-l lg:border-t-0`}>
             <ExportCardWrapper fileName={cleanFileName} calculatorType="average" embedded>
-              {/* Main Avg Price Card */}
-              <div className="bg-gradient-to-r from-acc-purple to-acc-purple/90 text-white rounded-xl p-5 flex items-center justify-between">
+              {/* Main Avg Price Card (Solid Purple) */}
+              <div className="bg-[#7c3aed] text-white rounded-xl p-5 flex items-center justify-between">
                 <div>
                   <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-85">Harga Rata-Rata per Lembar (Avg Price)</div>
                   <div className="text-2xl sm:text-3xl font-extrabold mt-1">{formatIDR(result.avgPrice)}</div>

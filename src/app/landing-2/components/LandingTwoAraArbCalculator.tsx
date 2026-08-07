@@ -115,7 +115,7 @@ export default function LandingTwoAraArbCalculator({ fractionRules }: Props) {
 
         <div className="bg-slate-100 border border-slate-200/80 text-slate-700 rounded-xl p-3.5 space-y-1 text-xs">
           <div className="flex items-center gap-1.5 font-bold text-slate-900">
-            <HelpCircle size={14} /> Aturan Pembulatan BEI:
+            <HelpCircle size={14} /> Aturan Pembulatan Fraksi:
           </div>
           <span className="text-slate-600 text-[11px] leading-relaxed block">
             ARA dibulatkan ke bawah (Math.floor) ke tick terdekat untuk mencegah harga melebihi batas persentase maksimal. ARB dibulatkan ke atas (Math.ceil).
@@ -129,47 +129,47 @@ export default function LandingTwoAraArbCalculator({ fractionRules }: Props) {
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="ara-arb" embedded>
-          {/* ARA Box */}
-          <div className="bg-slate-900 text-white rounded-xl p-4 flex items-center justify-between shadow-sm">
+          {/* ARA Box (Solid Emerald, No Gradient, No Shadow, No Border) */}
+          <div className="bg-[#059669] text-white rounded-xl p-4 flex items-center justify-between">
             <div>
-              <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300">Batas Auto Rejection Atas (ARA)</div>
+              <div className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-100">Batas Auto Rejection Atas (ARA)</div>
               <div className="text-xl sm:text-2xl font-extrabold mt-1 text-white">{formatIDR(result.ara)}</div>
             </div>
-            <div className="text-white opacity-90">
+            <div className="text-white opacity-95">
               <TrendingUp size={24} />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 mb-5">
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-slate-500">Persentase ARA</span>
-              <span className="text-sm font-extrabold block text-slate-900 wrap-break-word">+{result.araPercent.toFixed(2)}%</span>
+            <div className="bg-[#ecfdf5] rounded-xl p-3.5 space-y-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-[#047857]">Persentase ARA</span>
+              <span className="text-sm font-extrabold block text-[#065f46] wrap-break-word">+{result.araPercent.toFixed(2)}%</span>
             </div>
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-slate-500 leading-tight">Harga Mentah ARA</span>
-              <span className="text-sm font-extrabold block text-slate-900 wrap-break-word">{formatIDR(result.araRaw)}</span>
+            <div className="bg-[#f8fafc] rounded-xl p-3.5 space-y-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-[#475569] leading-tight">Harga Mentah ARA</span>
+              <span className="text-sm font-extrabold block text-[#0f172a] wrap-break-word">{formatIDR(result.araRaw)}</span>
             </div>
           </div>
 
-          {/* ARB Box */}
-          <div className="bg-slate-800 text-white rounded-xl p-4 flex items-center justify-between gap-3 shadow-sm">
+          {/* ARB Box (Solid Rose, No Gradient, No Shadow, No Border) */}
+          <div className="bg-[#e11d48] text-white rounded-xl p-4 flex items-center justify-between gap-3">
             <div>
-              <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300">Batas Auto Rejection Bawah (ARB)</div>
+              <div className="text-[10px] font-extrabold uppercase tracking-wider text-rose-100">Batas Auto Rejection Bawah (ARB)</div>
               <div className="text-lg sm:text-2xl font-extrabold mt-1 text-white wrap-break-word">{formatIDR(result.arb)}</div>
             </div>
-            <div className="shrink-0 text-white opacity-90">
+            <div className="shrink-0 text-white opacity-95">
               <TrendingDown size={24} />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-slate-500">Persentase ARB</span>
-              <span className="text-sm font-extrabold block text-slate-900 wrap-break-word">-{result.arbPercent.toFixed(2)}%</span>
+            <div className="bg-[#fff1f2] rounded-xl p-3.5 space-y-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-[#be123c]">Persentase ARB</span>
+              <span className="text-sm font-extrabold block text-[#9f1239] wrap-break-word">-${Math.abs(result.arbPercent).toFixed(2)}%</span>
             </div>
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-slate-500 leading-tight">Harga Mentah ARB</span>
-              <span className="text-sm font-extrabold block text-slate-900 wrap-break-word">{formatIDR(result.arbRaw)}</span>
+            <div className="bg-[#f8fafc] rounded-xl p-3.5 space-y-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-[#475569] leading-tight">Harga Mentah ARB</span>
+              <span className="text-sm font-extrabold block text-[#0f172a] wrap-break-word">{formatIDR(result.arbRaw)}</span>
             </div>
           </div>
         </ExportCardWrapper>
