@@ -4,7 +4,7 @@ ARG NEXT_PUBLIC_GA_ID
 ENV NEXT_PUBLIC_GA_ID=$NEXT_PUBLIC_GA_ID
 COPY package*.json ./
 COPY prisma ./prisma/
-RUN npm ci
+RUN npm install --no-audit --no-fund
 COPY . .
 RUN npx prisma generate
 RUN npm run build
