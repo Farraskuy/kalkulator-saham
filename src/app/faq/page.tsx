@@ -1,43 +1,66 @@
 import React from 'react';
-import Navbar from '@/components/layout/Navbar';
+import { Metadata } from 'next';
+import Link from 'next/link';
+import { HelpCircle, ChevronRight, Calculator } from 'lucide-react';
+import LandingHeader from '@/components/landing/LandingHeader';
 import FaqSection from '@/features/faq/components/FaqSection';
 import Footer from '@/components/layout/Footer';
-import { Metadata } from 'next';
-import { HelpCircle } from 'lucide-react';
 import { getCachedFaqs } from '@/lib/cached-data';
+import styles from '@/components/landing/landing.module.css';
 
 export const metadata: Metadata = {
-  title: 'Pertanyaan Umum (FAQ) | HitungSaham.com',
+  title: 'FAQ Bantuan & Panduan | HitungSaham.com',
   description:
-    'Jawaban lengkap seputar penggunaan kalkulator saham, aturan fraksi BEI, batas ARA ARB, dan cara menghitung average down.',
+    'Pertanyaan umum seputar penggunaan kalkulator ARA ARB, simulasi average down, dan regulasi fraksi BEI.',
 };
 
 export default async function FaqPage() {
   const faqs = await getCachedFaqs();
 
   return (
-    <div className="flex flex-col min-h-screen bg-page text-main transition-colors duration-300">
-      <Navbar />
+    <div className={styles.page}>
+      {/* HEADER NAVBAR */}
+      <LandingHeader />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full grow space-y-10">
+      <main className="max-w-[1200px] w-full mx-auto px-5 sm:px-8 md:px-16 py-12 grow space-y-10 text-[#111210]">
         <section className="space-y-3 text-center pt-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sub-blue text-acc-blue text-xs font-extrabold mx-auto">
-            <HelpCircle size={14} /> Pusat Bantuan &amp; FAQ
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#ebebeb] text-[#111210] text-xs font-bold mx-auto border border-black/5">
+            <HelpCircle size={15} /> Pusat Bantuan &amp; FAQ
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-main tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-bold text-[#111210] tracking-tight">
             Pertanyaan yang Sering Diajukan
           </h1>
-          <p className="text-sm text-muted max-w-xl mx-auto font-medium leading-relaxed">
-            Temukan jawaban lengkap seputar kalkulasi ARA/ARB, strategi average down, dan regulasi fraksi bursa efek Indonesia.
+          <p className="text-xs sm:text-sm text-[#52534e] max-w-xl mx-auto font-medium leading-relaxed">
+            Jawaban lengkap seputar penggunaan kalkulator ARA/ARB, simulasi average down, dan aturan fraksi bursa efek Indonesia.
           </p>
         </section>
 
-        {/* Dynamic Individual FAQ Item Cards (Cached via Server Cache) */}
-        <FaqSection faqs={faqs} showHeader={false} />
+        {/* ACME STYLE INDIVIDUAL FAQ ITEM CARDS */}
+        <FaqSection faqs={faqs} showHeader={false} theme="acme" />
+
+        {/* PROMO CALC CARD */}
+        <div className="p-8 bg-[#111210] text-white rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div>
+            <div className="text-xs font-bold uppercase tracking-widest text-[#a0a09c] flex items-center gap-1.5 mb-1">
+              <Calculator size={14} /> HitungSaham Tools
+            </div>
+            <h3 className="text-xl font-bold text-white">Butuh Menghitung Average Down Saham Kamu?</h3>
+            <p className="text-xs text-gray-300 mt-1 max-w-md">
+              Gunakan kalkulator simulasi gratis kami untuk menghitung target harga rata-rata dan batas ARA/ARB BEI secara presisi.
+            </p>
+          </div>
+          <Link
+            href="/#calculator"
+            className="bg-white text-[#111210] font-bold text-xs px-5 py-3 rounded-xl whitespace-nowrap hover:bg-gray-200 transition-colors"
+          >
+            Buka Kalkulator <ChevronRight size={14} className="inline ml-1" />
+          </Link>
+        </div>
       </main>
 
-      {/* UNIFIED FOOTER */}
-      <Footer />
+      {/* UNIFIED ACME FOOTER */}
+      <Footer variant="acme" />
     </div>
   );
 }
+

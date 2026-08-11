@@ -2,12 +2,13 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
-import TrackBlogView from '@/features/blog/components/TrackBlogView';
 import { prisma } from '@/lib/db';
-import { Calendar, ArrowLeft, User, Share2, Bookmark } from 'lucide-react';
+import { ArrowLeft, Calendar, Calculator, ChevronRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import Footer from '@/components/layout/Footer';
+import LandingHeader from '@/components/landing/LandingHeader';
+import TrackBlogView from '@/features/blog/components/TrackBlogView';
+import styles from '../blog-acme.module.css';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -15,14 +16,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     where: { slug },
   });
 
-  if (!article) return { title: 'Artikel Tidak Ditemukan | HitungSaham.com' };
+  if (!article) return { title: 'Artikel Tidak Ditemukan | HitungSaham Blog' };
 
   return {
-    title: `${article.title} | HitungSaham.com`,
+    title: `${article.title} | HitungSaham Blog`,
     description: article.excerpt,
     keywords: [article.category, 'jurnal ', 'saham bei', 'kalkulator saham'],
     openGraph: {
-      title: `${article.title} | HitungSaham.com`,
+      title: `${article.title} | HitungSaham Blog`,
       description: article.excerpt,
       url: `https://hitungsaham.com/blog/${article.slug}`,
       siteName: 'HitungSaham.com',
@@ -49,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-export default async function LandingOneBlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const article = await prisma.article.findUnique({
     where: { slug },
@@ -82,56 +83,42 @@ export default async function LandingOneBlogDetailPage({ params }: { params: Pro
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-page text-main transition-colors duration-300">
+    <div className={styles.page}>
       <TrackBlogView article={article} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Navbar />
+      {/* HEADER NAVBAR */}
+      <LandingHeader />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10 w-full grow space-y-8">
-        {/* Sleek, Well-Proportioned Back Button */}
+      {/* ARTICLE CONTENT CONTAINER */}
+      <main className="max-w-[1200px] w-full mx-auto px-5 sm:px-8 md:px-16 py-10 space-y-8 text-[#111210]">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-sub-slate hover:bg-sub-blue text-main hover:text-acc-blue text-xs font-bold transition-all w-fit cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#52534e] hover:text-[#111210] mb-2"
         >
-          <ArrowLeft size={15} /> Kembali ke Blog &amp; Artikel
+          <ArrowLeft size={14} /> Kembali ke Blog &amp; Artikel
         </Link>
 
         {/* ARTICLE HEADER */}
-        <header className="space-y-4 pb-4">
-          <div className="flex items-center justify-between gap-4">
-            <span className="inline-block px-3.5 py-1 rounded-full bg-slate-900 text-white dark:bg-white dark:text-black font-extrabold text-xs uppercase tracking-wider">
-              {article.category}
-            </span>
-            <div className="flex items-center gap-3 text-xs text-muted">
-              <button className="flex items-center gap-1.5 hover:text-main cursor-pointer">
-                <Bookmark size={14} /> Simpan
-              </button>
-              <button className="flex items-center gap-1.5 hover:text-main cursor-pointer">
-                <Share2 size={14} /> Bagikan
-              </button>
-            </div>
-          </div>
+        <header className="space-y-4 border-b border-black/10 pb-8">
+          <span className="inline-block px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-[#e6e6e2] text-[#111210]">
+            {article.category}
+          </span>
 
-          <h1 className="text-3xl sm:text-5xl font-black text-main leading-tight tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-bold text-[#111210] leading-tight tracking-tight">
             {article.title}
           </h1>
 
-          <div className="flex items-center gap-3 text-xs font-semibold text-muted pt-1">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-acc-blue/20 text-acc-blue flex items-center justify-center font-bold">
-                <User size={13} />
-              </div>
-              <span className="font-bold text-main">{article.author || 'HitungSaham'}</span>
-            </div>
+          <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-[#82837e] pt-2">
+            <span>Oleh <strong className="text-[#111210]">{article.author || 'HitungSaham'}</strong></span>
             <span>•</span>
             <span className="flex items-center gap-1">
               <Calendar size={13} />
               {new Date(article.publishedAt).toLocaleDateString('id-ID', {
-                day: 'numeric',
                 month: 'long',
+                day: 'numeric',
                 year: 'numeric',
               })}
             </span>
@@ -139,7 +126,7 @@ export default async function LandingOneBlogDetailPage({ params }: { params: Pro
         </header>
 
         {/* HERO IMAGE */}
-        <div className="relative w-full h-[320px] sm:h-[460px] rounded-2xl overflow-hidden bg-sub-slate">
+        <div className="relative w-full h-[320px] sm:h-[440px] rounded-2xl overflow-hidden bg-[#111210]">
           <Image
             src={article.coverImage || '/assets/images/img.png'}
             alt={article.title}
@@ -151,19 +138,36 @@ export default async function LandingOneBlogDetailPage({ params }: { params: Pro
 
         {/* EXCERPT CALLOUT */}
         {article.excerpt && (
-          <div className="p-6 rounded-2xl bg-sub-slate/60 text-base font-semibold text-main leading-relaxed italic">
+          <div className="p-6 bg-[#f2f2ef] border-l-4 border-[#111210] rounded-r-xl text-base font-medium text-[#333430] leading-relaxed italic">
             {article.excerpt}
           </div>
         )}
 
         {/* ARTICLE BODY */}
-        <article className="prose dark:prose-invert max-w-none text-main text-base leading-relaxed space-y-6 pt-2">
+        <article className="prose max-w-none text-[#111210] text-base leading-relaxed space-y-6 pt-2">
           <ReactMarkdown>{article.content}</ReactMarkdown>
         </article>
+
+        {/* CALCULATOR PROMO FOOTER BOX */}
+        <div className="mt-12 p-8 bg-[#111210] text-white rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div>
+            <div className="text-xs font-bold uppercase tracking-widest text-[#a0a09c] flex items-center gap-1.5 mb-1">
+              <Calculator size={14} /> HitungSaham Tools
+            </div>
+            <h3 className="text-xl font-bold text-white">Butuh Menghitung Average Down Saham Kamu?</h3>
+            <p className="text-xs text-gray-300 mt-1 max-w-md">
+              Gunakan kalkulator simulasi gratis kami untuk menghitung target harga rata-rata dan batas ARA/ARB BEI secara presisi.
+            </p>
+          </div>
+          <Link href="/#calculator" className="bg-white text-[#111210] font-bold text-xs px-5 py-3 rounded-xl whitespace-nowrap hover:bg-gray-200 transition-colors">
+            Buka Kalkulator <ChevronRight size={14} className="inline ml-1" />
+          </Link>
+        </div>
       </main>
 
-      {/* UNIFIED FOOTER */}
-      <Footer />
+      {/* UNIFIED ACME FOOTER */}
+      <Footer variant="acme" />
     </div>
   );
 }
+

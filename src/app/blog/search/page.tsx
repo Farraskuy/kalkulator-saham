@@ -1,12 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Navbar from '@/components/layout/Navbar';
+import { Search, ArrowLeft, Calculator, ChevronRight } from 'lucide-react';
+import { Metadata } from 'next';
 import Footer from '@/components/layout/Footer';
+import LandingHeader from '@/components/landing/LandingHeader';
 import BlogSearchDropdown from '@/features/blog/components/BlogSearchDropdown';
 import { getCachedArticles, getCachedCategories } from '@/lib/cached-data';
-import { Search, ArrowLeft, ArrowUpRight, Calendar, User } from 'lucide-react';
-import { Metadata } from 'next';
+import styles from '../blog-acme.module.css';
 
 export async function generateMetadata({
   searchParams,
@@ -17,8 +18,8 @@ export async function generateMetadata({
   const queryText = q || category || 'Saham BEI';
 
   return {
-    title: `Pencarian Artikel: "${queryText}" | HitungSaham Blog`,
-    description: `Hasil pencarian artikel dan jurnal  saham BEI untuk kata kunci "${queryText}".`,
+    title: `Pencarian Artikel: "${queryText}" | HitungSaham Jurnal`,
+    description: `Hasil pencarian artikel dan jurnal saham BEI untuk kata kunci "${queryText}".`,
     robots: {
       index: false,
       follow: true,
@@ -26,7 +27,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function LandingOneBlogSearchPage({
+export default async function BlogSearchPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string; category?: string }>;
@@ -54,47 +55,51 @@ export default async function LandingOneBlogSearchPage({
     return matchesCategory && matchesQuery;
   });
 
-  return (
-    <div className="flex flex-col min-h-screen bg-page text-main transition-colors duration-300">
-      <Navbar />
+  const popularPicks = searchResults.slice(0, 3).map((art) => ({
+    title: art.title,
+    category: art.category,
+    slug: art.slug,
+    readTime: '5 min baca',
+  }));
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full grow space-y-8">
-        {/* BREADCRUMB NAV */}
-        <div className="pt-2">
+  return (
+    <div className={styles.page}>
+      <LandingHeader />
+
+      <main className={styles.container} style={{ paddingTop: '32px' }}>
+        {/* BREADCRUMB */}
+        <div className="mb-6">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-muted hover:text-main transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#52534e] hover:text-[#111210] transition-colors"
           >
             <ArrowLeft size={14} /> Kembali ke Blog &amp; Artikel
           </Link>
         </div>
 
-        {/* HERO PROMINENT SEARCHBAR SECTION (Agak Besar dengan Keyword) */}
-        <div className="w-full max-w-3xl mx-auto space-y-3 py-2 text-center">
+        {/* HERO PROMINENT SEARCHBAR SECTION */}
+        <div className="w-full max-w-3xl mx-auto space-y-3 py-2 text-center mb-8">
           <div className="w-full">
             <BlogSearchDropdown
               articles={articles}
               basePath="/blog"
-              placeholder="Cari artikel, jurnal, atau edukasi saham..."
+              placeholder="Cari kata kunci jurnal atau edukasi..."
+              theme="acme"
               defaultValue={q}
             />
           </div>
           {q && (
-            <p className="text-xs text-muted font-medium">
-              Menampilkan hasil pencarian untuk kata kunci: <strong className="text-main">&quot;{q}&quot;</strong> ({searchResults.length} ditemukan)
+            <p className="text-xs text-[#52534e] font-medium">
+              Menampilkan hasil pencarian untuk kata kunci: <strong className="text-[#111210]">&quot;{q}&quot;</strong> ({searchResults.length} ditemukan)
             </p>
           )}
         </div>
 
-        {/* CATEGORY FILTER BAR */}
-        <div className="flex items-center justify-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+        {/* CATEGORY PILLS BAR ACME STYLE */}
+        <div className="flex items-center justify-center gap-2 overflow-x-auto pb-2 scrollbar-none mb-8">
           <Link
             href={q ? `/blog/search?q=${encodeURIComponent(q)}` : '/blog/search'}
-            className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-              category === 'ALL'
-                ? 'bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs'
-                : 'bg-sub-slate text-sub hover:bg-sub-blue hover:text-acc-blue'
-            }`}
+            className={category === 'ALL' ? styles.categoryPillActive : styles.categoryPill}
           >
             Semua ({articles.length})
           </Link>
@@ -105,11 +110,7 @@ export default async function LandingOneBlogSearchPage({
               <Link
                 key={cat.id}
                 href={searchUrl}
-                className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-                  isActive
-                    ? 'bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs'
-                    : 'bg-sub-slate text-sub hover:bg-sub-blue hover:text-acc-blue'
-                }`}
+                className={isActive ? styles.categoryPillActive : styles.categoryPill}
               >
                 {cat.name}
               </Link>
@@ -117,84 +118,90 @@ export default async function LandingOneBlogSearchPage({
           })}
         </div>
 
-        {/* SEARCH RESULTS GRID / UN-BOXED EMPTY STATE */}
+        {/* SEARCH RESULTS SPLIT LAYOUT */}
         {searchResults.length === 0 ? (
-          /* EMPTY STATE (USER DIRECTIVE: "jangan menggunakan style card menyatu dengan bg saja") */
           <div className="flex flex-col items-center justify-center py-20 px-4 text-center space-y-4 my-8">
-            <div className="w-16 h-16 rounded-full bg-sub-blue text-acc-blue flex items-center justify-center text-2xl font-bold">
+            <div className="w-16 h-16 rounded-full bg-[#111210] text-white flex items-center justify-center text-2xl font-bold">
               <Search size={28} />
             </div>
             <div className="space-y-1.5 max-w-md">
-              <h2 className="text-2xl font-black text-main">Tidak Ada Catatan Ditemukan</h2>
-              <p className="text-xs text-muted leading-relaxed">
+              <h2 className="text-2xl font-bold text-[#111210]">Tidak Ada Catatan Ditemukan</h2>
+              <p className="text-xs text-[#52534e] leading-relaxed">
                 Maaf, tidak ada catatan jurnal yang cocok dengan kata kunci &quot;{q || category}&quot;. Silakan coba pencarian lain.
               </p>
             </div>
             <Link
               href="/blog"
-              className="px-6 py-2.5 rounded-full bg-slate-900 text-white dark:bg-white dark:text-black text-xs font-extrabold hover:bg-black transition-colors"
+              className="px-6 py-2.5 rounded-full bg-[#111210] text-white text-xs font-bold hover:bg-black transition-colors"
             >
               Lihat Semua Catatan Jurnal
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
-            {searchResults.map((art) => (
-              <Link
-                key={art.id}
-                href={`/blog/${art.slug}`}
-                className="group bg-card rounded-2xl p-4 flex flex-col justify-between transition-colors hover:bg-sub-slate/50 border border-border-custom/40 shadow-xs"
-              >
-                <div className="space-y-3">
-                  <div className="relative w-full h-48 rounded-xl overflow-hidden bg-sub-slate">
-                    <Image
-                      src={art.coverImage || '/assets/images/img.png'}
-                      alt={art.title}
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute top-2.5 left-2.5">
-                      <span className="px-3 py-1 rounded-full bg-slate-900/80 text-white text-[10px] font-extrabold uppercase tracking-wider">
-                        {art.category}
-                      </span>
+          <div className={styles.splitLayout}>
+            <div>
+              <div className={styles.sectionHeader}>
+                <h2 className={styles.sectionTitle}>Daftar Hasil Pencarian ({searchResults.length})</h2>
+              </div>
+
+              <div className={styles.articlesGrid}>
+                {searchResults.map((art) => (
+                  <Link key={art.id} href={`/blog/${art.slug}`} className={styles.articleCard}>
+                    <div className={styles.articleImage}>
+                      <Image
+                        src={art.coverImage || '/assets/images/img.png'}
+                        alt={art.title}
+                        fill
+                      />
                     </div>
-                  </div>
-
-                  <div className="flex items-start justify-between gap-3 pt-1">
-                    <h2 className="text-base font-extrabold text-main group-hover:text-acc-blue transition-colors leading-snug line-clamp-2">
-                      {art.title}
-                    </h2>
-                    <div className="w-7 h-7 rounded-full bg-sub-slate flex items-center justify-center text-main shrink-0 mt-0.5">
-                      <ArrowUpRight size={15} />
+                    <div className="flex flex-col justify-center">
+                      <span className={styles.tagPill}>{art.category}</span>
+                      <h2 className={styles.articleTitle}>{art.title}</h2>
+                      <p className="text-xs text-gray-600 line-clamp-2 my-1">{art.excerpt}</p>
+                      <div className={styles.metaInfo}>
+                        Dipublikasikan {new Date(art.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </div>
                     </div>
-                  </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
 
-                  <p className="text-xs text-muted line-clamp-2 leading-relaxed">
-                    {art.excerpt}
-                  </p>
+            <aside className={styles.sidebar}>
+              <div className={styles.sidebarWidget}>
+                <h3 className={styles.sidebarTitle}>Catatan Terkait</h3>
+                <div className={styles.picksList}>
+                  {popularPicks.map((pick, i) => (
+                    <Link key={i} href={`/blog/${pick.slug}`} className={styles.pickItem}>
+                      <div className={styles.pickMeta}>
+                        <span className="font-bold text-slate-800">{pick.category}</span> • {pick.readTime}
+                      </div>
+                      <div className={styles.pickTitle}>{pick.title}</div>
+                    </Link>
+                  ))}
                 </div>
+              </div>
 
-                <div className="pt-3 mt-3 flex items-center gap-2 text-xs text-muted font-medium border-t border-border-custom/30">
-                  <div className="w-5 h-5 rounded-full bg-acc-blue/20 text-acc-blue flex items-center justify-center font-bold text-[9px]">
-                    <User size={11} />
-                  </div>
-                  <span>{art.author || 'HitungSaham'}</span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1">
-                    <Calendar size={11} />
-                    {new Date(art.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </span>
+              <div className={styles.promoWidget}>
+                <div className={styles.promoTag}>
+                  <Calculator size={14} className="inline mr-1" /> Simulasikan Portofolio
                 </div>
-              </Link>
-            ))}
+                <h4 className={styles.promoTitle}>Kalkulator ARA/ARB &amp; Average Down</h4>
+                <p className={styles.promoDesc}>
+                  Hitung persentase batas auto rejection dan kebutuhan lot pembelian tambahan saham kamu secara gratis.
+                </p>
+                <Link href="/#calculator" className={styles.promoBtn}>
+                  Coba Kalkulator Sekarang <ChevronRight size={14} className="inline ml-1" />
+                </Link>
+              </div>
+            </aside>
           </div>
         )}
-
-        {/* FOOTER */}
       </main>
 
-      {/* UNIFIED FOOTER */}
-      <Footer />
+      {/* UNIFIED ACME FOOTER */}
+      <Footer variant="acme" />
     </div>
   );
 }
+

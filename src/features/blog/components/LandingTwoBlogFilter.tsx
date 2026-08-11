@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Calculator, ChevronRight, X, BookOpen } from 'lucide-react';
 import { ArticleData, CategoryData } from '@/types';
 import BlogSearchDropdown from './BlogSearchDropdown';
-import styles from '@/app/landing-2/blog/blog-acme.module.css';
+import styles from '@/app/blog/blog-acme.module.css';
 
 interface LandingTwoBlogFilterProps {
   initialArticles: ArticleData[];
@@ -53,13 +53,13 @@ export default function LandingTwoBlogFilter({
       params.delete('category');
     }
     const queryString = params.toString();
-    const newUrl = queryString ? `/landing-2/blog?${queryString}` : '/landing-2/blog';
+    const newUrl = queryString ? `/blog?${queryString}` : '/blog';
     router.replace(newUrl, { scroll: false });
   };
 
   const handleResetCategory = () => {
     setActiveCategory('ALL');
-    router.replace('/landing-2/blog', { scroll: false });
+    router.replace('/blog', { scroll: false });
   };
 
   const filteredArticles = initialArticles.filter((art) => {
@@ -106,7 +106,7 @@ export default function LandingTwoBlogFilter({
         <div className="w-full md:w-80 shrink-0">
           <BlogSearchDropdown
             articles={initialArticles}
-            basePath="/landing-2/blog"
+            basePath="/blog"
             placeholder="Cari artikel / jurnal..."
             theme="acme"
           />
@@ -157,7 +157,7 @@ export default function LandingTwoBlogFilter({
 
             <div className={styles.articlesGrid}>
               {filteredArticles.map((art) => (
-                <Link key={art.id} href={`/landing-2/blog/${art.slug}`} className={styles.articleCard}>
+                <Link key={art.id} href={`/blog/${art.slug}`} className={styles.articleCard}>
                   <div className={styles.articleImage}>
                     <Image
                       src={art.coverImage || '/assets/images/img.png'}
@@ -183,7 +183,7 @@ export default function LandingTwoBlogFilter({
               <h3 className={styles.sidebarTitle}>Catatan Pilihan Trader</h3>
               <div className={styles.picksList}>
                 {popularPicks.map((pick, i) => (
-                  <Link key={i} href={`/landing-2/blog/${pick.slug}`} className={styles.pickItem}>
+                  <Link key={i} href={`/blog/${pick.slug}`} className={styles.pickItem}>
                     <div className={styles.pickMeta}>
                       <span className="font-bold text-slate-800">{pick.category}</span> • {pick.readTime}
                     </div>
@@ -201,7 +201,7 @@ export default function LandingTwoBlogFilter({
               <p className={styles.promoDesc}>
                 Hitung persentase batas auto rejection dan kebutuhan lot pembelian tambahan saham kamu secara gratis.
               </p>
-              <Link href="/landing-2#calculator" className={styles.promoBtn}>
+              <Link href="/#calculator" className={styles.promoBtn}>
                 Coba Kalkulator Sekarang <ChevronRight size={14} className="inline ml-1" />
               </Link>
             </div>

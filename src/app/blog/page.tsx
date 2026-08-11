@@ -2,18 +2,20 @@ import React, { Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
-import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import LandingOneBlogFilter from '@/features/blog/components/LandingOneBlogFilter';
+import LandingHeader from '@/components/landing/LandingHeader';
+import LandingTwoBlogFilter from '@/features/blog/components/LandingTwoBlogFilter';
 import { getCachedArticles, getCachedCategories } from '@/lib/cached-data';
+import { ArticleData } from '@/types';
+import styles from './blog-acme.module.css';
 
 export const metadata: Metadata = {
   title: 'Blog & Catatan Artikel Pribadi | HitungSaham.com',
-  description: 'Kumpulan blog artikel opini pribadi, catatan pengalaman pengelola, dan alat simulasi kalkulasi matematis saham.',
+  description: 'Artikel personal, catatan opini pribadi pengelola, dan kalkulator simulasi matematis saham.',
   keywords: ['blog saham', 'artikel pribadi', 'catatan opini saham', 'average down saham', 'kalkulator saham'],
   openGraph: {
     title: 'Blog & Catatan Artikel Pribadi | HitungSaham.com',
-    description: 'Catatan artikel opini pribadi, ulasan pengalaman, dan alat simulasi matematis saham.',
+    description: 'Artikel personal, catatan opini pribadi pengelola, dan kalkulator simulasi matematis saham.',
     url: 'https://hitungsaham.com/blog',
     siteName: 'HitungSaham.com',
     locale: 'id_ID',
@@ -22,31 +24,30 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Blog & Catatan Artikel Pribadi | HitungSaham.com',
-    description: 'Catatan artikel opini pribadi, ulasan pengalaman, dan alat simulasi matematis saham.',
+    description: 'Artikel personal, catatan opini pribadi pengelola, dan kalkulator simulasi matematis saham.',
   },
   alternates: {
     canonical: 'https://hitungsaham.com/blog',
   },
 };
 
-export default async function LandingOneBlogPage() {
+export default async function PersonalBlogPage() {
   const [articles, categories] = await Promise.all([
     getCachedArticles(),
     getCachedCategories(),
   ]);
 
-  const mainHero = articles[0] || null;
-  const secondaryHero1 = articles[1] || null;
-  const secondaryHero2 = articles[2] || null;
+  const mainHeadline = articles[0] || null;
+  const secondaryPosts = articles.slice(1, 3);
 
-  // JSON-LD Structured Data Schema for Blog & Collection
+  // JSON-LD Structured Data Schema for Search Engines
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
     name: 'HitungSaham Blog & Catatan Artikel Pribadi',
-    description: 'Kumpulan artikel opini pribadi dan simulasi kalkulasi matematis saham.',
+    description: 'Kumpulan artikel opini pribadi pengelola dan simulasi matematis saham.',
     url: 'https://hitungsaham.com/blog',
-    blogPost: articles.map((art) => ({
+    blogPost: articles.map((art: ArticleData) => ({
       '@type': 'BlogPosting',
       headline: art.title,
       description: art.excerpt,
@@ -60,154 +61,112 @@ export default async function LandingOneBlogPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-page text-main transition-colors duration-300">
+    <div className={styles.page}>
       {/* Inject Structured JSON-LD Schema for Search Engines */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <Navbar />
+      {/* HEADER NAVBAR */}
+      <LandingHeader />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full grow space-y-10">
-        {/* DATABASE INTEGRATED BENTO HERO OR EMPTY STATE */}
+      {/* HERO SECTION HEADER */}
+      <section className={styles.hero}>
+        <p className={styles.breadcrumb}>HitungSaham / Blog &amp; Artikel Pribadi</p>
+
+        <div className={styles.heroContentGrid}>
+          <div className={styles.heroLeft}>
+            <h1>Blog &amp;<br />Artikel Pribadi</h1>
+          </div>
+          <div className={styles.heroRightCopy}>
+            Kumpulan artikel personal, catatan opini pengelola, serta alat bantu simulasi perhitungan matematis saham secara rasional dan terukur.
+          </div>
+        </div>
+      </section>
+
+      {/* MAIN CONTAINER */}
+      <main className={styles.container}>
         {articles.length === 0 ? (
-          <section className="flex flex-col items-center justify-center py-20 px-4 text-center bg-sub-slate/50 rounded-3xl border border-dashed border-border-custom space-y-4 my-6">
+          /* EMPTY STATE FOR BLOG */
+          <div className="flex flex-col items-center justify-center py-20 px-4 text-center space-y-8">
             <div className="space-y-1.5 max-w-md">
-              <h1 className="text-2xl font-extrabold text-main">Belum Ada Artikel Dipublikasikan</h1>
-              <p className="text-xs text-muted leading-relaxed">
+              <h2 className="text-2xl font-bold text-[#111210]">Belum Ada Artikel Dipublikasikan</h2>
+              <p className="text-xs text-[#52534e] leading-relaxed">
                 Saat ini belum ada artikel blog pribadi yang dipublikasikan di database. Silakan kembali lagi nanti.
               </p>
             </div>
             <Link
               href="/"
-              className="px-6 py-2.5 rounded-full bg-[#111210] text-white text-xs font-extrabold hover:bg-black transition-colors inline-flex items-center gap-2"
+              className="px-6 py-2.5 rounded-full bg-[#111210] text-white text-xs font-bold hover:bg-black transition-colors inline-flex items-center gap-2"
             >
-              <span>Kembali ke Beranda</span>
+              <span>Kembali ke Kalkulator Saham</span>
             </Link>
-          </section>
+          </div>
         ) : (
-          <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 pt-2">
-            {/* Main Big Feature Card (Left - 7 cols) */}
-            {mainHero && (
-              <Link
-                href={`/blog/${mainHero.slug}`}
-                className="lg:col-span-7 group relative h-[380px] sm:h-[440px] rounded-2xl overflow-hidden flex flex-col justify-end p-6 sm:p-8 text-white transition-opacity duration-200 hover:opacity-95"
-              >
-                <Image
-                  src={mainHero.coverImage || '/assets/images/img.png'}
-                  alt={mainHero.title}
-                  fill
-                  priority
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent" />
-
-                <div className="relative z-10 space-y-4">
-                  <h1 className="text-2xl sm:text-4xl font-extrabold leading-tight tracking-tight text-white">
-                    {mainHero.title}
-                  </h1>
-
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-3 text-xs text-gray-300 border-t border-white/15">
-                    <div className="flex items-center gap-4">
-                      <div>
-                        <span className="text-[10px] text-gray-400 font-bold block uppercase tracking-wider">PENULIS</span>
-                        <span className="font-bold text-white">{mainHero.author || 'HitungSaham'}</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-gray-400 font-bold block uppercase tracking-wider">DIPUBLIKASIKAN</span>
-                        <span className="font-bold text-white">
-                          {new Date(mainHero.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1 rounded-full bg-white/20 font-extrabold text-[11px] uppercase tracking-wider text-white">
-                        {mainHero.category}
-                      </span>
-                    </div>
+          <>
+            {/* HERO FEATURED POST GRID */}
+            <section className={styles.heroGrid}>
+              {/* Main Highlighted Post */}
+              {mainHeadline && (
+                <Link href={`/blog/${mainHeadline.slug}`} className={styles.mainPostCard}>
+                  <div className={styles.mainPostImage}>
+                    <Image
+                      src={mainHeadline.coverImage || '/assets/images/img.png'}
+                      alt={mainHeadline.title}
+                      fill
+                      priority
+                    />
                   </div>
-                </div>
-              </Link>
-            )}
-
-            {/* Right Stacked Column (5 cols) */}
-            <div className="lg:col-span-5 flex flex-col gap-5">
-              {secondaryHero1 && (
-                <Link
-                  href={`/blog/${secondaryHero1.slug}`}
-                  className="group relative h-[180px] sm:h-[208px] rounded-2xl overflow-hidden flex flex-col justify-end p-5 text-white transition-opacity duration-200 hover:opacity-95"
-                >
-                  <Image
-                    src={secondaryHero1.coverImage || '/assets/images/img.png'}
-                    alt={secondaryHero1.title}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-
-                  <div className="relative z-10 space-y-2">
-                    <span className="px-2.5 py-0.5 rounded-full bg-white/20 font-extrabold text-[10px] uppercase tracking-wider text-white w-fit block">
-                      {secondaryHero1.category}
-                    </span>
-                    <h2 className="text-base sm:text-lg font-extrabold leading-snug text-white">
-                      {secondaryHero1.title}
-                    </h2>
+                  <div className={styles.mainPostContent}>
+                    <span className={styles.tagPill}>{mainHeadline.category}</span>
+                    <h2 className={styles.mainPostTitle}>{mainHeadline.title}</h2>
+                    <p className={styles.mainPostExcerpt}>{mainHeadline.excerpt}</p>
+                    <div className={styles.metaInfo}>
+                      Oleh {mainHeadline.author || 'HitungSaham'} • {new Date(mainHeadline.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </div>
                   </div>
                 </Link>
               )}
 
-              {secondaryHero2 && (
-                <Link
-                  href={`/blog/${secondaryHero2.slug}`}
-                  className="group relative h-[180px] sm:h-[208px] rounded-2xl overflow-hidden flex flex-col justify-end p-5 text-white transition-opacity duration-200 hover:opacity-95"
-                >
-                  <Image
-                    src={secondaryHero2.coverImage || '/assets/images/img.png'}
-                    alt={secondaryHero2.title}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+              {/* Secondary Stacked Posts */}
+              <div className={styles.secondaryColumn}>
+                {secondaryPosts.map((post: ArticleData) => (
+                  <Link key={post.id} href={`/blog/${post.slug}`} className={styles.secondaryCard}>
+                    <div className={styles.secondaryImage}>
+                      <Image
+                        src={post.coverImage || '/assets/images/img.png'}
+                        alt={post.title}
+                        fill
+                      />
+                    </div>
+                    <div className={styles.secondaryContent}>
+                      <span className={styles.tagPill}>{post.category}</span>
+                      <h3 className={styles.secondaryTitle}>{post.title}</h3>
+                      <p className={styles.secondaryExcerpt}>{post.excerpt}</p>
+                      <div className={styles.metaInfo}>
+                        {new Date(post.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
 
-                  <div className="relative z-10 space-y-2">
-                    <span className="px-2.5 py-0.5 rounded-full bg-white/20 font-extrabold text-[10px] uppercase tracking-wider text-white w-fit block">
-                      {secondaryHero2.category}
-                    </span>
-                    <h2 className="text-base sm:text-lg font-extrabold leading-snug text-white">
-                      {secondaryHero2.title}
-                    </h2>
-                  </div>
-                </Link>
-              )}
-            </div>
-          </section>
-        )}
-
-        {/* SECTION HEADER & INTERACTIVE DYNAMIC BLOG FILTER CLIENT */}
-        {articles.length > 0 && (
-          <section className="space-y-6 pt-2">
-            <div>
-              <h2 className="text-3xl font-black tracking-tight text-main">Blog &amp; Artikel Pribadi</h2>
-              <p className="text-xs sm:text-sm text-muted mt-1 font-medium">
-                Catatan artikel opini pribadi pengelola, ulasan pengalaman, dan simulasi perhitungan matematis saham.
-              </p>
-            </div>
-
+            {/* INTERACTIVE DYNAMIC BLOG FILTER CLIENT (ACME THEME) */}
             <Suspense fallback={null}>
-              <LandingOneBlogFilter
+              <LandingTwoBlogFilter
                 initialArticles={articles}
                 categories={categories}
               />
             </Suspense>
-          </section>
+          </>
         )}
-
       </main>
 
-      {/* UNIFIED FOOTER */}
-      <Footer />
+      {/* UNIFIED ACME FOOTER */}
+      <Footer variant="acme" />
     </div>
   );
 }
+
