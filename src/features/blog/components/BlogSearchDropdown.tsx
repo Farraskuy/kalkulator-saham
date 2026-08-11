@@ -16,7 +16,7 @@ import {
 
 interface BlogSearchDropdownProps {
   articles: ArticleData[];
-  basePath: string; // '/blog' or '/landing-2/blog'
+  basePath: string;
   placeholder?: string;
   theme?: 'default' | 'acme';
   defaultValue?: string;

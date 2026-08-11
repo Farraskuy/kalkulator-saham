@@ -4,26 +4,26 @@ import React, { useState } from 'react';
 import { X, CheckCircle2 } from 'lucide-react';
 import AppLogo from '@/components/layout/AppLogo';
 
-interface LandingTwoLoginModalProps {
+interface LandingLoginModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function LandingTwoLoginModal({ isOpen, onClose }: LandingTwoLoginModalProps) {
+export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModalProps) {
   const [dontShowAgain, setDontShowAgain] = useState(false);
 
   if (!isOpen) return null;
 
   const handleClose = () => {
     if (dontShowAgain) {
-      localStorage.setItem('hide_google_login_promo_l2', 'true');
+      localStorage.setItem('hide_google_login_promo', 'true');
     }
     onClose();
   };
 
   const handleGoogleLogin = () => {
     if (dontShowAgain) {
-      localStorage.setItem('hide_google_login_promo_l2', 'true');
+      localStorage.setItem('hide_google_login_promo', 'true');
     }
     window.location.href = '/api/auth/google/login';
   };
@@ -120,13 +120,13 @@ export default function LandingTwoLoginModal({ isOpen, onClose }: LandingTwoLogi
           {/* Don't show again checkbox */}
           <div className="flex items-center justify-center gap-2 pt-1">
             <input
-              id="dont-show-promo-l2"
+              id="dont-show-promo"
               type="checkbox"
               checked={dontShowAgain}
               onChange={(e) => setDontShowAgain(e.target.checked)}
               className="w-4 h-4 rounded border-gray-300 text-[#111210] focus:ring-[#111210] cursor-pointer"
             />
-            <label htmlFor="dont-show-promo-l2" className="text-[11px] text-[#52534e] font-medium cursor-pointer select-none">
+            <label htmlFor="dont-show-promo" className="text-[11px] text-[#52534e] font-medium cursor-pointer select-none">
               Jangan tampilkan lagi pesan promosi ini
             </label>
           </div>

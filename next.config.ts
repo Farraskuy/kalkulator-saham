@@ -3,6 +3,20 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   output: 'standalone',
   poweredByHeader: false,
+  async redirects() {
+    return [
+      {
+        source: '/landing-2',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/landing-2/:path*',
+        destination: '/:path*',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

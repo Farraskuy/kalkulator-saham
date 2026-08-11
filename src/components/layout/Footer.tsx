@@ -11,7 +11,6 @@ interface FooterProps {
 
 export default function Footer({ variant = 'default' }: FooterProps) {
   const isAcme = variant === 'acme';
-  const basePath = isAcme ? '/landing-2' : '';
   const year = new Date().getFullYear();
 
   return (
@@ -38,22 +37,22 @@ export default function Footer({ variant = 'default' }: FooterProps) {
               </div>
               <ul className="space-y-2.5 text-muted font-medium">
                 <li>
-                  <Link href={`${basePath}/#prediction`} className="hover:text-main transition-colors">
+                  <Link href="/#calculator" className="hover:text-main transition-colors">
                     Prediksi Target Jual/Beli
                   </Link>
                 </li>
                 <li>
-                  <Link href={`${basePath}/#ara-arb`} className="hover:text-main transition-colors">
+                  <Link href="/#calculator" className="hover:text-main transition-colors">
                     Auto Rejection (ARA/ARB)
                   </Link>
                 </li>
                 <li>
-                  <Link href={`${basePath}/#avg-up-down`} className="hover:text-main transition-colors">
+                  <Link href="/#calculator" className="hover:text-main transition-colors">
                     Average Up / Down
                   </Link>
                 </li>
                 <li>
-                  <Link href={`${basePath}/faq`} className="hover:text-main transition-colors">
+                  <Link href="/faq" className="hover:text-main transition-colors">
                     Pertanyaan Umum (FAQ)
                   </Link>
                 </li>
@@ -66,12 +65,12 @@ export default function Footer({ variant = 'default' }: FooterProps) {
               </div>
               <ul className="space-y-2.5 text-muted font-medium">
                 <li>
-                  <Link href={`${basePath}/blog`} className="hover:text-main transition-colors">
+                  <Link href="/blog" className="hover:text-main transition-colors">
                     Blog &amp; Artikel
                   </Link>
                 </li>
                 <li>
-                  <Link href={`${basePath}/faq`} className="hover:text-main transition-colors">
+                  <Link href="/faq" className="hover:text-main transition-colors">
                     Pusat Bantuan &amp; FAQ
                   </Link>
                 </li>

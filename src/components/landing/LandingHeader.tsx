@@ -11,10 +11,10 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import AppLogo from '@/components/layout/AppLogo';
-import styles from '../landing-2.module.css';
-import LandingTwoLoginModal from './LandingTwoLoginModal';
+import styles from './landing.module.css';
+import LandingLoginModal from './LandingLoginModal';
 
-export default function LandingTwoHeader() {
+export default function LandingHeader() {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const [loginModalOpen, setLoginModalOpen] = useState<boolean>(false);
 
@@ -22,15 +22,15 @@ export default function LandingTwoHeader() {
     <>
       <header className={styles.header}>
         <div className="max-w-300 w-full mx-auto flex items-center justify-between">
-          <Link className={styles.logo} href="/landing-2" aria-label="HitungSaham home">
+          <Link className={styles.logo} href="/" aria-label="HitungSaham home">
             <AppLogo size={28} variant="dark-icon" />
             <span>HitungSaham</span>
           </Link>
 
           <nav className={styles.nav} aria-label="Navigasi utama">
-            <Link href="/landing-2#calculator">Kalkulator Saham</Link>
-            <Link href="/landing-2/blog">Blog &amp; Artikel</Link>
-            <Link href="/landing-2/faq">FAQ</Link>
+            <Link href="/#calculator">Kalkulator Saham</Link>
+            <Link href="/blog">Blog &amp; Artikel</Link>
+            <Link href="/faq">FAQ</Link>
           </nav>
 
           {/* Login Google Popup Trigger Button */}
@@ -53,7 +53,7 @@ export default function LandingTwoHeader() {
           </button>
         </div>
 
-        {/* OFFCANVAS MOBILE DRAWER MENU FOR LANDING 2 */}
+        {/* OFFCANVAS MOBILE DRAWER MENU */}
         {mobileOpen && (
           <div className="fixed inset-0 z-50 flex justify-end">
             {/* Backdrop Overlay */}
@@ -83,7 +83,7 @@ export default function LandingTwoHeader() {
                 {/* Nav Links */}
                 <nav className="flex flex-col space-y-2">
                   <Link
-                    href="/landing-2#calculator"
+                    href="/#calculator"
                     onClick={() => setMobileOpen(false)}
                     className="px-4 py-3 rounded-xl font-bold text-sm text-[#111210] hover:bg-[#ebebeb] transition-colors flex items-center gap-3"
                   >
@@ -92,7 +92,7 @@ export default function LandingTwoHeader() {
                   </Link>
 
                   <Link
-                    href="/landing-2/blog"
+                    href="/blog"
                     onClick={() => setMobileOpen(false)}
                     className="px-4 py-3 rounded-xl font-bold text-sm text-[#111210] hover:bg-[#ebebeb] transition-colors flex items-center gap-3"
                   >
@@ -101,7 +101,7 @@ export default function LandingTwoHeader() {
                   </Link>
 
                   <Link
-                    href="/landing-2/faq"
+                    href="/faq"
                     onClick={() => setMobileOpen(false)}
                     className="px-4 py-3 rounded-xl font-bold text-sm text-[#111210] hover:bg-[#ebebeb] transition-colors flex items-center gap-3"
                   >
@@ -132,8 +132,8 @@ export default function LandingTwoHeader() {
         )}
       </header>
 
-      {/* LANDING 2 GOOGLE LOGIN PROMO MODAL */}
-      <LandingTwoLoginModal
+      {/* GOOGLE LOGIN PROMO MODAL */}
+      <LandingLoginModal
         isOpen={loginModalOpen}
         onClose={() => setLoginModalOpen(false)}
       />

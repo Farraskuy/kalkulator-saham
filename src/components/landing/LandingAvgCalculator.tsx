@@ -6,7 +6,7 @@ import { calculateAverage, calculateTargetAverageLots, PurchaseRow } from '@/fea
 import { formatIDR, formatNumber } from '@/lib/utils/formatters';
 import ExportCardWrapper from '@/components/ui/ExportCardWrapper';
 
-export default function LandingTwoAvgCalculator() {
+export default function LandingAvgCalculator() {
   const [ticker, setTicker] = useState<string>('BBRI');
   const [rows, setRows] = useState<PurchaseRow[]>([
     { id: '1', price: 1000, lot: 10 },
@@ -44,7 +44,7 @@ export default function LandingTwoAvgCalculator() {
   const handleCalculate = () => {
     setHasCalculated(true);
     setTimeout(() => {
-      const el = document.getElementById('landing2-avg-result');
+      const el = document.getElementById('avg-result');
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
@@ -75,11 +75,11 @@ export default function LandingTwoAvgCalculator() {
           </div>
 
           <div className="space-y-1.5 mb-5">
-            <label htmlFor="landing2-avg-ticker" className="text-[11px] font-bold text-slate-500 block">
+            <label htmlFor="avg-ticker" className="text-[11px] font-bold text-slate-500 block">
               Kode Ticker Saham (Max 4 Huruf)
             </label>
             <input
-              id="landing2-avg-ticker"
+              id="avg-ticker"
               type="text"
               className="w-full h-10 bg-white rounded-lg px-3 py-2 text-sm text-slate-900 font-bold outline-none focus:ring-1 focus:ring-slate-900 border border-slate-200 transition-all uppercase placeholder-slate-400"
               value={ticker}
@@ -196,7 +196,7 @@ export default function LandingTwoAvgCalculator() {
 
       {/* Right Output Card (Hidden on mobile until Hitung is clicked) */}
       <div
-        id="landing2-avg-result"
+        id="avg-result"
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="average" embedded>

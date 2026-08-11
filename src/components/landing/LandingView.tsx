@@ -7,17 +7,17 @@ import {
   ShieldCheck,
   Target,
 } from 'lucide-react';
-import styles from './landing-2.module.css';
-import LandingTwoHeader from './components/LandingTwoHeader';
-import LandingTwoPredictionCalculator from './components/LandingTwoPredictionCalculator';
-import LandingTwoAraArbCalculator from './components/LandingTwoAraArbCalculator';
-import LandingTwoAvgCalculator from './components/LandingTwoAvgCalculator';
+import styles from './landing.module.css';
+import LandingHeader from './LandingHeader';
+import LandingPredictionCalculator from './LandingPredictionCalculator';
+import LandingAraArbCalculator from './LandingAraArbCalculator';
+import LandingAvgCalculator from './LandingAvgCalculator';
 import FaqSection from '@/features/faq/components/FaqSection';
 import AnalyticsTracker from '@/components/analytics/AnalyticsTracker';
 import Footer from '@/components/layout/Footer';
 import type { FractionRule } from '@/types';
 
-interface LandingTwoProps {
+interface LandingViewProps {
   fractionRules?: FractionRule[];
   tax?: number;
   faqs?: { id: string; question: string; answer: string }[];
@@ -29,7 +29,7 @@ const tabs = [
   { id: 'average', label: 'Average Up / Down', icon: BarChart3 },
 ];
 
-export default function LandingTwo({ fractionRules, tax, faqs: faqsProp }: LandingTwoProps) {
+export default function LandingView({ fractionRules, tax, faqs: faqsProp }: LandingViewProps) {
   const [activeTab, setActiveTab] = useState<string>('target');
   const faqs = faqsProp || [];
 
@@ -39,8 +39,8 @@ export default function LandingTwo({ fractionRules, tax, faqs: faqsProp }: Landi
         <AnalyticsTracker />
       </Suspense>
 
-      {/* NAVBAR (Acme Style Clean Header with Offcanvas Drawer) */}
-      <LandingTwoHeader />
+      {/* NAVBAR */}
+      <LandingHeader />
 
       <main>
         {/* HERO SECTION */}
@@ -74,10 +74,10 @@ export default function LandingTwo({ fractionRules, tax, faqs: faqsProp }: Landi
           </div>
         </div>
 
-        {/* CALCULATOR SECTION (Acme Segmented Card Form Style) */}
+        {/* CALCULATOR SECTION */}
         <section className={styles.calculatorSection} id="calculator">
           <div className={styles.calculatorContainer}>
-            {/* Acme Segmented Tab Pill Controller */}
+            {/* Segmented Tab Controller */}
             <div className={styles.calculatorTabs} role="tablist" aria-label="Pilih kalkulator saham">
               {tabs.map(({ id, label, icon: Icon }) => (
                 <button
@@ -98,9 +98,9 @@ export default function LandingTwo({ fractionRules, tax, faqs: faqsProp }: Landi
 
             {/* Active Calculator Component */}
             <div className={styles.activeCalculator}>
-              {activeTab === 'target' && <LandingTwoPredictionCalculator fractionRules={fractionRules} tax={tax} />}
-              {activeTab === 'ara' && <LandingTwoAraArbCalculator fractionRules={fractionRules} />}
-              {activeTab === 'average' && <LandingTwoAvgCalculator />}
+              {activeTab === 'target' && <LandingPredictionCalculator fractionRules={fractionRules} tax={tax} />}
+              {activeTab === 'ara' && <LandingAraArbCalculator fractionRules={fractionRules} />}
+              {activeTab === 'average' && <LandingAvgCalculator />}
             </div>
           </div>
         </section>

@@ -11,7 +11,7 @@ interface Props {
   fractionRules?: FractionRule[];
 }
 
-export default function LandingTwoAraArbCalculator({ fractionRules }: Props) {
+export default function LandingAraArbCalculator({ fractionRules }: Props) {
   const [ticker, setTicker] = useState<string>('BBRI');
   const [price, setPrice] = useState<number>(2110);
   const [board, setBoard] = useState<Board>('Utama');
@@ -32,7 +32,7 @@ export default function LandingTwoAraArbCalculator({ fractionRules }: Props) {
   const handleCalculate = () => {
     setHasCalculated(true);
     setTimeout(() => {
-      const el = document.getElementById('landing2-ara-arb-result');
+      const el = document.getElementById('ara-arb-result');
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
@@ -59,11 +59,11 @@ export default function LandingTwoAraArbCalculator({ fractionRules }: Props) {
 
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="space-y-1">
-              <label htmlFor="landing2-ara-ticker" className="text-[11px] font-bold text-slate-500 block">
+              <label htmlFor="ara-ticker" className="text-[11px] font-bold text-slate-500 block">
                 Ticker (A-Z)
               </label>
               <input
-                id="landing2-ara-ticker"
+                id="ara-ticker"
                 type="text"
                 className="w-full h-10 bg-white rounded-lg px-3 py-2 text-sm text-slate-900 font-bold outline-none focus:ring-1 focus:ring-slate-900 border border-slate-200 uppercase transition-all placeholder-slate-400"
                 value={ticker}
@@ -73,11 +73,11 @@ export default function LandingTwoAraArbCalculator({ fractionRules }: Props) {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="landing2-ara-board" className="text-[11px] font-bold text-slate-500 block">
+              <label htmlFor="ara-board" className="text-[11px] font-bold text-slate-500 block">
                 Papan Saham
               </label>
               <select
-                id="landing2-ara-board"
+                id="ara-board"
                 className="w-full h-10 bg-white rounded-lg px-3 py-2 text-sm text-slate-900 font-semibold outline-none focus:ring-1 focus:ring-slate-900 border border-slate-200 cursor-pointer transition-all"
                 value={board}
                 onChange={(e) => setBoard(e.target.value as Board)}
@@ -90,11 +90,11 @@ export default function LandingTwoAraArbCalculator({ fractionRules }: Props) {
           </div>
 
           <div className="space-y-1 mb-5">
-            <label htmlFor="landing2-ara-price" className="text-[11px] font-bold text-slate-500 block">
+            <label htmlFor="ara-price" className="text-[11px] font-bold text-slate-500 block">
               Harga Penutupan Kemarin
             </label>
             <input
-              id="landing2-ara-price"
+              id="ara-price"
               type="text"
               inputMode="numeric"
               className="w-full h-10 bg-white rounded-lg px-3 py-2 text-sm text-slate-900 font-semibold outline-none focus:ring-1 focus:ring-slate-900 border border-slate-200 transition-all"
@@ -127,7 +127,7 @@ export default function LandingTwoAraArbCalculator({ fractionRules }: Props) {
 
       {/* Right Output Card (Hidden on mobile until Hitung is clicked) */}
       <div
-        id="landing2-ara-arb-result"
+        id="ara-arb-result"
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="ara-arb" embedded>

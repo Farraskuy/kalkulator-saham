@@ -12,7 +12,7 @@ interface Props {
   tax?: number;
 }
 
-export default function LandingTwoPredictionCalculator({ fractionRules, tax = 0.0 }: Props) {
+export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }: Props) {
   const [ticker, setTicker] = useState<string>('BBRI');
   const [clientName, setClientName] = useState<string>('');
   const [hargaBeli, setHargaBeli] = useState<number>(1000);
@@ -49,7 +49,7 @@ export default function LandingTwoPredictionCalculator({ fractionRules, tax = 0.
   const handleCalculate = () => {
     setHasCalculated(true);
     setTimeout(() => {
-      const el = document.getElementById('landing2-prediction-result');
+      const el = document.getElementById('prediction-result');
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
@@ -76,11 +76,11 @@ export default function LandingTwoPredictionCalculator({ fractionRules, tax = 0.
 
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="space-y-1">
-              <label htmlFor="landing2-pred-ticker" className="text-[11px] font-bold text-slate-500 block">
+              <label htmlFor="pred-ticker" className="text-[11px] font-bold text-slate-500 block">
                 Ticker (A-Z)
               </label>
               <input
-                id="landing2-pred-ticker"
+                id="pred-ticker"
                 type="text"
                 className="w-full h-10 bg-white rounded-lg px-3 py-2 text-sm text-slate-900 font-bold outline-none focus:ring-1 focus:ring-slate-900 border border-slate-200 uppercase transition-all placeholder-slate-400"
                 value={ticker}
@@ -90,11 +90,11 @@ export default function LandingTwoPredictionCalculator({ fractionRules, tax = 0.
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="landing2-pred-name" className="text-[11px] font-bold text-slate-500 block">
+              <label htmlFor="pred-name" className="text-[11px] font-bold text-slate-500 block">
                 Nama (Opsional)
               </label>
               <input
-                id="landing2-pred-name"
+                id="pred-name"
                 type="text"
                 className="w-full h-10 bg-white rounded-lg px-3 py-2 text-sm text-slate-900 font-semibold outline-none focus:ring-1 focus:ring-slate-900 border border-slate-200 transition-all placeholder-slate-400"
                 value={clientName}
@@ -106,11 +106,11 @@ export default function LandingTwoPredictionCalculator({ fractionRules, tax = 0.
 
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="space-y-1">
-              <label htmlFor="landing2-pred-price" className="text-[11px] font-bold text-slate-500 block">
+              <label htmlFor="pred-price" className="text-[11px] font-bold text-slate-500 block">
                 Harga Beli (Rp)
               </label>
               <input
-                id="landing2-pred-price"
+                id="pred-price"
                 type="text"
                 inputMode="numeric"
                 className="w-full h-10 bg-white rounded-lg px-3 py-2 text-sm text-slate-900 font-semibold outline-none focus:ring-1 focus:ring-slate-900 border border-slate-200 transition-all"
@@ -121,11 +121,11 @@ export default function LandingTwoPredictionCalculator({ fractionRules, tax = 0.
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="landing2-pred-lot" className="text-[11px] font-bold text-slate-500 block">
+              <label htmlFor="pred-lot" className="text-[11px] font-bold text-slate-500 block">
                 Jumlah Lot
               </label>
               <input
-                id="landing2-pred-lot"
+                id="pred-lot"
                 type="text"
                 inputMode="numeric"
                 className="w-full h-10 bg-white rounded-lg px-3 py-2 text-sm text-slate-900 font-semibold outline-none focus:ring-1 focus:ring-slate-900 border border-slate-200 transition-all"
@@ -138,11 +138,11 @@ export default function LandingTwoPredictionCalculator({ fractionRules, tax = 0.
 
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="space-y-1">
-              <label htmlFor="landing2-pred-feebeli" className="text-[11px] font-bold text-slate-500 block">
+              <label htmlFor="pred-feebeli" className="text-[11px] font-bold text-slate-500 block">
                 Fee Beli (%)
               </label>
               <input
-                id="landing2-pred-feebeli"
+                id="pred-feebeli"
                 type="number"
                 step="0.01"
                 className="w-full h-10 bg-white rounded-lg px-3 py-2 text-sm text-slate-900 font-semibold outline-none focus:ring-1 focus:ring-slate-900 border border-slate-200 transition-all"
@@ -152,11 +152,11 @@ export default function LandingTwoPredictionCalculator({ fractionRules, tax = 0.
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="landing2-pred-feejual" className="text-[11px] font-bold text-slate-500 block">
+              <label htmlFor="pred-feejual" className="text-[11px] font-bold text-slate-500 block">
                 Fee Jual (%)
               </label>
               <input
-                id="landing2-pred-feejual"
+                id="pred-feejual"
                 type="number"
                 step="0.01"
                 className="w-full h-10 bg-white rounded-lg px-3 py-2 text-sm text-slate-900 font-semibold outline-none focus:ring-1 focus:ring-slate-900 border border-slate-200 transition-all"
@@ -168,11 +168,11 @@ export default function LandingTwoPredictionCalculator({ fractionRules, tax = 0.
 
           <div className="grid grid-cols-2 gap-3 mb-5">
             <div className="space-y-1">
-              <label htmlFor="landing2-pred-profit" className="text-[11px] font-bold text-slate-500 block">
+              <label htmlFor="pred-profit" className="text-[11px] font-bold text-slate-500 block">
                 Target Untung (Rp)
               </label>
               <input
-                id="landing2-pred-profit"
+                id="pred-profit"
                 type="text"
                 inputMode="numeric"
                 className="w-full h-10 bg-white rounded-lg px-3 py-2 text-sm text-slate-900 font-semibold outline-none focus:ring-1 focus:ring-slate-900 border border-slate-200 transition-all"
@@ -183,11 +183,11 @@ export default function LandingTwoPredictionCalculator({ fractionRules, tax = 0.
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="landing2-pred-loss" className="text-[11px] font-bold text-slate-500 block">
+              <label htmlFor="pred-loss" className="text-[11px] font-bold text-slate-500 block">
                 Batas Rugi (Rp)
               </label>
               <input
-                id="landing2-pred-loss"
+                id="pred-loss"
                 type="text"
                 inputMode="numeric"
                 className="w-full h-10 bg-white rounded-lg px-3 py-2 text-sm text-slate-900 font-semibold outline-none focus:ring-1 focus:ring-slate-900 border border-slate-200 transition-all"
@@ -212,7 +212,7 @@ export default function LandingTwoPredictionCalculator({ fractionRules, tax = 0.
 
       {/* Right Output Card (Hidden on mobile until Hitung is clicked) */}
       <div
-        id="landing2-prediction-result"
+        id="prediction-result"
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="prediction" embedded>
