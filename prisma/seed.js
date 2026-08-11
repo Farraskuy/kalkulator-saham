@@ -18,27 +18,30 @@ if (fs.existsSync(path.resolve(__dirname, '../.env'))) {
 
 if (!process.env.DATABASE_URL) {
   const user = process.env.DB_USER || 'kalkulator_app';
-  const pass = process.env.DB_PASSWORD || '9SMvEgRQIhYkk3YqTMALrAoXZETm7SjU';
+  const pass = process.env.DB_PASSWORD;
   const name = process.env.DB_NAME || 'kalkulator_saham';
   const host = process.env.DB_HOST || 'localhost';
   const port = process.env.DB_PORT || '5432';
-  process.env.DATABASE_URL = `postgresql://${user}:${pass}@${host}:${port}/${name}?schema=public`;
+  if (!user || !pass || !name) {
+    throw new Error('DATABASE_URL or DB_USER, DB_PASSWORD, and DB_NAME must be configured before seeding');
+  }
+  process.env.DATABASE_URL = `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(pass)}@${host}:${port}/${encodeURIComponent(name)}?schema=public`;
 }
 
 const { PrismaClient } = require('@prisma/client');
-const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
-
-function hashPassword(password) {
-  return crypto.createHash('sha256').update(password).digest('hex');
-}
 
 async function main() {
   console.log('Memulai seeding database...');
 
   // 1. Seed Admin User
-  const email = 'admin@credisuite.com';
-  const passwordHash = hashPassword('credisuite2026');
+  const email = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!email || !adminPassword || adminPassword.length < 12) {
+    throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD (at least 12 characters) must be configured before seeding');
+  }
+  const passwordHash = await bcrypt.hash(adminPassword, 10);
 
   const existingAdmin = await prisma.adminUser.findUnique({
     where: { email },
@@ -53,7 +56,11 @@ async function main() {
     });
     console.log('✔ Akun Admin default berhasil dibuat.');
   } else {
-    console.log('✔ Akun Admin default sudah ada.');
+    await prisma.adminUser.update({
+      where: { id: existingAdmin.id },
+      data: { passwordHash },
+    });
+    console.log('Admin password updated from environment configuration.');
   }
 
   // 2. Seed Default Fractions
@@ -239,7 +246,7 @@ async function main() {
 
   for (const art of defaultArticles) {
     await prisma.article.create({
-      data: art,
+      data: { ...art, status: 'PUBLISHED' },
     });
   }
   console.log('✔ Personal Stock Blog & Educational Articles berhasil disimpan.');

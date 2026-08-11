@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { Target, TrendingUp, TrendingDown, Calculator, Coins } from 'lucide-react';
-import { kalkulasiTargetSaham, formatIDR, formatNumber } from '@/features/calculators/services/calculations';
+import { kalkulasiTargetSaham } from '@/features/calculators';
+import { formatIDR, formatNumber } from '@/lib/utils/formatters';
 import { FractionRule } from '@/types';
 import ExportCardWrapper from '@/components/ui/ExportCardWrapper';
 

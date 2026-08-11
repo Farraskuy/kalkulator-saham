@@ -4,25 +4,32 @@ import { verifySession } from '@/lib/auth';
 
 export async function GET() {
   const session = await verifySession();
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
-    // 1. Total traffic & user counts
-    const totalTraffic = await prisma.trafficLog.count().catch(() => 0);
-    const totalUsers = await prisma.user.count().catch(() => 0);
-    const totalCalculations = await prisma.calculationHistory.count().catch(() => 0);
-
-    // 2. Total action counts
-    const totalDownloads = await prisma.actionLog.count({ where: { action: 'download' } }).catch(() => 0);
-    const totalShares = await prisma.actionLog.count({ where: { action: 'share' } }).catch(() => 0);
-
-    // 3. Traffic by Referrer
-    const trafficLogs = await prisma.trafficLog.findMany({
-      select: { referrer: true },
-      take: 1000,
-    }).catch(() => []);
+    const [
+      totalTraffic,
+      totalUsers,
+      totalCalculations,
+      totalDownloads,
+      totalShares,
+      totalArticles,
+      publishedArticles,
+      trafficLogs,
+      actionGroups,
+      recentActions,
+    ] = await Promise.all([
+      prisma.trafficLog.count(),
+      prisma.user.count(),
+      prisma.calculationHistory.count(),
+      prisma.actionLog.count({ where: { action: 'download' } }),
+      prisma.actionLog.count({ where: { action: 'share' } }),
+      prisma.article.count(),
+      prisma.article.count({ where: { status: 'PUBLISHED' } }),
+      prisma.trafficLog.findMany({ select: { referrer: true }, orderBy: { timestamp: 'desc' }, take: 1000 }),
+      prisma.actionLog.groupBy({ by: ['calculatorType', 'action'], _count: { _all: true } }),
+      prisma.actionLog.findMany({ orderBy: { timestamp: 'desc' }, take: 8 }),
+    ]);
 
     const referrerCounts: Record<string, number> = {};
     trafficLogs.forEach((log) => {
@@ -32,39 +39,21 @@ export async function GET() {
       else if (ref.includes('twitter') || ref.includes('t.co')) ref = 'Twitter';
       else if (ref.includes('instagram')) ref = 'Instagram';
       else if (ref.includes('localhost') || ref.includes('127.0.0.1')) ref = 'Localhost';
-      else if (!ref || ref === 'Direct' || ref === '') ref = 'Direct / Bookmark';
-      
+      else if (!ref || ref === 'Direct') ref = 'Direct / Bookmark';
       referrerCounts[ref] = (referrerCounts[ref] || 0) + 1;
     });
 
-    const referrerList = Object.entries(referrerCounts)
-      .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value);
-
-    // 4. Action Counts by Calculator Type
-    const actions = await prisma.actionLog.findMany({
-      select: { calculatorType: true, action: true },
-    }).catch(() => []);
-
-    const calculatorStats = {
+    const calculatorStats: Record<string, { download: number; share: number }> = {
       'ara-arb': { download: 0, share: 0 },
-      'average': { download: 0, share: 0 },
-      'prediction': { download: 0, share: 0 },
+      average: { download: 0, share: 0 },
+      prediction: { download: 0, share: 0 },
     };
-
-    actions.forEach((act) => {
-      const type = act.calculatorType as 'ara-arb' | 'average' | 'prediction';
-      const actionType = act.action as 'download' | 'share';
-      if (calculatorStats[type]) {
-        calculatorStats[type][actionType] = (calculatorStats[type][actionType] || 0) + 1;
+    actionGroups.forEach((group) => {
+      const stats = calculatorStats[group.calculatorType];
+      if (stats && (group.action === 'download' || group.action === 'share')) {
+        stats[group.action] = group._count._all;
       }
     });
-
-    // 5. Recent actions log
-    const recentActions = await prisma.actionLog.findMany({
-      orderBy: { timestamp: 'desc' },
-      take: 10,
-    }).catch(() => []);
 
     return NextResponse.json({
       summary: {
@@ -73,15 +62,18 @@ export async function GET() {
         totalCalculations,
         totalDownloads,
         totalShares,
+        totalArticles,
+        publishedArticles,
+        draftArticles: totalArticles - publishedArticles,
       },
-      referrers: referrerList,
+      referrers: Object.entries(referrerCounts)
+        .map(([name, value]) => ({ name, value }))
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 8),
       calculatorStats,
       recentActions,
     });
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Gagal mengambil data analitik: ' + (error as Error).message },
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ error: 'Gagal mengambil data dashboard.' }, { status: 500 });
   }
 }

@@ -1,11 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifySession } from '@/lib/auth';
-import crypto from 'crypto';
-
-function hashPassword(password: string): string {
-  return crypto.createHash('sha256').update(password).digest('hex');
-}
+import { hashPassword, verifyPassword } from '@/lib/password';
 
 export async function POST(request: Request) {
   const session = await verifySession();
@@ -23,9 +19,9 @@ export async function POST(request: Request) {
       );
     }
 
-    if (newPassword.length < 6) {
+    if (newPassword.length < 10) {
       return NextResponse.json(
-        { error: 'Password baru minimal harus memiliki 6 karakter.' },
+        { error: 'Password baru minimal harus memiliki 10 karakter.' },
         { status: 400 }
       );
     }
@@ -38,23 +34,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Pengguna tidak ditemukan.' }, { status: 404 });
     }
 
-    const oldHash = hashPassword(oldPassword);
-    // Allow match if hashed or plain password matches
-    if (user.passwordHash !== oldHash && user.passwordHash !== oldPassword) {
+    if (!(await verifyPassword(oldPassword, user.passwordHash))) {
       return NextResponse.json({ error: 'Password lama yang Anda masukkan salah.' }, { status: 400 });
     }
 
     // Update password
-    const newHash = hashPassword(newPassword);
+    const newHash = await hashPassword(newPassword);
     await prisma.adminUser.update({
       where: { email: session.email },
       data: { passwordHash: newHash },
     });
 
     return NextResponse.json({ success: true, message: 'Password berhasil diperbarui!' });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
-      { error: 'Terjadi kesalahan: ' + (error as Error).message },
+      { error: 'Terjadi kesalahan server.' },
       { status: 500 }
     );
   }

@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { Layers, Plus, Trash2, Calculator } from 'lucide-react';
-import { calculateAverage, formatIDR, formatNumber, PurchaseRow } from '@/lib/calculations';
+import { calculateAverage, calculateTargetAverageLots, PurchaseRow } from '@/features/calculators';
+import { formatIDR, formatNumber } from '@/lib/utils/formatters';
 import ExportCardWrapper from '@/components/ui/ExportCardWrapper';
 
 export default function LandingTwoAvgCalculator() {
@@ -50,20 +51,12 @@ export default function LandingTwoAvgCalculator() {
     }, 50);
   };
 
-  let neededLots = 0;
-  let neededCapital = 0;
-
-  if (targetAvg > 0 && newPrice > 0 && result.totalLembar > 0 && targetAvg !== newPrice) {
-    const numerator = targetAvg * result.totalLembar - result.totalInvestment;
-    const denominator = 100 * (newPrice - targetAvg);
-    if (denominator !== 0) {
-      const calcLot = Math.ceil(numerator / denominator);
-      if (calcLot > 0) {
-        neededLots = calcLot;
-        neededCapital = neededLots * 100 * newPrice;
-      }
-    }
-  }
+  const { neededLots, neededCapital } = calculateTargetAverageLots(
+    targetAvg,
+    newPrice,
+    result.totalLembar,
+    result.totalInvestment
+  );
 
   const cleanFileName = ticker ? `kalkulator-average-${ticker}` : `kalkulator-average`;
 

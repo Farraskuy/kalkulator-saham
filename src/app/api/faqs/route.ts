@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       },
     });
 
-    revalidateTag('faqs');
+    revalidateTag('faqs', 'max');
 
     return NextResponse.json({ success: true, faq: newFaq });
   } catch (error) {
@@ -76,7 +76,7 @@ export async function PUT(request: Request) {
       },
     });
 
-    revalidateTag('faqs');
+    revalidateTag('faqs', 'max');
 
     return NextResponse.json({ success: true, faq: updatedFaq });
   } catch (error) {
@@ -105,7 +105,7 @@ export async function DELETE(request: Request) {
       where: { id },
     });
 
-    revalidateTag('faqs');
+    revalidateTag('faqs', 'max');
 
     return NextResponse.json({ success: true });
   } catch (error) {

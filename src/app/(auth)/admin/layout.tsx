@@ -1,222 +1,185 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import {
   BarChart3,
-  ListRestart,
-  Percent,
+  BookOpen,
+  ChevronDown,
   FileText,
+  HelpCircle,
+  ListRestart,
   Lock,
   LogOut,
   Menu,
-  X,
-  ChevronDown,
+  Percent,
   RefreshCw,
-  HelpCircle,
-  BookOpen,
   Tag,
+  X,
 } from 'lucide-react';
-import ThemeToggle from '@/components/layout/ThemeToggle';
 import AppLogo from '@/components/layout/AppLogo';
+import ThemeToggle from '@/components/layout/ThemeToggle';
 
-const navItems = [
-  { href: '/admin', label: 'Dashboard', icon: BarChart3 },
-  { href: '/admin/articles', label: 'Kelola Artikel & Blog', icon: BookOpen },
-  { href: '/admin/categories', label: 'Kategori Artikel', icon: Tag },
-  { href: '/admin/fractions', label: 'Fraksi Harga BEI', icon: ListRestart },
-  { href: '/admin/ara-arb', label: 'Aturan ARA / ARB', icon: Percent },
-  { href: '/admin/faqs', label: 'Kelola FAQ', icon: HelpCircle },
-  { href: '/admin/settings', label: 'Syarat & Ketentuan', icon: FileText },
-  { href: '/admin/security', label: 'Ganti Password', icon: Lock },
+const navGroups = [
+  {
+    label: 'Overview',
+    items: [{ href: '/admin', label: 'Dashboard', icon: BarChart3 }],
+  },
+  {
+    label: 'Konten',
+    items: [
+      { href: '/admin/articles', label: 'Artikel & Blog', icon: BookOpen },
+      { href: '/admin/categories', label: 'Kategori Artikel', icon: Tag },
+      { href: '/admin/faqs', label: 'FAQ', icon: HelpCircle },
+    ],
+  },
+  {
+    label: 'Konfigurasi',
+    items: [
+      { href: '/admin/fractions', label: 'Fraksi Harga BEI', icon: ListRestart },
+      { href: '/admin/ara-arb', label: 'Aturan ARA / ARB', icon: Percent },
+      { href: '/admin/settings', label: 'Syarat & Ketentuan', icon: FileText },
+      { href: '/admin/security', label: 'Keamanan Akun', icon: Lock },
+    ],
+  },
 ];
+
+const navItems = navGroups.flatMap((group) => group.items);
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
+  const [email, setEmail] = useState('Administrator');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  useEffect(() => {
-    // Verify session
-    let isMounted = true;
-    fetch('/api/auth/me')
-      .then((res) => {
-        if (!res.ok) {
-          router.push('/login');
-        } else if (isMounted) {
-          setAuthenticated(true);
-        }
-      })
-      .catch(() => {
-        if (isMounted) router.push('/login');
-      });
+  const [profileOpen, setProfileOpen] = useState(false);
 
+  useEffect(() => {
+    let active = true;
+    fetch('/api/auth/me')
+      .then(async (response) => {
+        if (!response.ok) throw new Error('Unauthorized');
+        return response.json();
+      })
+      .then((data) => {
+        if (!active) return;
+        setEmail(data.email || 'Administrator');
+        setAuthenticated(true);
+      })
+      .catch(() => router.replace('/login'));
     return () => {
-      isMounted = false;
+      active = false;
     };
   }, [router]);
 
+  useEffect(() => {
+    setMobileSidebarOpen(false);
+    setProfileOpen(false);
+  }, [pathname]);
+
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/login');
-  };
-
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 11) return 'Selamat Pagi ☀️';
-    if (hour < 15) return 'Selamat Siang 🌤️';
-    if (hour < 18) return 'Selamat Sore 🌇';
-    return 'Selamat Malam 🌙';
+    router.replace('/login');
+    router.refresh();
   };
 
   if (authenticated === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-page text-main">
-        <div className="flex items-center gap-3 font-bold text-sm">
-          <RefreshCw size={20} className="animate-spin text-acc-blue" />
-          <span>Memuat Admin Panel...</span>
+      <div className="flex min-h-screen items-center justify-center bg-page text-main">
+        <div className="flex items-center gap-2.5 text-sm font-semibold text-muted">
+          <RefreshCw size={18} className="animate-spin text-acc-blue" /> Memuat CMS...
         </div>
       </div>
     );
   }
-
   if (!authenticated) return null;
 
-  const activeNav = navItems.find((item) => item.href === pathname) || navItems[0];
+  const activeNav = navItems.find((item) => item.href === '/admin' ? pathname === '/admin' : pathname.startsWith(item.href)) ?? navItems[0];
 
-  return (
-    <div className="h-screen flex overflow-hidden bg-page text-main transition-colors duration-300">
-      {/* SIDEBAR FOR DESKTOP */}
-      <aside className="hidden md:flex flex-col w-64 h-screen sticky top-0 shrink-0 bg-card border-r border-border-custom transition-colors duration-300">
-        {/* Brand Logo */}
-        <div className="h-16 flex items-center gap-2.5 px-6 shrink-0">
-          <AppLogo size={30} />
-          <span className="font-extrabold text-sm tracking-wider">Hitungsaham</span>
+  const sidebarContent = (
+    <>
+      <div className="flex h-16 shrink-0 items-center gap-3 border-b border-border-custom px-5">
+        <AppLogo size={31} />
+        <div className="min-w-0">
+          <p className="truncate text-sm font-bold tracking-tight text-main">HitungSaham</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">Admin CMS</p>
         </div>
-
-        {/* Master Menu Label */}
-        <div className="px-6 pt-6 pb-2 text-[10px] font-extrabold text-muted tracking-widest uppercase shrink-0">
-          Master Menu
-        </div>
-
-        {/* Sidebar Nav Links */}
-        <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all duration-200 ${
-                  isActive
-                    ? 'bg-acc-blue text-white  shadow-acc-blue/20'
-                    : 'text-sub hover:bg-sub-slate hover:text-main'
-                }`}
-              >
-                <Icon size={16} />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-      </aside>
-
-      {/* MOBILE DRAWER SIDEBAR */}
-      {mobileSidebarOpen && (
-        <div className="fixed inset-0 z-50 flex md:hidden bg-black/50 backdrop-blur-sm">
-          <div className="w-64 bg-card h-full flex flex-col border-r border-border-custom animate-slide-in">
-            <div className="h-16 flex items-center justify-between px-6 shrink-0">
-              <div className="flex items-center gap-2.5">
-                <AppLogo size={30} />
-                <span className="font-extrabold text-sm tracking-wider uppercase">Hitungsaham</span>
-              </div>
-              <button onClick={() => setMobileSidebarOpen(false)} className="text-main">
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="px-6 pt-6 pb-2 text-[10px] font-extrabold text-muted tracking-widest uppercase shrink-0">
-              Master Menu
-            </div>
-
-            <nav className="grow px-4 space-y-1.5 overflow-y-auto">
-              {navItems.map((item) => {
+      </div>
+      <nav className="grow overflow-y-auto px-3 py-5">
+        {navGroups.map((group, groupIndex) => (
+          <div key={group.label} className={groupIndex ? 'mt-6' : ''}>
+            <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-muted">{group.label}</p>
+            <div className="space-y-1">
+              {group.items.map((item) => {
                 const Icon = item.icon;
-                const isActive = pathname === item.href;
+                const active = item.href === '/admin' ? pathname === '/admin' : pathname.startsWith(item.href);
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    onClick={() => setMobileSidebarOpen(false)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all duration-200 ${
-                      isActive
-                        ? 'bg-acc-blue text-white '
-                        : 'text-sub hover:bg-sub-slate'
+                    className={`flex min-h-10 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${
+                      active ? 'bg-acc-blue text-white' : 'text-sub hover:bg-sub-slate hover:text-main'
                     }`}
                   >
-                    <Icon size={16} />
+                    <Icon size={17} strokeWidth={active ? 2.3 : 2} />
                     <span>{item.label}</span>
                   </Link>
                 );
               })}
-            </nav>
+            </div>
           </div>
+        ))}
+      </nav>
+      <div className="border-t border-border-custom p-3">
+        <Link href="/" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-muted hover:bg-sub-slate hover:text-main">
+          <FileText size={17} /> Lihat website
+        </Link>
+      </div>
+    </>
+  );
+
+  return (
+    <div className="flex h-screen overflow-hidden bg-page text-main">
+      <aside className="hidden h-screen w-64 shrink-0 flex-col border-r border-border-custom bg-card md:flex">{sidebarContent}</aside>
+
+      {mobileSidebarOpen && (
+        <div className="fixed inset-0 z-50 flex md:hidden">
+          <button className="absolute inset-0 bg-slate-950/45" onClick={() => setMobileSidebarOpen(false)} aria-label="Tutup menu" />
+          <aside className="relative flex h-full w-[min(84vw,280px)] flex-col border-r border-border-custom bg-card">
+            {sidebarContent}
+            <button onClick={() => setMobileSidebarOpen(false)} className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-lg text-muted hover:bg-sub-slate hover:text-main" aria-label="Tutup sidebar"><X size={19} /></button>
+          </aside>
         </div>
       )}
 
-      {/* MAIN CONTAINER */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-        {/* TOP BAR */}
-        <header className="h-16 shrink-0 bg-card  flex items-center justify-between px-4 sm:px-6 z-10 transition-colors duration-300">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setMobileSidebarOpen(true)}
-              className="p-1.5 rounded-lg text-main hover:bg-sub-slate md:hidden"
-            >
-              <Menu size={22} />
-            </button>
-            <h1 className="font-extrabold text-lg tracking-tight capitalize text-main">
-              {activeNav.label}
-            </h1>
+      <div className="flex min-w-0 grow flex-col overflow-hidden">
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-border-custom bg-card px-4 sm:px-6">
+          <div className="flex min-w-0 items-center gap-3">
+            <button onClick={() => setMobileSidebarOpen(true)} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted hover:bg-sub-slate hover:text-main md:hidden" aria-label="Buka menu"><Menu size={20} /></button>
+            <div className="min-w-0">
+              <p className="truncate text-base font-bold text-main">{activeNav.label}</p>
+              <p className="hidden text-[11px] text-muted sm:block">Kelola website HitungSaham</p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
             <ThemeToggle />
-
             <div className="relative">
               <button
-                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="flex items-center gap-2 bg-sub-slate/50 hover:bg-sub-slate px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer text-main"
+                onClick={() => setProfileOpen((open) => !open)}
+                className="flex h-10 items-center gap-2 rounded-xl border border-border-custom bg-card px-2 text-left hover:bg-sub-slate sm:px-3"
               >
-                <div className="w-5 h-5 rounded-full bg-acc-blue text-white flex items-center justify-center font-bold text-[10px]">
-                  A
-                </div>
-                <span className="hidden sm:inline">admin@credisuite.com</span>
-                <ChevronDown size={14} className="opacity-60" />
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-acc-blue text-xs font-bold text-white">A</span>
+                <span className="hidden max-w-40 sm:block"><span className="block truncate text-xs font-semibold text-main">Administrator</span><span className="block truncate text-[10px] text-muted">{email}</span></span>
+                <ChevronDown size={14} className="hidden text-muted sm:block" />
               </button>
-
-              {profileDropdownOpen && (
+              {profileOpen && (
                 <>
-                  <div className="fixed inset-0 z-20" onClick={() => setProfileDropdownOpen(false)} />
-                  <div className="absolute right-0 mt-2 w-56 bg-card  rounded-2xl shadow-xl z-30 p-2 text-main animate-fade-in">
-                    <div className="px-3 py-2.5 ">
-                      <p className="text-[10px] font-bold text-muted uppercase tracking-wider">{getGreeting()}</p>
-                      <p className="text-xs font-extrabold mt-0.5 truncate text-main">Administrator</p>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setProfileDropdownOpen(false);
-                        handleLogout();
-                      }}
-                      className="w-full flex items-center gap-2.5 px-3 py-2.5 mt-1 rounded-xl text-left text-xs font-bold text-acc-pink hover:bg-sub-pink transition-colors cursor-pointer"
-                    >
-                      <LogOut size={15} />
-                      <span>Logout Sesi</span>
-                    </button>
+                  <button className="fixed inset-0 z-20" onClick={() => setProfileOpen(false)} aria-label="Tutup profil" />
+                  <div className="absolute right-0 z-30 mt-2 w-64 rounded-2xl border border-border-custom bg-card p-2">
+                    <div className="border-b border-border-custom px-3 py-3"><p className="text-xs font-semibold text-main">Administrator</p><p className="mt-0.5 truncate text-xs text-muted">{email}</p></div>
+                    <button onClick={handleLogout} className="mt-2 flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-rose-600 hover:bg-rose-500/10"><LogOut size={16} /> Keluar dari CMS</button>
                   </div>
                 </>
               )}
@@ -224,9 +187,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
 
-        {/* MAIN PAGE CONTENT (Independent Vertical Scroll) */}
-        <main className="flex-1 p-4 sm:p-6 overflow-y-auto max-w-7xl w-full mx-auto space-y-6">
-          {children}
+        <main className="grow overflow-y-auto">
+          <div className="mx-auto w-full max-w-[1440px] p-4 sm:p-6 lg:p-7">{children}</div>
         </main>
       </div>
     </div>

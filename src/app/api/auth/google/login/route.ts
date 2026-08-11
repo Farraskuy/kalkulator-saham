@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { createOAuthState } from '@/lib/auth';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -16,7 +17,7 @@ export async function GET(request: Request) {
   const redirectUri = `${baseUrl.replace(/\/$/, '')}/api/auth/google/callback`;
 
   const scope = encodeURIComponent('openid email profile');
-  const state = Buffer.from(JSON.stringify({ redirectPath })).toString('base64url');
+  const state = await createOAuthState(redirectPath);
 
   const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(
     redirectUri

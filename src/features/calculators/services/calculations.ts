@@ -45,7 +45,7 @@ export function getTickSize(price: number, rules: FractionRule[] = DEFAULT_FRACT
   return 25;
 }
 
-export function bulatkanHargaBEI(
+export function bulatkanBEI(
   hargaExact: number,
   type: 'ceil' | 'floor' = 'ceil',
   rules: FractionRule[] = DEFAULT_FRACTION_RULES
@@ -107,8 +107,8 @@ export function calculateAraArb(
     ? Math.max(1, previousPrice - fixedAmount)
     : previousPrice - previousPrice * (arbPercentMax / 100);
 
-  const ara = bulatkanHargaBEI(araRaw, 'floor', fractionRules);
-  const arb = bulatkanHargaBEI(arbRaw, 'floor', fractionRules);
+  const ara = bulatkanBEI(araRaw, 'floor', fractionRules);
+  const arb = bulatkanBEI(arbRaw, 'floor', fractionRules);
 
   const araPercentActual = ((ara - previousPrice) / previousPrice) * 100;
   const arbPercentActual = ((arb - previousPrice) / previousPrice) * 100;
@@ -151,6 +151,29 @@ export function calculateAverage(rows: PurchaseRow[]) {
   };
 }
 
+export function calculateTargetAverageLots(
+  targetAvg: number,
+  newPrice: number,
+  currentTotalLembar: number,
+  currentTotalInvestment: number
+): { neededLots: number; neededCapital: number } {
+  if (targetAvg > 0 && newPrice > 0 && currentTotalLembar > 0 && targetAvg !== newPrice) {
+    const numerator = targetAvg * currentTotalLembar - currentTotalInvestment;
+    const denominator = 100 * (newPrice - targetAvg);
+    if (denominator !== 0) {
+      const calcLot = Math.ceil(numerator / denominator);
+      if (calcLot > 0) {
+        return {
+          neededLots: calcLot,
+          neededCapital: calcLot * 100 * newPrice,
+        };
+      }
+    }
+  }
+  return { neededLots: 0, neededCapital: 0 };
+}
+
+
 export interface TargetPredictionInput {
   hargaBeli: number;
   lot: number;
@@ -184,12 +207,12 @@ export function kalkulasiTargetSaham(
   }
 
   const hargaUntungExact = (totalModal + targetUntungRp) / pengaliJual;
-  const hargaUntungBEI = bulatkanHargaBEI(hargaUntungExact, 'ceil', fractionRules);
+  const hargaUntungBEI = bulatkanBEI(hargaUntungExact, 'ceil', fractionRules);
   const pctProfitMax = ((hargaUntungBEI - hargaBeli) / hargaBeli) * 100;
   const labaBersihReal = hargaUntungBEI * pengaliJual - totalModal;
 
   const hargaRugiExact = (totalModal - targetRugiRp) / pengaliJual;
-  const hargaRugiBEI = bulatkanHargaBEI(hargaRugiExact, 'ceil', fractionRules);
+  const hargaRugiBEI = bulatkanBEI(hargaRugiExact, 'ceil', fractionRules);
   const pctLossMax = ((hargaBeli - hargaRugiBEI) / hargaBeli) * 100;
   const rugiBersihReal = totalModal - hargaRugiBEI * pengaliJual;
 

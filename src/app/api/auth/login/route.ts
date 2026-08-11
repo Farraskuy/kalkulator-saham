@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { createSession } from '@/lib/auth';
-import crypto from 'crypto';
-
-function hashPassword(password: string): string {
-  return crypto.createHash('sha256').update(password).digest('hex');
-}
+import { hashPassword, passwordNeedsUpgrade, verifyPassword } from '@/lib/password';
+import { checkRateLimit, getClientAddress } from '@/lib/rate-limit';
 
 export async function POST(request: Request) {
+  if (!checkRateLimit(`admin-login:${getClientAddress(request)}`, 10, 15 * 60 * 1000)) {
+    return NextResponse.json({ error: 'Terlalu banyak percobaan login. Coba lagi nanti.' }, { status: 429 });
+  }
+
   try {
     const { email, password } = await request.json();
 
@@ -21,8 +22,13 @@ export async function POST(request: Request) {
       });
 
       if (user) {
-        const inputHash = hashPassword(password);
-        if (inputHash === user.passwordHash || user.passwordHash.startsWith('$2a$') || user.passwordHash === password) {
+        if (await verifyPassword(password, user.passwordHash)) {
+          if (passwordNeedsUpgrade(user.passwordHash)) {
+            await prisma.adminUser.update({
+              where: { id: user.id },
+              data: { passwordHash: await hashPassword(password) },
+            });
+          }
           await createSession(user.email);
           return NextResponse.json({ success: true, email: user.email });
         }
@@ -31,15 +37,10 @@ export async function POST(request: Request) {
       // Fallback if DB not ready
     }
 
-    if (email === 'admin@credisuite.com' && password === 'credisuite2026') {
-      await createSession(email);
-      return NextResponse.json({ success: true, email });
-    }
-
     return NextResponse.json({ error: 'Email atau password salah.' }, { status: 401 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
-      { error: 'Terjadi kesalahan server: ' + (error as Error).message },
+      { error: 'Terjadi kesalahan server.' },
       { status: 500 }
     );
   }

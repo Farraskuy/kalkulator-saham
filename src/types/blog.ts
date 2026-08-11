@@ -13,8 +13,11 @@ export interface ArticleData {
   content: string;
   category: string;
   type: string;
+  status: 'DRAFT' | 'PUBLISHED';
   coverImage?: string | null;
   author?: string | null;
   source?: string | null;
   publishedAt: Date | string;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }

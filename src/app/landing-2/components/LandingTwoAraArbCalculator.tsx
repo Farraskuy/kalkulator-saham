@@ -2,7 +2,9 @@
 
 import React, { useState } from 'react';
 import { ShieldAlert, TrendingUp, TrendingDown, HelpCircle, Calculator } from 'lucide-react';
-import { Board, calculateAraArb, formatIDR, FractionRule } from '@/lib/calculations';
+import { Board, calculateAraArb } from '@/features/calculators';
+import { formatIDR } from '@/lib/utils/formatters';
+import type { FractionRule } from '@/types';
 import ExportCardWrapper from '@/components/ui/ExportCardWrapper';
 
 interface Props {

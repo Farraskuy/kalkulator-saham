@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifySession } from '@/lib/auth';
-import { DEFAULT_FRACTION_RULES, DEFAULT_ARA_ARB_RULES } from '@/lib/calculations';
+import { DEFAULT_FRACTION_RULES, DEFAULT_ARA_ARB_RULES } from '@/features/calculators';
 
 export async function GET() {
   try {

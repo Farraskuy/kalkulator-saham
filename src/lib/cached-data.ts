@@ -1,7 +1,7 @@
 import { unstable_cache } from 'next/cache';
 import { prisma } from '@/lib/db';
 import type { FaqItemData } from '@/types';
-import type { FractionRule } from '@/lib/calculations';
+import type { FractionRule } from '@/types';
 
 /**
  * 1. Cached FAQs fetcher with Next.js Server Cache & Revalidation Tag
@@ -32,6 +32,7 @@ export const getCachedArticles = unstable_cache(
   async () => {
     try {
       return await prisma.article.findMany({
+        where: { status: 'PUBLISHED' },
         orderBy: { publishedAt: 'desc' },
       });
     } catch (err) {
@@ -53,8 +54,8 @@ export const getCachedArticleBySlug = (slug: string) =>
   unstable_cache(
     async () => {
       try {
-        return await prisma.article.findUnique({
-          where: { slug },
+        return await prisma.article.findFirst({
+          where: { slug, status: 'PUBLISHED' },
         });
       } catch (err) {
         console.error(`Error fetching cached Article by slug [${slug}]:`, err);

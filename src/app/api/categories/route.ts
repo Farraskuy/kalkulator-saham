@@ -50,7 +50,7 @@ export async function POST(request: Request) {
       },
     });
 
-    revalidateTag('categories');
+    revalidateTag('categories', 'max');
 
     return NextResponse.json({ success: true, category: newCategory });
   } catch (error) {
@@ -90,7 +90,7 @@ export async function PUT(request: Request) {
       },
     });
 
-    revalidateTag('categories');
+    revalidateTag('categories', 'max');
 
     return NextResponse.json({ success: true, category: updatedCategory });
   } catch (error) {
@@ -119,7 +119,7 @@ export async function DELETE(request: Request) {
       where: { id },
     });
 
-    revalidateTag('categories');
+    revalidateTag('categories', 'max');
 
     return NextResponse.json({ success: true });
   } catch (error) {

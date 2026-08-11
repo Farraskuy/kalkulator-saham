@@ -90,6 +90,6 @@ jobs:
             printf '%s' "$GHCR_PAT" | sudo docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
             sudo docker compose -p "$APP_NAME" pull app
             sudo docker compose -p "$APP_NAME" up -d --wait postgres
-            sudo docker compose -p "$APP_NAME" run --rm app npx prisma migrate deploy
+            sudo docker compose -p "$APP_NAME" run --rm app prisma migrate deploy
             sudo docker compose -p "$APP_NAME" up -d --no-deps app
             sudo docker compose -p "$APP_NAME" ps

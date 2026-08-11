@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { Plus, Save, Trash2 } from 'lucide-react';
-import { FractionRule, DEFAULT_FRACTION_RULES } from '@/lib/calculations';
+import { DEFAULT_FRACTION_RULES } from '@/features/calculators';
+import type { FractionRule } from '@/types';
 
 export default function AdminFractionsPage() {
   const [fractions, setFractions] = useState<FractionRule[]>(DEFAULT_FRACTION_RULES);

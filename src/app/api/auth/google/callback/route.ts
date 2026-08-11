@@ -1,23 +1,13 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { createUserSession } from '@/lib/auth';
+import { createUserSession, verifyOAuthState } from '@/lib/auth';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
-  const stateStr = searchParams.get('state');
+  const redirectPath = await verifyOAuthState(searchParams.get('state'));
 
-  let redirectPath = '/';
-  if (stateStr) {
-    try {
-      const parsed = JSON.parse(Buffer.from(stateStr, 'base64url').toString('utf8'));
-      if (parsed.redirectPath) redirectPath = parsed.redirectPath;
-    } catch {
-      // default /
-    }
-  }
-
-  if (!code) {
+  if (!code || !redirectPath) {
     return NextResponse.redirect(new URL('/?error=no_code', request.url));
   }
 
@@ -30,6 +20,7 @@ export async function GET(request: Request) {
     // 1. Tukar authorization code dengan tokens
     const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
+      signal: AbortSignal.timeout(10_000),
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         code,
@@ -51,6 +42,7 @@ export async function GET(request: Request) {
     // 2. Ambil profil user dari Google
     const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: { Authorization: `Bearer ${tokens.access_token}` },
+      signal: AbortSignal.timeout(10_000),
     });
 
     if (!userRes.ok) {
@@ -60,7 +52,7 @@ export async function GET(request: Request) {
     const googleUser = await userRes.json();
     // googleUser: { id, email, name, picture, verified_email }
 
-    if (!googleUser.email) {
+    if (!googleUser.email || !googleUser.verified_email) {
       return NextResponse.redirect(new URL('/?error=no_email', request.url));
     }
 
@@ -88,20 +80,15 @@ export async function GET(request: Request) {
         },
       },
       update: {
-        access_token: tokens.access_token,
-        refresh_token: tokens.refresh_token,
-        expires_at: tokens.expires_in ? Math.floor(Date.now() / 1000) + tokens.expires_in : null,
-        id_token: tokens.id_token,
+        access_token: null,
+        refresh_token: null,
+        id_token: null,
       },
       create: {
         userId: dbUser.id,
         type: 'oauth',
         provider: 'google',
         providerAccountId: googleUser.id,
-        access_token: tokens.access_token,
-        refresh_token: tokens.refresh_token,
-        expires_at: tokens.expires_in ? Math.floor(Date.now() / 1000) + tokens.expires_in : null,
-        id_token: tokens.id_token,
         token_type: tokens.token_type,
         scope: tokens.scope,
       },

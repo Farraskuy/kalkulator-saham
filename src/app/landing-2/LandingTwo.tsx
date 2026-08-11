@@ -15,7 +15,7 @@ import LandingTwoAvgCalculator from './components/LandingTwoAvgCalculator';
 import FaqSection from '@/features/faq/components/FaqSection';
 import AnalyticsTracker from '@/components/analytics/AnalyticsTracker';
 import Footer from '@/components/layout/Footer';
-import { FractionRule } from '@/lib/calculations';
+import type { FractionRule } from '@/types';
 
 interface LandingTwoProps {
   fractionRules?: FractionRule[];

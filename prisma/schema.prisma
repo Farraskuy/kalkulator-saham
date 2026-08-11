@@ -12,6 +12,11 @@ enum Role {
   ADMIN
 }
 
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+}
+
 model User {
   id            String               @id @default(cuid())
   name          String?
@@ -123,11 +128,14 @@ model Article {
   content     String   @db.Text
   category    String   // "Jurnal " | "Edukasi Saham" | "Analisis Pasar" | "Tips & Trik" | "Pengalaman"
   type        String   @default("BLOG") // "ARTICLE" (Edukasi/Panduan) | "BLOG" (Berita/Blog Portal)
+  status      ArticleStatus @default(DRAFT)
   coverImage  String?
   author      String?  @default("Tim Redaksi")
   source      String?  @default("HitungSaham NEWS")
   publishedAt DateTime @default(now())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([status, publishedAt])
 }
 
