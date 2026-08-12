@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { use, useEffect, useState } from 'react';
-import { AlertCircle, ArrowLeft, LoaderCircle } from 'lucide-react';
+import { AlertCircle, ArrowLeft } from 'lucide-react';
 import ArticleEditorForm, { ArticleEditorData } from '@/features/admin/articles/ArticleEditorForm';
+import { AdminEditorSkeleton } from '@/features/admin/components/AdminCrudUi';
 
 export default function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -31,6 +32,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
           content: data.content || '',
           coverImage: data.coverImage || '',
           author: data.author || 'Tim Redaksi',
+          isTraderPick: data.isTraderPick === true,
         });
       })
       .catch((fetchError) => {
@@ -55,7 +57,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
   }
 
   if (!article) {
-    return <div className="flex min-h-64 items-center justify-center gap-2 text-sm font-medium text-muted"><LoaderCircle size={18} className="animate-spin text-acc-blue" /> Memuat artikel...</div>;
+    return <AdminEditorSkeleton label="Memuat artikel..." />;
   }
 
   return <ArticleEditorForm mode="edit" initialData={article} />;

@@ -5,6 +5,7 @@ import { verifySession } from '@/lib/auth';
 
 const ARTICLE_TYPES = new Set(['ARTICLE', 'BLOG']);
 const ARTICLE_STATUSES = new Set(['DRAFT', 'PUBLISHED']);
+const MAX_TRADER_PICKS = 3;
 
 type ArticleInput = {
   title: string;
@@ -16,6 +17,7 @@ type ArticleInput = {
   content: string;
   coverImage: string | null;
   author: string;
+  isTraderPick: boolean;
 };
 
 function cleanSlug(value: string): string {
@@ -36,6 +38,7 @@ function parseArticleInput(body: Record<string, unknown>): { data?: ArticleInput
   const type = typeof body.type === 'string' && ARTICLE_TYPES.has(body.type) ? body.type : 'BLOG';
   const status = typeof body.status === 'string' && ARTICLE_STATUSES.has(body.status) ? body.status : 'DRAFT';
   const rawCover = typeof body.coverImage === 'string' ? body.coverImage.trim() : '';
+  const isTraderPick = body.isTraderPick === true;
 
   if (!title || !slug || !category || !excerpt || !content) {
     return { error: 'Judul, slug, kategori, ringkasan, dan isi artikel wajib diisi.' };
@@ -65,8 +68,22 @@ function parseArticleInput(body: Record<string, unknown>): { data?: ArticleInput
       content,
       coverImage: rawCover || null,
       author,
+      isTraderPick,
     },
   };
+}
+
+async function validateTraderPickLimit(isTraderPick: boolean, currentArticleId?: string): Promise<string | null> {
+  if (!isTraderPick) return null;
+  const count = await prisma.article.count({
+    where: {
+      isTraderPick: true,
+      ...(currentArticleId ? { id: { not: currentArticleId } } : {}),
+    },
+  });
+  return count >= MAX_TRADER_PICKS
+    ? `Catatan Pilihan Trader dibatasi maksimal ${MAX_TRADER_PICKS} artikel. Hapus pilihan dari artikel lain terlebih dahulu.`
+    : null;
 }
 
 function databaseErrorResponse(error: unknown) {
@@ -112,6 +129,9 @@ export async function POST(req: NextRequest) {
     const parsed = parseArticleInput(await req.json());
     if (!parsed.data) return NextResponse.json({ error: parsed.error }, { status: 400 });
 
+    const traderPickError = await validateTraderPickLimit(parsed.data.isTraderPick);
+    if (traderPickError) return NextResponse.json({ error: traderPickError }, { status: 400 });
+
     const category = await prisma.category.findUnique({ where: { name: parsed.data.category } });
     if (!category) return NextResponse.json({ error: 'Kategori artikel tidak valid.' }, { status: 400 });
 
@@ -122,7 +142,9 @@ export async function POST(req: NextRequest) {
         publishedAt: new Date(),
       },
     });
-    revalidateTag('articles', 'max');
+    try {
+      revalidateTag('articles', 'max');
+    } catch {}
     return NextResponse.json({ success: true, article }, { status: 201 });
   } catch (error) {
     return databaseErrorResponse(error);
@@ -148,6 +170,9 @@ export async function PUT(req: NextRequest) {
     if (!existing) return NextResponse.json({ error: 'Artikel tidak ditemukan.' }, { status: 404 });
     if (!category) return NextResponse.json({ error: 'Kategori artikel tidak valid.' }, { status: 400 });
 
+    const traderPickError = await validateTraderPickLimit(parsed.data.isTraderPick, existing.id);
+    if (traderPickError) return NextResponse.json({ error: traderPickError }, { status: 400 });
+
     const article = await prisma.article.update({
       where: { id },
       data: {
@@ -158,9 +183,11 @@ export async function PUT(req: NextRequest) {
             : existing.publishedAt,
       },
     });
-    revalidateTag('articles', 'max');
-    revalidateTag(`article-${existing.slug}`, 'max');
-    if (existing.slug !== article.slug) revalidateTag(`article-${article.slug}`, 'max');
+    try {
+      revalidateTag('articles', 'max');
+      revalidateTag(`article-${existing.slug}`, 'max');
+      if (existing.slug !== article.slug) revalidateTag(`article-${article.slug}`, 'max');
+    } catch {}
     return NextResponse.json({ success: true, article });
   } catch (error) {
     return databaseErrorResponse(error);
@@ -176,8 +203,10 @@ export async function DELETE(req: NextRequest) {
 
   try {
     const article = await prisma.article.delete({ where: { id } });
-    revalidateTag('articles', 'max');
-    revalidateTag(`article-${article.slug}`, 'max');
+    try {
+      revalidateTag('articles', 'max');
+      revalidateTag(`article-${article.slug}`, 'max');
+    } catch {}
     return NextResponse.json({ success: true });
   } catch (error) {
     return databaseErrorResponse(error);

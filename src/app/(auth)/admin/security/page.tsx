@@ -1,22 +1,23 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Save } from 'lucide-react';
+import { Save, Lock } from 'lucide-react';
+import { useToast } from '@/components/ui/Toast';
+import { AdminCrudHeader } from '@/features/admin/components/AdminCrudHeader';
 
 export default function AdminSecurityPage() {
+  const { showToast } = useToast();
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    setMessage(null);
 
     if (newPassword !== confirmPassword) {
-      setMessage({ type: 'error', text: 'Konfirmasi password baru tidak cocok!' });
+      showToast('Konfirmasi password baru tidak cocok!', 'error');
       setSaving(false);
       return;
     }
@@ -30,42 +31,25 @@ export default function AdminSecurityPage() {
 
       const data = await res.json();
       if (res.ok && data.success) {
-        setMessage({ type: 'success', text: 'Password admin berhasil diperbarui!' });
+        showToast('Password admin berhasil diperbarui!', 'success');
         setOldPassword('');
         setNewPassword('');
         setConfirmPassword('');
       } else {
-        setMessage({ type: 'error', text: data.error || 'Gagal mengubah password.' });
+        showToast(data.error || 'Gagal mengubah password.', 'error');
       }
     } catch {
-      setMessage({ type: 'error', text: 'Terjadi kesalahan jaringan.' });
+      showToast('Terjadi kesalahan jaringan.', 'error');
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {message && (
-        <div
-          className={`p-4 rounded-2xl font-bold text-xs border ${
-            message.type === 'success'
-              ? 'bg-sub-green border-acc-green text-acc-green'
-              : 'bg-sub-pink border-acc-pink text-acc-pink'
-          }`}
-        >
-          {message.text}
-        </div>
-      )}
+    <div className="space-y-6 animate-fade-in max-w-4xl">
+      <AdminCrudHeader title="Keamanan Akun" description="Ganti password keamanan Anda untuk membatasi akses Admin CMS." icon={Lock} />
 
-      <div className="bg-card rounded-3xl p-6 max-w-md">
-        <div>
-          <h3 className="font-extrabold text-sm tracking-tight  pb-4 mb-3 text-main">
-            Perbarui Keamanan Password
-          </h3>
-          <p className="text-xs text-muted mb-6 leading-relaxed">
-            Ganti password keamanan Anda untuk membatasi akses Admin CMS.
-          </p>
+      <div className="bg-card rounded-3xl p-6 border border-border-custom max-w-md">
 
           <form onSubmit={handleChangePassword} className="space-y-4">
             <div className="space-y-1">
@@ -111,7 +95,6 @@ export default function AdminSecurityPage() {
               <span>{saving ? 'Memperbarui...' : 'Perbarui Password Admin'}</span>
             </button>
           </form>
-        </div>
       </div>
     </div>
   );

@@ -1,6 +1,13 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://hitungsaham.com'),
@@ -73,7 +80,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id">
+    <html lang="id" suppressHydrationWarning>
+      <head>
+        <Script
+          id="theme-initializer"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var saved=localStorage.getItem('theme');var theme=saved||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',theme);document.documentElement.classList.toggle('dark',theme==='dark')}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body>
         <GoogleAnalytics />
         {children}

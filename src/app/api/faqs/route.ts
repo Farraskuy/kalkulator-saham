@@ -1,10 +1,20 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { revalidateTag } from 'next/cache';
 import { prisma } from '@/lib/db';
 import { verifySession } from '@/lib/auth';
 
-export async function GET() {
+function slugify(value: string) {
+  return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+}
+
+export async function GET(request: NextRequest) {
   try {
+    const id = request.nextUrl.searchParams.get('id');
+    if (id) {
+      const faq = await prisma.faqItem.findUnique({ where: { id } });
+      if (!faq) return NextResponse.json({ error: 'FAQ tidak ditemukan.' }, { status: 404 });
+      return NextResponse.json({ faq });
+    }
     const faqs = await prisma.faqItem.findMany({
       orderBy: { order: 'asc' },
     });
@@ -24,9 +34,10 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { question, answer, order } = body;
+    const slug = slugify(typeof body.slug === 'string' ? body.slug : question || '');
 
-    if (!question || !answer) {
-      return NextResponse.json({ error: 'Pertanyaan dan jawaban wajib diisi' }, { status: 400 });
+    if (!question || !answer || !slug) {
+      return NextResponse.json({ error: 'Pertanyaan, slug, dan jawaban wajib diisi' }, { status: 400 });
     }
 
     const maxOrder = await prisma.faqItem.aggregate({
@@ -37,6 +48,7 @@ export async function POST(request: Request) {
     const newFaq = await prisma.faqItem.create({
       data: {
         question,
+        slug,
         answer,
         order: nextOrder,
       },
@@ -62,15 +74,17 @@ export async function PUT(request: Request) {
   try {
     const body = await request.json();
     const { id, question, answer, order } = body;
+    const slug = slugify(typeof body.slug === 'string' ? body.slug : question || '');
 
-    if (!id || !question || !answer) {
-      return NextResponse.json({ error: 'ID, pertanyaan, dan jawaban wajib diisi' }, { status: 400 });
+    if (!id || !question || !answer || !slug) {
+      return NextResponse.json({ error: 'ID, pertanyaan, slug, dan jawaban wajib diisi' }, { status: 400 });
     }
 
     const updatedFaq = await prisma.faqItem.update({
       where: { id },
       data: {
         question,
+        slug,
         answer,
         order: order !== undefined ? Number(order) : 0,
       },

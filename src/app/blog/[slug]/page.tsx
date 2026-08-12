@@ -8,7 +8,6 @@ import ReactMarkdown from 'react-markdown';
 import Footer from '@/components/layout/Footer';
 import LandingHeader from '@/components/landing/LandingHeader';
 import TrackBlogView from '@/features/blog/components/TrackBlogView';
-import styles from '../blog-acme.module.css';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -83,7 +82,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
   };
 
   return (
-    <div className={styles.page}>
+    <div className="min-h-screen w-full overflow-x-hidden text-(--landing-text) bg-(--landing-bg) font-sans">
       <TrackBlogView article={article} />
       <script
         type="application/ld+json"
@@ -93,26 +92,26 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
       <LandingHeader />
 
       {/* ARTICLE CONTENT CONTAINER */}
-      <main className="max-w-[1200px] w-full mx-auto px-5 sm:px-8 md:px-16 py-10 space-y-8 text-[#111210]">
+      <main className="max-w-[1200px] w-full mx-auto px-5 sm:px-8 md:px-16 py-10 space-y-8 text-main">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#52534e] hover:text-[#111210] mb-2"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-muted hover:text-main mb-2"
         >
           <ArrowLeft size={14} /> Kembali ke Blog &amp; Artikel
         </Link>
 
         {/* ARTICLE HEADER */}
-        <header className="space-y-4 border-b border-black/10 pb-8">
-          <span className="inline-block px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-[#e6e6e2] text-[#111210]">
+        <header className="space-y-4 border-b border-border-custom pb-8">
+          <span className="inline-block px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-sub-slate text-main">
             {article.category}
           </span>
 
-          <h1 className="text-3xl sm:text-5xl font-bold text-[#111210] leading-tight tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-bold text-main leading-tight tracking-tight">
             {article.title}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-[#82837e] pt-2">
-            <span>Oleh <strong className="text-[#111210]">{article.author || 'HitungSaham'}</strong></span>
+          <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-muted pt-2">
+            <span>Oleh <strong className="text-main">{article.author || 'HitungSaham'}</strong></span>
             <span>•</span>
             <span className="flex items-center gap-1">
               <Calendar size={13} />
@@ -138,20 +137,20 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
         {/* EXCERPT CALLOUT */}
         {article.excerpt && (
-          <div className="p-6 bg-[#f2f2ef] border-l-4 border-[#111210] rounded-r-xl text-base font-medium text-[#333430] leading-relaxed italic">
+          <div className="p-6 bg-card border-l-4 border-main rounded-r-xl text-base font-medium text-main leading-relaxed italic">
             {article.excerpt}
           </div>
         )}
 
         {/* ARTICLE BODY */}
-        <article className="prose max-w-none text-[#111210] text-base leading-relaxed space-y-6 pt-2">
+        <article className="prose max-w-none space-y-6 pt-2 text-base leading-relaxed text-main prose-headings:text-main prose-p:text-main prose-strong:text-main prose-li:text-main prose-blockquote:text-main prose-code:text-main prose-a:text-acc-blue">
           <ReactMarkdown>{article.content}</ReactMarkdown>
         </article>
 
         {/* CALCULATOR PROMO FOOTER BOX */}
-        <div className="mt-12 p-8 bg-[#111210] text-white rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="mt-12 flex flex-col items-center justify-between gap-6 rounded-2xl border border-white/10 bg-slate-900 p-8 text-white sm:flex-row">
           <div>
-            <div className="text-xs font-bold uppercase tracking-widest text-[#a0a09c] flex items-center gap-1.5 mb-1">
+            <div className="mb-1 flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-slate-300">
               <Calculator size={14} /> HitungSaham Tools
             </div>
             <h3 className="text-xl font-bold text-white">Butuh Menghitung Average Down Saham Kamu?</h3>
@@ -159,7 +158,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
               Gunakan kalkulator simulasi gratis kami untuk menghitung target harga rata-rata dan batas ARA/ARB BEI secara presisi.
             </p>
           </div>
-          <Link href="/#calculator" className="bg-white text-[#111210] font-bold text-xs px-5 py-3 rounded-xl whitespace-nowrap hover:bg-gray-200 transition-colors">
+          <Link href="/#calculator" className="whitespace-nowrap rounded-xl bg-white px-5 py-3 text-xs font-bold text-slate-950 transition-colors hover:bg-slate-200">
             Buka Kalkulator <ChevronRight size={14} className="inline ml-1" />
           </Link>
         </div>
@@ -170,4 +169,3 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
     </div>
   );
 }
-

@@ -3,6 +3,9 @@
 
 @import "tailwindcss";
 
+/* Dark utilities follow the in-app toggle, not the operating-system theme. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --bg-page: #f8fafc;
   --bg-card: #ffffff;
@@ -29,6 +32,24 @@
   --radius-sm: 6px;
 
   --nav-bg: rgba(255, 255, 255, 0.95);
+
+  --landing-bg: #f7f7f5;
+  --landing-card: #ffffff;
+  --landing-soft: #ebebeb;
+  --landing-soft-strong: #e0e0dc;
+  --landing-text: #111210;
+  --landing-muted: #52534e;
+  --landing-faint: #82837e;
+  --landing-ink: #111210;
+  --landing-on-ink: #ffffff;
+  --landing-border: rgba(17, 18, 16, 0.12);
+  --landing-header: rgba(247, 247, 245, 0.95);
+  --landing-control: #ffffff;
+  --landing-inverse-bg: #111827;
+  --landing-inverse-text: #ffffff;
+  --landing-cta-bg: #ffffff;
+  --landing-cta-text: #111827;
+  --landing-image-scrim: linear-gradient(90deg, rgba(0, 0, 0, 0.68) 0%, rgba(0, 0, 0, 0.28) 58%, rgba(0, 0, 0, 0.08) 100%);
 }
 
 [data-theme='dark'] {
@@ -52,6 +73,24 @@
   --accent-red: #ef4444;
 
   --nav-bg: rgba(19, 25, 38, 0.95);
+
+  --landing-bg: #080d16;
+  --landing-card: #141c2a;
+  --landing-soft: #1d293a;
+  --landing-soft-strong: #2a3a50;
+  --landing-text: #f8fafc;
+  --landing-muted: #b8c3d4;
+  --landing-faint: #93a2b8;
+  --landing-ink: #111827;
+  --landing-on-ink: #ffffff;
+  --landing-border: rgba(203, 213, 225, 0.18);
+  --landing-header: rgba(8, 13, 22, 0.96);
+  --landing-control: #0c1320;
+  --landing-inverse-bg: #111827;
+  --landing-inverse-text: #ffffff;
+  --landing-cta-bg: #f8fafc;
+  --landing-cta-text: #0f172a;
+  --landing-image-scrim: linear-gradient(90deg, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.38) 60%, rgba(0, 0, 0, 0.12) 100%);
 }
 
 @theme {
@@ -86,4 +125,86 @@ body {
   line-height: 1.5;
   transition: background-color 0.3s ease, color 0.3s ease;
   min-height: 100vh;
+}
+
+/* Landing active calculator & form overrides */
+.landing-active-calc section {
+  scroll-margin-top: 100px;
+}
+.landing-active-calc section > div:first-child {
+  display: none;
+}
+.landing-active-calc section > div:last-child {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.landing-active-calc input,
+.landing-active-calc select {
+  background-color: var(--landing-control) !important;
+  border-color: var(--landing-border) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  color: var(--landing-text) !important;
+}
+[data-theme='dark'] .landing-active-calc input,
+[data-theme='dark'] .landing-active-calc select {
+  background-color: #0c1320 !important;
+  color: #f8fafc !important;
+  color-scheme: dark;
+}
+[data-theme='dark'] .landing-active-calc input::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1;
+}
+.landing-active-calc input:hover,
+.landing-active-calc select:hover {
+  border-color: color-mix(in srgb, var(--landing-muted) 48%, transparent) !important;
+}
+.landing-active-calc input:focus,
+.landing-active-calc select:focus {
+  border-color: var(--accent-blue) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-blue) 18%, transparent) !important;
+}
+.landing-active-calc button {
+  border-radius: 8px !important;
+}
+
+/* Custom scrollbar helper */
+.landing-scroller {
+  scrollbar-width: thin;
+  scrollbar-color: var(--landing-faint) transparent;
+}
+.landing-scroller::-webkit-scrollbar {
+  height: 5px;
+}
+.landing-scroller::-webkit-scrollbar-thumb {
+  background: var(--landing-faint);
+  border-radius: 999px;
+}
+
+/* Fix iOS Safari auto-zoom on input focus (Safari auto-zooms when font-size < 16px) */
+@media screen and (max-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Animated Toast Keyframes (Credisuite Toast) */
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(120%) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-toast-slide-in {
+  animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

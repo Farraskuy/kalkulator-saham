@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShieldAlert, TrendingUp, TrendingDown, HelpCircle, Calculator } from 'lucide-react';
+import { ShieldAlert, TrendingUp, TrendingDown, HelpCircle, Calculator, RotateCcw } from 'lucide-react';
 import { Board, calculateAraArb } from '@/features/calculators';
-import { formatIDR } from '@/lib/utils/formatters';
+import { formatIDR, formatPercent, formatNumber } from '@/lib/utils/formatters';
 import type { FractionRule } from '@/types';
 import ExportCardWrapper from '@/components/ui/ExportCardWrapper';
 
@@ -12,12 +12,19 @@ interface Props {
 }
 
 export default function LandingAraArbCalculator({ fractionRules }: Props) {
-  const [ticker, setTicker] = useState<string>('BBRI');
-  const [price, setPrice] = useState<number>(2110);
-  const [board, setBoard] = useState<Board>('Utama');
+  const [ticker, setTicker] = useState<string>('');
+  const [price, setPrice] = useState<number>(0);
+  const [board, setBoard] = useState<Board | ''>('');
   const [hasCalculated, setHasCalculated] = useState<boolean>(false);
+  const [domainName, setDomainName] = useState<string>('HitungSaham.com');
 
-  const result = calculateAraArb(price, board, fractionRules);
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hostname) {
+      setDomainName(window.location.hostname);
+    }
+  }, []);
+
+  const result = calculateAraArb(price, board || 'Utama', fractionRules);
 
   const handleTickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const cleanTicker = e.target.value.replace(/[^a-zA-Z]/g, '').slice(0, 4).toUpperCase();
@@ -39,6 +46,13 @@ export default function LandingAraArbCalculator({ fractionRules }: Props) {
     }, 50);
   };
 
+  const handleReset = () => {
+    setTicker('');
+    setPrice(0);
+    setBoard('');
+    setHasCalculated(false);
+  };
+
   const cleanFileName = ticker
     ? `kalkulator-ara-arb-${ticker}-${price}`
     : `kalkulator-ara-arb-${price}`;
@@ -48,24 +62,27 @@ export default function LandingAraArbCalculator({ fractionRules }: Props) {
       {/* Left Form Input Card */}
       <div className="flex flex-col justify-between space-y-5">
         <div>
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200/80 mb-5">
+          <div className="flex items-center justify-between pb-3 border-b border-border-custom/80 mb-5">
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded-md flex items-center justify-center bg-slate-900 text-white">
                 <ShieldAlert size={16} />
               </div>
-              <span className="font-bold text-slate-900 text-sm">Parameter Penutupan</span>
+              <span className="font-bold text-main text-sm">Parameter Penutupan</span>
             </div>
+            <button type="button" onClick={handleReset} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold text-muted transition-colors hover:bg-sub-slate hover:text-main" title="Reset kalkulator">
+              <RotateCcw size={13} /> Reset
+            </button>
           </div>
 
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="space-y-1">
-              <label htmlFor="ara-ticker" className="text-[11px] font-bold text-slate-500 block">
-                Ticker (A-Z)
+              <label htmlFor="ara-ticker" className="text-[11px] font-bold text-muted block">
+                Kode Saham
               </label>
               <input
                 id="ara-ticker"
                 type="text"
-                className="w-full h-10 bg-white rounded-lg px-3 py-2 text-sm text-slate-900 font-bold outline-none focus:ring-1 focus:ring-slate-900 border border-slate-200 uppercase transition-all placeholder-slate-400"
+                className="w-full h-10 bg-card rounded-lg px-3 py-2 text-sm text-main font-bold outline-none focus:ring-1 focus:ring-acc-blue border border-border-custom uppercase transition-all placeholder:text-muted"
                 value={ticker}
                 onChange={handleTickerChange}
                 placeholder="BBRI"
@@ -73,32 +90,33 @@ export default function LandingAraArbCalculator({ fractionRules }: Props) {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="ara-board" className="text-[11px] font-bold text-slate-500 block">
+              <label htmlFor="ara-board" className="text-[11px] font-bold text-muted block">
                 Papan Saham
               </label>
               <select
                 id="ara-board"
-                className="w-full h-10 bg-white rounded-lg px-3 py-2 text-sm text-slate-900 font-semibold outline-none focus:ring-1 focus:ring-slate-900 border border-slate-200 cursor-pointer transition-all"
+                className="w-full h-10 bg-card rounded-lg px-3 py-2 text-sm text-main font-semibold outline-none focus:ring-1 focus:ring-acc-blue border border-border-custom cursor-pointer transition-all"
                 value={board}
                 onChange={(e) => setBoard(e.target.value as Board)}
               >
+                <option value="" disabled>Pilih papan saham</option>
                 <option value="Utama">Utama / Pengembangan</option>
                 <option value="Akselerasi">Akselerasi</option>
-                <option value="Watchlist">Watchlist (FTS)</option>
+                <option value="Watchlist">FCA</option>
               </select>
             </div>
           </div>
 
           <div className="space-y-1 mb-5">
-            <label htmlFor="ara-price" className="text-[11px] font-bold text-slate-500 block">
+            <label htmlFor="ara-price" className="text-[11px] font-bold text-muted block">
               Harga Penutupan Kemarin
             </label>
             <input
               id="ara-price"
               type="text"
               inputMode="numeric"
-              className="w-full h-10 bg-white rounded-lg px-3 py-2 text-sm text-slate-900 font-semibold outline-none focus:ring-1 focus:ring-slate-900 border border-slate-200 transition-all"
-              value={price ? new Intl.NumberFormat('id-ID').format(price) : ''}
+              className="w-full h-10 bg-card rounded-lg px-3 py-2 text-sm text-main font-semibold outline-none focus:ring-1 focus:ring-acc-blue border border-border-custom transition-all"
+              value={price ? formatNumber(price) : ''}
               onChange={handlePriceChange}
               placeholder="e.g. 2.110"
             />
@@ -111,15 +129,15 @@ export default function LandingAraArbCalculator({ fractionRules }: Props) {
             className="w-full h-11 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm mb-4"
           >
             <Calculator size={16} />
-            <span>Hitung Batas ARA &amp; ARB</span>
+            <span>Hitung</span>
           </button>
         </div>
 
-        <div className="bg-slate-100 border border-slate-200/80 text-slate-700 rounded-xl p-3.5 space-y-1 text-xs">
-          <div className="flex items-center gap-1.5 font-bold text-slate-900">
+        <div className="bg-sub-slate border border-border-custom text-sub rounded-xl p-3.5 space-y-1 text-xs">
+          <div className="flex items-center gap-1.5 font-bold text-main">
             <HelpCircle size={14} /> Aturan Pembulatan Fraksi:
           </div>
-          <span className="text-slate-600 text-[11px] leading-relaxed block">
+          <span className="text-sub text-[11px] leading-relaxed block">
             ARA dibulatkan ke bawah (Math.floor) ke tick terdekat untuk mencegah harga melebihi batas persentase maksimal. ARB dibulatkan ke atas (Math.ceil).
           </span>
         </div>
@@ -142,15 +160,16 @@ export default function LandingAraArbCalculator({ fractionRules }: Props) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 mb-5">
-            <div className="bg-[#ecfdf5] rounded-xl p-3.5 space-y-1">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-[#047857]">Persentase ARA</span>
-              <span className="text-sm font-extrabold block text-[#065f46] wrap-break-word">+{result.araPercent.toFixed(2)}%</span>
+          <div className="mt-4 mb-4">
+            <div className="bg-emerald-500/10 rounded-xl p-3.5 space-y-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">Persentase ARA</span>
+              <span className="text-sm font-extrabold block text-emerald-800 dark:text-emerald-300 wrap-break-word">+{formatPercent(result.araPercent)}</span>
             </div>
-            <div className="bg-[#f8fafc] rounded-xl p-3.5 space-y-1">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-[#475569] leading-tight">Harga Mentah ARA</span>
-              <span className="text-sm font-extrabold block text-[#0f172a] wrap-break-word">{formatIDR(result.araRaw)}</span>
-            </div>
+          </div>
+
+          <div className="flex justify-between border-y border-border-custom/30 py-1 text-[10px] font-medium text-muted">
+            <div>{domainName}</div>
+            <div>{new Date().toLocaleDateString('id-ID', { dateStyle: 'medium' })}</div>
           </div>
 
           {/* ARB Box (Solid Rose, No Gradient, No Shadow, No Border) */}
@@ -164,14 +183,10 @@ export default function LandingAraArbCalculator({ fractionRules }: Props) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-            <div className="bg-[#fff1f2] rounded-xl p-3.5 space-y-1">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-[#be123c]">Persentase ARB</span>
-              <span className="text-sm font-extrabold block text-[#9f1239] wrap-break-word">-${Math.abs(result.arbPercent).toFixed(2)}%</span>
-            </div>
-            <div className="bg-[#f8fafc] rounded-xl p-3.5 space-y-1">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-[#475569] leading-tight">Harga Mentah ARB</span>
-              <span className="text-sm font-extrabold block text-[#0f172a] wrap-break-word">{formatIDR(result.arbRaw)}</span>
+          <div className="mt-4">
+            <div className="bg-rose-500/10 rounded-xl p-3.5 space-y-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-rose-700 dark:text-rose-400">Persentase ARB</span>
+              <span className="text-sm font-extrabold block text-rose-800 dark:text-rose-300 wrap-break-word">-{formatPercent(Math.abs(result.arbPercent))}</span>
             </div>
           </div>
         </ExportCardWrapper>

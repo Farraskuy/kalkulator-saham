@@ -6,13 +6,13 @@ import { Metadata } from 'next';
 import Footer from '@/components/layout/Footer';
 import LandingHeader from '@/components/landing/LandingHeader';
 import BlogSearchDropdown from '@/features/blog/components/BlogSearchDropdown';
+import BlogPagination from '@/features/blog/components/BlogPagination';
 import { getCachedArticles, getCachedCategories } from '@/lib/cached-data';
-import styles from '../blog-acme.module.css';
 
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; category?: string }>;
+  searchParams: Promise<{ q?: string; category?: string; page?: string }>;
 }): Promise<Metadata> {
   const { q, category } = await searchParams;
   const queryText = q || category || 'Saham BEI';
@@ -30,9 +30,9 @@ export async function generateMetadata({
 export default async function BlogSearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; category?: string }>;
+  searchParams: Promise<{ q?: string; category?: string; page?: string }>;
 }) {
-  const { q = '', category = 'ALL' } = await searchParams;
+  const { q = '', category = 'ALL', page: pageParam } = await searchParams;
   const [articles, categories] = await Promise.all([
     getCachedArticles(),
     getCachedCategories(),
@@ -55,6 +55,21 @@ export default async function BlogSearchPage({
     return matchesCategory && matchesQuery;
   });
 
+  const pageSize = 6;
+  const totalPages = Math.max(1, Math.ceil(searchResults.length / pageSize));
+  const requestedPage = Number.parseInt(pageParam || '1', 10);
+  const currentPage = Number.isFinite(requestedPage)
+    ? Math.min(Math.max(requestedPage, 1), totalPages)
+    : 1;
+  const paginatedResults = searchResults.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const searchPageHref = (page: number) => {
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    if (category !== 'ALL') params.set('category', category);
+    params.set('page', String(page));
+    return `/blog/search?${params.toString()}`;
+  };
+
   const popularPicks = searchResults.slice(0, 3).map((art) => ({
     title: art.title,
     category: art.category,
@@ -62,16 +77,19 @@ export default async function BlogSearchPage({
     readTime: '5 min baca',
   }));
 
+  const categoryPillClass = "inline-flex items-center justify-center px-5 py-[9px] rounded-full text-xs font-semibold text-(--landing-muted) bg-(--landing-soft) hover:bg-(--landing-soft-strong) hover:text-(--landing-text) no-underline whitespace-nowrap transition-all duration-200";
+  const categoryPillActiveClass = "inline-flex items-center justify-center px-5 py-[9px] rounded-full text-xs font-bold bg-(--landing-inverse-bg) text-(--landing-inverse-text) no-underline whitespace-nowrap";
+
   return (
-    <div className={styles.page}>
+    <div className="min-h-screen w-full overflow-x-hidden text-(--landing-text) bg-(--landing-bg) font-sans">
       <LandingHeader />
 
-      <main className={styles.container} style={{ paddingTop: '32px' }}>
+      <main className="max-w-[1200px] mx-auto px-5 sm:px-8 md:px-16 pt-8 pb-[72px]">
         {/* BREADCRUMB */}
         <div className="mb-6">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#52534e] hover:text-[#111210] transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-muted hover:text-main transition-colors"
           >
             <ArrowLeft size={14} /> Kembali ke Blog &amp; Artikel
           </Link>
@@ -89,17 +107,17 @@ export default async function BlogSearchPage({
             />
           </div>
           {q && (
-            <p className="text-xs text-[#52534e] font-medium">
-              Menampilkan hasil pencarian untuk kata kunci: <strong className="text-[#111210]">&quot;{q}&quot;</strong> ({searchResults.length} ditemukan)
+            <p className="text-xs text-muted font-medium">
+              Menampilkan hasil pencarian untuk kata kunci: <strong className="text-main">&quot;{q}&quot;</strong> ({searchResults.length} ditemukan)
             </p>
           )}
         </div>
 
         {/* CATEGORY PILLS BAR ACME STYLE */}
-        <div className="flex items-center justify-center gap-2 overflow-x-auto pb-2 scrollbar-none mb-8">
+        <div className="flex items-center gap-2 w-full overflow-x-auto overscroll-x-contain pb-2 snap-x snap-proximity landing-scroller [&>*]:shrink-0 [&>*]:snap-start">
           <Link
             href={q ? `/blog/search?q=${encodeURIComponent(q)}` : '/blog/search'}
-            className={category === 'ALL' ? styles.categoryPillActive : styles.categoryPill}
+            className={category === 'ALL' ? categoryPillActiveClass : categoryPillClass}
           >
             Semua ({articles.length})
           </Link>
@@ -110,7 +128,7 @@ export default async function BlogSearchPage({
               <Link
                 key={cat.id}
                 href={searchUrl}
-                className={isActive ? styles.categoryPillActive : styles.categoryPill}
+                className={isActive ? categoryPillActiveClass : categoryPillClass}
               >
                 {cat.name}
               </Link>
@@ -125,8 +143,8 @@ export default async function BlogSearchPage({
               <Search size={28} />
             </div>
             <div className="space-y-1.5 max-w-md">
-              <h2 className="text-2xl font-bold text-[#111210]">Tidak Ada Catatan Ditemukan</h2>
-              <p className="text-xs text-[#52534e] leading-relaxed">
+              <h2 className="text-2xl font-bold text-main">Tidak Ada Catatan Ditemukan</h2>
+              <p className="text-xs text-muted leading-relaxed">
                 Maaf, tidak ada catatan jurnal yang cocok dengan kata kunci &quot;{q || category}&quot;. Silakan coba pencarian lain.
               </p>
             </div>
@@ -138,59 +156,66 @@ export default async function BlogSearchPage({
             </Link>
           </div>
         ) : (
-          <div className={styles.splitLayout}>
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-9 mt-9">
             <div>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>Daftar Hasil Pencarian ({searchResults.length})</h2>
+              <div className="mb-6 pb-3 border-b border-(--landing-border)">
+                <h2 className="text-[22px] font-bold text-(--landing-text) tracking-[-0.5px] m-0">Daftar Hasil Pencarian ({searchResults.length})</h2>
               </div>
 
-              <div className={styles.articlesGrid}>
-                {searchResults.map((art) => (
-                  <Link key={art.id} href={`/blog/${art.slug}`} className={styles.articleCard}>
-                    <div className={styles.articleImage}>
+              <div className="flex flex-col gap-5">
+                {paginatedResults.map((art) => (
+                  <Link key={art.id} href={`/blog/${art.slug}`} className="group bg-(--landing-card) rounded-[14px] p-[22px] no-underline text-inherit flex flex-col sm:flex-row gap-5  hover:bg-(--landing-soft) transition-all duration-200">
+                    <div className="relative w-full sm:w-[140px] h-[160px] sm:h-[105px] rounded-lg overflow-hidden shrink-0 bg-(--landing-inverse-bg)">
                       <Image
                         src={art.coverImage || '/assets/images/img.png'}
                         alt={art.title}
                         fill
+                        className="object-cover transition-transform duration-300 "
                       />
                     </div>
                     <div className="flex flex-col justify-center">
-                      <span className={styles.tagPill}>{art.category}</span>
-                      <h2 className={styles.articleTitle}>{art.title}</h2>
-                      <p className="text-xs text-gray-600 line-clamp-2 my-1">{art.excerpt}</p>
-                      <div className={styles.metaInfo}>
+                      <span className="inline-block px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-[0.5px] bg-(--landing-soft-strong) text-(--landing-text) w-fit">{art.category}</span>
+                      <h2 className="my-1 text-base font-bold text-(--landing-text) leading-[1.35]">{art.title}</h2>
+                      <p className="my-1 line-clamp-2 text-xs leading-relaxed text-muted">{art.excerpt}</p>
+                      <div className="text-xs font-medium text-(--landing-faint) mt-auto pt-3">
                         Dipublikasikan {new Date(art.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </div>
                     </div>
                   </Link>
                 ))}
               </div>
+
+              <BlogPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                hrefForPage={searchPageHref}
+              />
             </div>
 
-            <aside className={styles.sidebar}>
-              <div className={styles.sidebarWidget}>
-                <h3 className={styles.sidebarTitle}>Catatan Terkait</h3>
-                <div className={styles.picksList}>
+            <aside className="flex flex-col gap-6">
+              <div className="bg-(--landing-card) rounded-[14px] p-6 border border-(--landing-border)">
+                <h3 className="text-[15px] font-bold text-(--landing-text) m-0 mb-4 pb-[10px] border-b border-(--landing-border)">Catatan Terkait</h3>
+                <div className="flex flex-col gap-3.5">
                   {popularPicks.map((pick, i) => (
-                    <Link key={i} href={`/blog/${pick.slug}`} className={styles.pickItem}>
-                      <div className={styles.pickMeta}>
-                        <span className="font-bold text-slate-800">{pick.category}</span> • {pick.readTime}
+                    <Link key={i} href={`/blog/${pick.slug}`} className="group/pick no-underline text-inherit transition-colors">
+                      <div className="text-[11px] text-(--landing-faint)">
+                        <span className="font-bold text-sub">{pick.category}</span> • {pick.readTime}
                       </div>
-                      <div className={styles.pickTitle}>{pick.title}</div>
+                      <div className="text-xs font-semibold text-(--landing-text) leading-[1.4] mt-0.5 group-hover/pick:text-(--accent-blue) transition-colors">{pick.title}</div>
                     </Link>
                   ))}
                 </div>
               </div>
 
-              <div className={styles.promoWidget}>
-                <div className={styles.promoTag}>
+              <div className="bg-(--landing-inverse-bg) text-(--landing-inverse-text) border border-white/12 rounded-[14px] p-6 sm:p-7 flex flex-col gap-3">
+                <div className="text-[11px] font-bold tracking-[1.5px] uppercase text-[#aebbd0]">
                   <Calculator size={14} className="inline mr-1" /> Simulasikan Portofolio
                 </div>
-                <h4 className={styles.promoTitle}>Kalkulator ARA/ARB &amp; Average Down</h4>
-                <p className={styles.promoDesc}>
+                <h4 className="text-[18px] font-bold leading-[1.35] m-0">Kalkulator ARA/ARB &amp; Average Down</h4>
+                <p className="text-xs leading-[1.5] text-[#cbd5e1] m-0">
                   Hitung persentase batas auto rejection dan kebutuhan lot pembelian tambahan saham kamu secara gratis.
                 </p>
-                <Link href="/#calculator" className={styles.promoBtn}>
+                <Link href="/#calculator" className="inline-flex items-center justify-center px-[18px] py-2.5 bg-(--landing-cta-bg) text-(--landing-cta-text) rounded-lg text-xs font-bold no-underline mt-1 hover:bg-[#e2e8f0] transition-colors">
                   Coba Kalkulator Sekarang <ChevronRight size={14} className="inline ml-1" />
                 </Link>
               </div>

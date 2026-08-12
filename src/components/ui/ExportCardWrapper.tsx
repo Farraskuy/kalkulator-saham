@@ -82,11 +82,6 @@ export default function ExportCardWrapper({
       {/* EXPORTABLE CARD CONTAINER */}
       <div ref={cardRef} className="p-2 sm:p-3 bg-card rounded-xl space-y-4">
         {children}
-
-        <div className="pt-3 border-t border-border-custom/30 flex items-center justify-between text-[10px] text-muted font-medium">
-          <span>Kalkulator Saham • HitungSaham.com</span>
-          <span>{new Date().toLocaleDateString('id-ID', { dateStyle: 'medium' })}</span>
-        </div>
       </div>
 
       {/* ACTION BUTTONS AT BOTTOM (PILL STYLED: UNDUH GAMBAR PNG & BAGIKAN) */}

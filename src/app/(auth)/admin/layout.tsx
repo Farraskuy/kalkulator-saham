@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import AppLogo from '@/components/layout/AppLogo';
 import ThemeToggle from '@/components/layout/ThemeToggle';
+import { ToastProvider } from '@/components/ui/Toast';
 
 const navGroups = [
   {
@@ -140,57 +141,59 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   );
 
   return (
-    <div className="flex h-screen overflow-hidden bg-page text-main">
-      <aside className="hidden h-screen w-64 shrink-0 flex-col border-r border-border-custom bg-card md:flex">{sidebarContent}</aside>
+    <ToastProvider>
+      <div className="flex h-screen w-full overflow-hidden bg-page text-main">
+        {/* DESKTOP SIDEBAR */}
+        <aside className="hidden w-64 shrink-0 border-r border-border-custom bg-card md:flex md:flex-col">
+          {sidebarContent}
+        </aside>
 
-      {mobileSidebarOpen && (
-        <div className="fixed inset-0 z-50 flex md:hidden">
-          <button className="absolute inset-0 bg-slate-950/45" onClick={() => setMobileSidebarOpen(false)} aria-label="Tutup menu" />
-          <aside className="relative flex h-full w-[min(84vw,280px)] flex-col border-r border-border-custom bg-card">
-            {sidebarContent}
-            <button onClick={() => setMobileSidebarOpen(false)} className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-lg text-muted hover:bg-sub-slate hover:text-main" aria-label="Tutup sidebar"><X size={19} /></button>
-          </aside>
+        {/* MOBILE SIDEBAR MODAL */}
+        {mobileSidebarOpen && (
+          <div className="fixed inset-0 z-50 flex md:hidden">
+            <button className="absolute inset-0 bg-slate-950/45" onClick={() => setMobileSidebarOpen(false)} aria-label="Tutup menu" />
+            <aside className="relative flex h-full w-[min(84vw,280px)] flex-col border-r border-border-custom bg-card">
+              {sidebarContent}
+              <button onClick={() => setMobileSidebarOpen(false)} className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-lg text-muted hover:bg-sub-slate hover:text-main" aria-label="Tutup sidebar"><X size={19} /></button>
+            </aside>
+          </div>
+        )}
+
+        <div className="flex min-w-0 grow flex-col overflow-hidden">
+          <header className="flex h-16 shrink-0 items-center justify-between border-b border-border-custom bg-card px-4 sm:px-6">
+            <div className="flex min-w-0 items-center gap-3">
+              <button onClick={() => setMobileSidebarOpen(true)} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted hover:bg-sub-slate hover:text-main md:hidden" aria-label="Buka menu"><Menu size={20} /></button>
+            </div>
+
+            <div className="flex items-center gap-2 sm:gap-3">
+              <ThemeToggle />
+              <div className="relative">
+                <button
+                  onClick={() => setProfileOpen((open) => !open)}
+                  className="flex h-10 items-center gap-2 rounded-xl border border-border-custom bg-card px-2 text-left hover:bg-sub-slate sm:px-3"
+                >
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-acc-blue text-xs font-bold text-white">A</span>
+                  <span className="hidden max-w-40 sm:block"><span className="block truncate text-xs font-semibold text-main">Administrator</span><span className="block truncate text-[10px] text-muted">{email}</span></span>
+                  <ChevronDown size={14} className="hidden text-muted sm:block" />
+                </button>
+                {profileOpen && (
+                  <>
+                    <button className="fixed inset-0 z-20" onClick={() => setProfileOpen(false)} aria-label="Tutup profil" />
+                    <div className="absolute right-0 z-30 mt-2 w-64 rounded-2xl border border-border-custom bg-card p-2">
+                      <div className="border-b border-border-custom px-3 py-3"><p className="text-xs font-semibold text-main">Administrator</p><p className="mt-0.5 truncate text-xs text-muted">{email}</p></div>
+                      <button onClick={handleLogout} className="mt-2 flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-rose-600 hover:bg-rose-500/10"><LogOut size={16} /> Keluar dari CMS</button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </header>
+
+          <main className="grow overflow-y-auto">
+            <div className="mx-auto w-full max-w-[1440px] p-4 sm:p-6 lg:p-7">{children}</div>
+          </main>
         </div>
-      )}
-
-      <div className="flex min-w-0 grow flex-col overflow-hidden">
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-border-custom bg-card px-4 sm:px-6">
-          <div className="flex min-w-0 items-center gap-3">
-            <button onClick={() => setMobileSidebarOpen(true)} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted hover:bg-sub-slate hover:text-main md:hidden" aria-label="Buka menu"><Menu size={20} /></button>
-            <div className="min-w-0">
-              <p className="truncate text-base font-bold text-main">{activeNav.label}</p>
-              <p className="hidden text-[11px] text-muted sm:block">Kelola website HitungSaham</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 sm:gap-3">
-            <ThemeToggle />
-            <div className="relative">
-              <button
-                onClick={() => setProfileOpen((open) => !open)}
-                className="flex h-10 items-center gap-2 rounded-xl border border-border-custom bg-card px-2 text-left hover:bg-sub-slate sm:px-3"
-              >
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-acc-blue text-xs font-bold text-white">A</span>
-                <span className="hidden max-w-40 sm:block"><span className="block truncate text-xs font-semibold text-main">Administrator</span><span className="block truncate text-[10px] text-muted">{email}</span></span>
-                <ChevronDown size={14} className="hidden text-muted sm:block" />
-              </button>
-              {profileOpen && (
-                <>
-                  <button className="fixed inset-0 z-20" onClick={() => setProfileOpen(false)} aria-label="Tutup profil" />
-                  <div className="absolute right-0 z-30 mt-2 w-64 rounded-2xl border border-border-custom bg-card p-2">
-                    <div className="border-b border-border-custom px-3 py-3"><p className="text-xs font-semibold text-main">Administrator</p><p className="mt-0.5 truncate text-xs text-muted">{email}</p></div>
-                    <button onClick={handleLogout} className="mt-2 flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-rose-600 hover:bg-rose-500/10"><LogOut size={16} /> Keluar dari CMS</button>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </header>
-
-        <main className="grow overflow-y-auto">
-          <div className="mx-auto w-full max-w-[1440px] p-4 sm:p-6 lg:p-7">{children}</div>
-        </main>
       </div>
-    </div>
+    </ToastProvider>
   );
 }

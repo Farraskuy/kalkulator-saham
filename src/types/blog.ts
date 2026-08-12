@@ -17,6 +17,7 @@ export interface ArticleData {
   coverImage?: string | null;
   author?: string | null;
   source?: string | null;
+  isTraderPick?: boolean;
   publishedAt: Date | string;
   createdAt?: Date | string;
   updatedAt?: Date | string;

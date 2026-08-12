@@ -11,8 +11,8 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import AppLogo from '@/components/layout/AppLogo';
-import styles from './landing.module.css';
 import LandingLoginModal from './LandingLoginModal';
+import ThemeToggle from '@/components/layout/ThemeToggle';
 
 export default function LandingHeader() {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
@@ -20,31 +20,29 @@ export default function LandingHeader() {
 
   return (
     <>
-      <header className={styles.header}>
-        <div className="max-w-300 w-full mx-auto flex items-center justify-between">
-          <Link className={styles.logo} href="/" aria-label="HitungSaham home">
-            <AppLogo size={28} variant="dark-icon" />
+      <header className="sticky top-0 z-50 w-full h-[76px] px-4 sm:px-8 md:px-16 flex items-center justify-between bg-(--landing-header) backdrop-blur-md border-b border-(--landing-border)">
+        <div className="max-w-[1200px] w-full mx-auto flex items-center justify-between">
+          <Link className="flex items-center gap-2.5 text-(--landing-text) text-[21px] font-bold tracking-[-0.6px] no-underline" href="/" aria-label="HitungSaham home">
+            <AppLogo size={28} variant="auto" />
             <span>HitungSaham</span>
           </Link>
 
-          <nav className={styles.nav} aria-label="Navigasi utama">
+          <nav className="hidden md:flex items-center gap-7 sm:gap-8 [&>a]:text-xs [&>a]:font-medium [&>a]:text-(--landing-muted) [&>a]:hover:text-(--landing-text) [&>a]:transition-colors" aria-label="Navigasi utama">
             <Link href="/#calculator">Kalkulator Saham</Link>
             <Link href="/blog">Blog &amp; Artikel</Link>
             <Link href="/faq">FAQ</Link>
           </nav>
 
-          {/* Login Google Popup Trigger Button */}
-          <button
-            onClick={() => setLoginModalOpen(true)}
-            className={styles.loginButton}
-            type="button"
-          >
-            <CircleUserRound size={16} /> Masuk Google
-          </button>
+          <div className="hidden items-center gap-2 md:flex">
+            <ThemeToggle />
+            <button onClick={() => setLoginModalOpen(true)} className="rounded-lg px-[18px] py-[9px] inline-flex items-center gap-2 text-(--landing-text) bg-(--landing-soft) hover:bg-(--landing-soft-strong) text-xs font-semibold no-underline transition-all cursor-pointer" type="button">
+              <CircleUserRound size={16} /> Masuk Google
+            </button>
+          </div>
 
           {/* Mobile Hamburger Button Trigger */}
           <button
-            className={styles.menuButton}
+            className="md:hidden border-0 text-(--landing-text) bg-transparent cursor-pointer"
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Buka navigasi"
@@ -58,22 +56,22 @@ export default function LandingHeader() {
           <div className="fixed inset-0 z-50 flex justify-end">
             {/* Backdrop Overlay */}
             <div
-              className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity cursor-pointer"
+              className="fixed inset-0 bg-black/60 transition-opacity cursor-pointer"
               onClick={() => setMobileOpen(false)}
             />
 
             {/* Offcanvas Drawer Content */}
-            <div className="relative z-10 w-4/5 max-w-sm h-full bg-[#f7f7f5] text-[#111210] p-6 shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-300">
+            <div className="relative z-10 flex h-full w-4/5 max-w-sm flex-col justify-between overflow-y-auto bg-page p-6 text-main shadow-2xl animate-in slide-in-from-right duration-300">
               <div className="space-y-6">
                 {/* Header in Drawer */}
-                <div className="flex items-center justify-between pb-4 border-b border-black/10">
-                  <div className="flex items-center gap-2.5 font-bold text-lg text-[#111210]">
-                    <AppLogo size={28} variant="dark-icon" />
+                <div className="flex items-center justify-between border-b border-border-custom pb-4">
+                  <div className="flex items-center gap-2.5 text-lg font-bold text-main">
+                    <AppLogo size={28} variant="auto" />
                     <span>HitungSaham</span>
                   </div>
                   <button
                     onClick={() => setMobileOpen(false)}
-                    className="p-2 rounded-full hover:bg-black/5 text-[#111210] transition-colors cursor-pointer"
+                    className="cursor-pointer rounded-full p-2 text-main transition-colors hover:bg-sub-slate"
                     aria-label="Tutup menu"
                   >
                     <X size={20} />
@@ -85,45 +83,46 @@ export default function LandingHeader() {
                   <Link
                     href="/#calculator"
                     onClick={() => setMobileOpen(false)}
-                    className="px-4 py-3 rounded-xl font-bold text-sm text-[#111210] hover:bg-[#ebebeb] transition-colors flex items-center gap-3"
+                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-main transition-colors hover:bg-sub-slate"
                   >
-                    <Calculator size={18} className="text-[#52534e]" />
+                    <Calculator size={18} className="text-muted" />
                     <span>Kalkulator Saham</span>
                   </Link>
 
                   <Link
                     href="/blog"
                     onClick={() => setMobileOpen(false)}
-                    className="px-4 py-3 rounded-xl font-bold text-sm text-[#111210] hover:bg-[#ebebeb] transition-colors flex items-center gap-3"
+                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-main transition-colors hover:bg-sub-slate"
                   >
-                    <BookOpen size={18} className="text-[#52534e]" />
+                    <BookOpen size={18} className="text-muted" />
                     <span>Blog &amp; Artikel</span>
                   </Link>
 
                   <Link
                     href="/faq"
                     onClick={() => setMobileOpen(false)}
-                    className="px-4 py-3 rounded-xl font-bold text-sm text-[#111210] hover:bg-[#ebebeb] transition-colors flex items-center gap-3"
+                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-main transition-colors hover:bg-sub-slate"
                   >
-                    <HelpCircle size={18} className="text-[#52534e]" />
+                    <HelpCircle size={18} className="text-muted" />
                     <span>FAQ</span>
                   </Link>
                 </nav>
               </div>
 
               {/* Drawer Bottom Actions */}
-              <div className="pt-6 border-t border-black/10 space-y-3">
+              <div className="space-y-3 border-t border-border-custom pt-6">
+                <div className="flex items-center justify-between rounded-xl bg-sub-slate px-3 py-2 text-sm font-semibold text-main"><span>Tema tampilan</span><ThemeToggle /></div>
                 <button
                   onClick={() => {
                     setMobileOpen(false);
                     setLoginModalOpen(true);
                   }}
-                  className="w-full py-3 px-4 rounded-xl bg-[#111210] text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-md transition-colors cursor-pointer"
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-main px-4 py-3 text-xs font-extrabold text-page transition-colors"
                 >
                   <CircleUserRound size={16} />
                   <span>Masuk Google</span>
                 </button>
-                <div className="text-[11px] text-center text-[#82837e]">
+                <div className="text-center text-[11px] text-muted">
                   &copy; {new Date().getFullYear()} HitungSaham.com
                 </div>
               </div>

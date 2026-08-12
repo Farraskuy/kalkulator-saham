@@ -1,14 +1,16 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Plus, Save, Trash2 } from 'lucide-react';
+import { Plus, Save, Trash2, Percent } from 'lucide-react';
 import { DEFAULT_FRACTION_RULES } from '@/features/calculators';
 import type { FractionRule } from '@/types';
+import { useToast } from '@/components/ui/Toast';
+import { AdminCrudHeader } from '@/features/admin/components/AdminCrudHeader';
 
 export default function AdminFractionsPage() {
+  const { showToast } = useToast();
   const [fractions, setFractions] = useState<FractionRule[]>(DEFAULT_FRACTION_RULES);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
     fetch('/api/rules')
@@ -23,7 +25,6 @@ export default function AdminFractionsPage() {
 
   const handleSaveRules = async () => {
     setSaving(true);
-    setMessage(null);
     try {
       const res = await fetch('/api/rules', {
         method: 'POST',
@@ -31,40 +32,23 @@ export default function AdminFractionsPage() {
         body: JSON.stringify({ fractions }),
       });
       if (res.ok) {
-        setMessage({ type: 'success', text: 'Aturan fraksi harga berhasil disimpan!' });
+        showToast('Aturan fraksi harga berhasil disimpan!', 'success');
       } else {
-        setMessage({ type: 'error', text: 'Gagal menyimpan aturan fraksi harga.' });
+        showToast('Gagal menyimpan aturan fraksi harga.', 'error');
       }
     } catch {
-      setMessage({ type: 'error', text: 'Terjadi kesalahan jaringan.' });
+      showToast('Terjadi kesalahan jaringan.', 'error');
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {message && (
-        <div
-          className={`p-4 rounded-2xl font-bold text-xs border ${
-            message.type === 'success'
-              ? 'bg-sub-green border-acc-green text-acc-green'
-              : 'bg-sub-pink border-acc-pink text-acc-pink'
-          }`}
-        >
-          {message.text}
-        </div>
-      )}
+    <div className="space-y-6 animate-fade-in max-w-4xl">
+      <AdminCrudHeader title="Fraksi Harga BEI" description="Kelola tingkatan fraksi harga saham dan kelipatan perubahan harganya (tick size) di Bursa Efek Indonesia." icon={Percent} />
 
-      <div className="bg-card rounded-3xl p-6">
+      <div className="bg-card rounded-3xl p-6 border border-border-custom">
         <div>
-          <h3 className="font-extrabold text-sm tracking-tight  pb-4 mb-3 text-main">
-            Tabel Fraksi Harga BEI (Tick Size)
-          </h3>
-          <p className="text-xs text-muted mb-6 leading-relaxed">
-            Kelola tingkatan fraksi harga saham dan kelipatan perubahan harganya (tick size) di Bursa Efek Indonesia.
-          </p>
-
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left border-collapse">
               <thead>

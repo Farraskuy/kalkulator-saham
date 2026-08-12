@@ -363,7 +363,7 @@ export default function BlogSearchDropdown({
         <Search
           size={15}
           className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${
-            isAcme ? 'text-[#82837e]' : 'text-muted'
+            isAcme ? 'text-muted' : 'text-muted'
           }`}
         />
         <input
@@ -378,7 +378,7 @@ export default function BlogSearchDropdown({
           placeholder={placeholder}
           className={
             isAcme
-              ? 'w-full bg-white border border-black/10 rounded-xl pl-9 pr-9 py-2 text-xs font-semibold text-[#111210] outline-none focus:border-[#111210] transition-colors shadow-2xs'
+              ? 'w-full bg-card border border-border-custom rounded-xl pl-9 pr-9 py-2 text-base sm:text-xs font-semibold text-main outline-none focus:border-main transition-colors shadow-2xs'
               : 'w-full bg-sub-slate border border-border-custom/50 rounded-xl pl-9 pr-9 py-2 text-xs font-semibold text-main outline-none focus:border-acc-blue transition-colors shadow-2xs'
           }
         />
@@ -390,7 +390,7 @@ export default function BlogSearchDropdown({
               setDebouncedQuery('');
             }}
             className={`absolute right-3 top-1/2 -translate-y-1/2 ${
-              isAcme ? 'text-[#82837e] hover:text-[#111210]' : 'text-muted hover:text-main'
+              isAcme ? 'text-muted hover:text-main' : 'text-muted hover:text-main'
             }`}
             title="Hapus kata kunci"
           >
@@ -399,12 +399,12 @@ export default function BlogSearchDropdown({
         )}
       </form>
 
-      {/* DESKTOP POPOVER DROPDOWN (sm:block) */}
+      {/* Desktop helper panel follows the full width of its search input. */}
       {isOpen && (
         <div
-          className={`hidden sm:block absolute right-0 top-full mt-2 w-full sm:w-[440px] z-50 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ${
+          className={`hidden sm:block absolute inset-x-0 top-full mt-2 z-50 max-h-[calc(100vh-8rem) w-full overflow-y-auto rounded-2xl shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200 ${
             isAcme
-              ? 'bg-white text-[#111210] border border-black/10'
+              ? 'bg-card text-main border border-border-custom'
               : 'bg-card text-main border border-border-custom/80'
           }`}
         >
@@ -417,11 +417,11 @@ export default function BlogSearchDropdown({
       {isOpen && (
         <div
           className={`sm:hidden fixed inset-0 z-50 flex flex-col overflow-y-auto animate-in fade-in duration-200 ${
-            isAcme ? 'bg-[#f7f7f5] text-[#111210]' : 'bg-page text-main'
+            isAcme ? 'bg-page text-main' : 'bg-page text-main'
           }`}
         >
           {/* MOBILE FULLSCREEN HEADER SEARCH BAR */}
-          <div className="p-4 border-b border-border-custom/50 flex items-center gap-3 sticky top-0 bg-background/95 backdrop-blur-md z-10">
+          <div className="sticky top-0 z-10 flex items-center gap-3 border-b border-border-custom/50 bg-card p-4">
             <button
               type="button"
               onClick={() => setIsOpen(false)}
@@ -449,7 +449,7 @@ export default function BlogSearchDropdown({
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={placeholder}
-                className="w-full bg-sub-slate border border-border-custom/50 rounded-xl pl-10 pr-9 py-2.5 text-sm font-semibold text-main outline-none focus:border-acc-blue"
+                className="w-full bg-sub-slate border border-border-custom/50 rounded-xl pl-10 pr-9 py-2.5 text-base font-semibold text-main outline-none focus:border-acc-blue"
               />
               {query && (
                 <button

@@ -1,10 +1,16 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { revalidateTag } from 'next/cache';
 import { prisma } from '@/lib/db';
 import { verifySession } from '@/lib/auth';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const id = request.nextUrl.searchParams.get('id');
+    if (id) {
+      const category = await prisma.category.findUnique({ where: { id } });
+      if (!category) return NextResponse.json({ error: 'Kategori tidak ditemukan.' }, { status: 404 });
+      return NextResponse.json({ category });
+    }
     const categories = await prisma.category.findMany({
       orderBy: { order: 'asc' },
     });

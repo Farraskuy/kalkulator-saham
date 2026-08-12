@@ -61,20 +61,27 @@ export function bulatkanBEI(
 
 export function getAraArbPercentages(
   price: number,
-  board: Board
+  board: Board,
+  customRules?: Record<string, { ara: number; arb: number }[]>
 ): { araPercent: number; arbPercent: number; fixedAmount?: number } {
   if (board === 'Akselerasi' || board === 'Watchlist') {
     if (price <= 10) {
       return { araPercent: 0, arbPercent: 0, fixedAmount: 1 };
     }
-    return { araPercent: 10, arbPercent: 10 };
+    const rule = customRules?.['Akselerasi']?.[0];
+    return { araPercent: rule?.ara ?? 10, arbPercent: rule?.arb ?? 10 };
   }
+
+  // Papan Utama & Pengembangan (3 Rentang Harga Resmi BEI)
   if (price <= 200) {
-    return { araPercent: 35, arbPercent: 15 };
+    const rule = customRules?.['Utama_50_200']?.[0] || customRules?.['Utama']?.[0];
+    return { araPercent: rule?.ara ?? 35, arbPercent: rule?.arb ?? 35 };
   } else if (price <= 5000) {
-    return { araPercent: 25, arbPercent: 15 };
+    const rule = customRules?.['Utama_200_5000']?.[0] || customRules?.['Utama']?.[0];
+    return { araPercent: rule?.ara ?? 25, arbPercent: rule?.arb ?? 25 };
   } else {
-    return { araPercent: 20, arbPercent: 15 };
+    const rule = customRules?.['Utama_5000']?.[0] || customRules?.['Utama']?.[0];
+    return { araPercent: rule?.ara ?? 20, arbPercent: rule?.arb ?? 20 };
   }
 }
 
@@ -201,8 +208,8 @@ export function kalkulasiTargetSaham(
   if (pengaliJual <= 0 || totalLembar <= 0 || hargaBeli <= 0) {
     return {
       rincian: { totalLembar: 0, totalModal: 0 },
-      skenarioUntung: { hargaExact: 0, hargaBEI: 0, persentase: '0.00', labaBersihReal: 0 },
-      skenarioRugi: { hargaExact: 0, hargaBEI: 0, persentase: '0.00', rugiBersihReal: 0 },
+      skenarioUntung: { hargaExact: 0, hargaBEI: 0, persentase: 0, labaBersihReal: 0 },
+      skenarioRugi: { hargaExact: 0, hargaBEI: 0, persentase: 0, rugiBersihReal: 0 },
     };
   }
 
@@ -224,13 +231,13 @@ export function kalkulasiTargetSaham(
     skenarioUntung: {
       hargaExact: hargaUntungExact,
       hargaBEI: hargaUntungBEI,
-      persentase: pctProfitMax.toFixed(2),
+      persentase: pctProfitMax,
       labaBersihReal: labaBersihReal,
     },
     skenarioRugi: {
       hargaExact: hargaRugiExact,
       hargaBEI: hargaRugiBEI,
-      persentase: pctLossMax.toFixed(2),
+      persentase: pctLossMax,
       rugiBersihReal: rugiBersihReal,
     },
   };

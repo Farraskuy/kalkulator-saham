@@ -29,12 +29,12 @@ export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModal
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">
-      <div className="bg-[#f7f7f5] text-[#111210] w-full max-w-md rounded-2xl border border-black/15 shadow-2xl overflow-hidden flex flex-col relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 transition-opacity animate-in fade-in duration-200">
+      <div className="bg-page text-main w-full max-w-md rounded-2xl border border-border-custom shadow-2xl overflow-hidden flex flex-col relative">
         {/* Close Button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 p-1.5 rounded-full bg-black/5 text-[#52534e] hover:text-[#111210] hover:bg-black/10 transition-colors cursor-pointer z-10"
+          className="absolute top-4 right-4 p-1.5 rounded-full bg-black/5 text-muted hover:text-main hover:bg-sub-slate transition-colors cursor-pointer z-10"
           aria-label="Tutup popup"
         >
           <X size={18} />
@@ -46,10 +46,10 @@ export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModal
             <AppLogo size={32} variant="white-icon" />
           </div>
           <div>
-            <h3 className="text-lg sm:text-xl font-bold text-[#111210] tracking-tight">
+            <h3 className="text-lg sm:text-xl font-bold text-main tracking-tight">
               Masuk dengan Google
             </h3>
-            <p className="text-xs text-[#52534e] mt-1 leading-relaxed">
+            <p className="text-xs text-muted mt-1 leading-relaxed">
               Nikmati akses mudah menyimpan histori perhitungan dan proyeksi saham Anda.
             </p>
           </div>
@@ -57,12 +57,12 @@ export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModal
 
         {/* Benefits List */}
         <div className="px-6 sm:px-7 space-y-3 mb-5">
-          <div className="bg-[#ebebeb] p-4 rounded-xl space-y-3 text-xs">
+          <div className="bg-sub-slate p-4 rounded-xl space-y-3 text-xs">
             <div className="flex items-start gap-2.5">
               <CheckCircle2 size={16} className="text-emerald-700 shrink-0 mt-0.5" />
               <div>
-                <strong className="text-[#111210] block font-bold">Simpan Riwayat Perhitungan Otomatis</strong>
-                <span className="text-[#52534e] text-[11px] leading-relaxed block">
+                <strong className="text-main block font-bold">Simpan Riwayat Perhitungan Otomatis</strong>
+                <span className="text-muted text-[11px] leading-relaxed block">
                   Hasil simulasi target profit, ARA/ARB, dan average down tersimpan aman di akun Anda.
                 </span>
               </div>
@@ -71,8 +71,8 @@ export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModal
             <div className="flex items-start gap-2.5">
               <CheckCircle2 size={16} className="text-emerald-700 shrink-0 mt-0.5" />
               <div>
-                <strong className="text-[#111210] block font-bold">Akses Kapan Saja &amp; Gratis 100%</strong>
-                <span className="text-[#52534e] text-[11px] leading-relaxed block">
+                <strong className="text-main block font-bold">Akses Kapan Saja &amp; Gratis 100%</strong>
+                <span className="text-muted text-[11px] leading-relaxed block">
                   Buka kembali analisis portofolio dari HP maupun Laptop secara instan tanpa biaya.
                 </span>
               </div>
@@ -81,8 +81,8 @@ export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModal
             <div className="flex items-start gap-2.5">
               <CheckCircle2 size={16} className="text-emerald-700 shrink-0 mt-0.5" />
               <div>
-                <strong className="text-[#111210] block font-bold">Autentikasi Aman via Google OAuth</strong>
-                <span className="text-[#52534e] text-[11px] leading-relaxed block">
+                <strong className="text-main block font-bold">Autentikasi Aman via Google OAuth</strong>
+                <span className="text-muted text-[11px] leading-relaxed block">
                   Tanpa perlu membuat kata sandi baru, login praktis dan aman dengan akun Google.
                 </span>
               </div>
@@ -96,7 +96,7 @@ export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModal
             onClick={handleGoogleLogin}
             className="w-full flex items-center justify-center gap-2.5 bg-[#111210] hover:bg-black text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm transition-all cursor-pointer shadow-md"
           >
-            <svg className="w-4 h-4 bg-white rounded-full p-0.5" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 bg-card rounded-full p-0.5" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -124,9 +124,9 @@ export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModal
               type="checkbox"
               checked={dontShowAgain}
               onChange={(e) => setDontShowAgain(e.target.checked)}
-              className="w-4 h-4 rounded border-gray-300 text-[#111210] focus:ring-[#111210] cursor-pointer"
+              className="h-4 w-4 cursor-pointer rounded border-border-custom text-main focus:ring-acc-blue"
             />
-            <label htmlFor="dont-show-promo" className="text-[11px] text-[#52534e] font-medium cursor-pointer select-none">
+            <label htmlFor="dont-show-promo" className="text-[11px] text-muted font-medium cursor-pointer select-none">
               Jangan tampilkan lagi pesan promosi ini
             </label>
           </div>

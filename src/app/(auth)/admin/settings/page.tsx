@@ -1,13 +1,15 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Save } from 'lucide-react';
+import { Save, FileText } from 'lucide-react';
+import { useToast } from '@/components/ui/Toast';
+import { AdminCrudHeader } from '@/features/admin/components/AdminCrudHeader';
 
 export default function AdminSettingsPage() {
+  const { showToast } = useToast();
   const [terms, setTerms] = useState('');
   const [taxSetting, setTaxSetting] = useState<number>(0.0);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
     fetch('/api/settings')
@@ -22,7 +24,6 @@ export default function AdminSettingsPage() {
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    setMessage(null);
 
     try {
       const res = await fetch('/api/settings', {
@@ -32,39 +33,22 @@ export default function AdminSettingsPage() {
       });
 
       if (res.ok) {
-        setMessage({ type: 'success', text: 'Pengaturan Syarat, Ketentuan & Pajak berhasil diperbarui!' });
+        showToast('Pengaturan Syarat, Ketentuan & Pajak berhasil diperbarui!', 'success');
       } else {
-        setMessage({ type: 'error', text: 'Gagal menyimpan pengaturan.' });
+        showToast('Gagal menyimpan pengaturan.', 'error');
       }
     } catch {
-      setMessage({ type: 'error', text: 'Terjadi kesalahan jaringan.' });
+      showToast('Terjadi kesalahan jaringan.', 'error');
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {message && (
-        <div
-          className={`p-4 rounded-2xl font-bold text-xs border ${
-            message.type === 'success'
-              ? 'bg-sub-green border-acc-green text-acc-green'
-              : 'bg-sub-pink border-acc-pink text-acc-pink'
-          }`}
-        >
-          {message.text}
-        </div>
-      )}
+    <div className="space-y-6 animate-fade-in max-w-4xl">
+      <AdminCrudHeader title="Syarat & Ketentuan" description="Kelola nilai pajak transaksi global dan teks disclaimer yang ditampilkan di website." icon={FileText} />
 
-      <div className="bg-card rounded-3xl p-6 max-w-3xl">
-        <div>
-          <h3 className="font-extrabold text-sm tracking-tight  pb-4 mb-3 text-main">
-            Pengaturan Sistem & Disclaimer
-          </h3>
-          <p className="text-xs text-muted mb-6 leading-relaxed">
-            Kelola nilai pajak transaksi global dan teks disclaimer yang ditampilkan di website.
-          </p>
+      <div className="bg-card rounded-3xl p-6 border border-border-custom max-w-3xl">
 
           <form onSubmit={handleSaveSettings} className="space-y-5">
             {/* Tax Setting Box */}
@@ -109,7 +93,6 @@ export default function AdminSettingsPage() {
               <span>{saving ? 'Menyimpan...' : 'Simpan Pengaturan Sistem'}</span>
             </button>
           </form>
-        </div>
       </div>
     </div>
   );

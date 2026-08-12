@@ -1,24 +1,27 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import {
-  ArrowLeft,
   Bold,
-  CheckCircle2,
+  Code2,
   Eye,
   FileText,
   Heading2,
+  Heading3,
   ImageIcon,
   Italic,
   Link2,
   List,
-  LoaderCircle,
+  ListOrdered,
+  Minus,
+  Quote,
   RotateCcw,
-  Save,
 } from 'lucide-react';
+import { AdminCrudNotice, AdminEditorHeader, fieldClass } from '@/features/admin/components/AdminCrudUi';
+import ArticleCoverUploader from './ArticleCoverUploader';
+import ToggleSwitch from '@/components/ui/ToggleSwitch';
 
 export type ArticleEditorData = {
   id?: string;
@@ -31,6 +34,7 @@ export type ArticleEditorData = {
   content: string;
   coverImage: string;
   author: string;
+  isTraderPick: boolean;
 };
 
 type Props = {
@@ -48,17 +52,36 @@ const EMPTY_ARTICLE: ArticleEditorData = {
   content: '',
   coverImage: '',
   author: 'Tim Redaksi',
+  isTraderPick: false,
 };
 
-const fieldClass =
-  'w-full rounded-xl border border-border-custom bg-card px-3.5 py-2.5 text-sm text-main outline-none transition-colors placeholder:text-muted/70 focus:border-acc-blue focus:ring-2 focus:ring-acc-blue/10';
-
 const MARKDOWN_TOOLS = [
-  { label: 'Heading', icon: Heading2, before: '## ', after: '', fallback: 'Subjudul' },
+  { label: 'Heading 2', icon: Heading2, before: '## ', after: '', fallback: 'Subjudul' },
+  { label: 'Heading 3', icon: Heading3, before: '### ', after: '', fallback: 'Subbagian' },
   { label: 'Bold', icon: Bold, before: '**', after: '**', fallback: 'teks' },
   { label: 'Italic', icon: Italic, before: '*', after: '*', fallback: 'teks' },
   { label: 'Daftar', icon: List, before: '- ', after: '', fallback: 'Item daftar' },
+  { label: 'Bernomor', icon: ListOrdered, before: '1. ', after: '', fallback: 'Langkah pertama' },
+  { label: 'Kutipan', icon: Quote, before: '> ', after: '', fallback: 'Kutipan penting' },
+  { label: 'Kode', icon: Code2, before: '`', after: '`', fallback: 'kode' },
   { label: 'Tautan', icon: Link2, before: '[', after: '](https://)', fallback: 'judul tautan' },
+  { label: 'Gambar', icon: ImageIcon, before: '![Deskripsi gambar](', after: ')', fallback: 'https://...' },
+  { label: 'Pemisah', icon: Minus, before: '\n---\n', after: '', fallback: '' },
+];
+
+const ARTICLE_TEMPLATES = [
+  {
+    label: 'Panduan',
+    content: `## Ringkasan\n\nJelaskan inti pembahasan dan manfaat artikel bagi pembaca.\n\n## Langkah-langkah\n\n1. Langkah pertama\n2. Langkah kedua\n3. Langkah ketiga\n\n## Hal yang perlu diperhatikan\n\n- Risiko atau batasan yang perlu dipahami.\n- Sumber data yang digunakan.\n\n## Kesimpulan\n\nRangkum poin utama dan ajakan tindakan yang relevan.`,
+  },
+  {
+    label: 'Analisis',
+    content: `## Ringkasan Analisis\n\nTulis konteks singkat kondisi pasar atau emiten.\n\n## Data dan Fakta\n\n- Data utama pertama\n- Data utama kedua\n\n## Analisis\n\nJelaskan interpretasi data secara objektif.\n\n> Catatan: Analisis bukan rekomendasi beli atau jual.\n\n## Risiko\n\nSebutkan risiko yang perlu dipertimbangkan pembaca.`,
+  },
+  {
+    label: 'Berita',
+    content: `## Ringkasan Kejadian\n\nJelaskan apa yang terjadi, kapan, dan pihak yang terkait.\n\n## Detail Penting\n\nUraikan fakta utama secara berurutan.\n\n## Dampak bagi Investor\n\nJelaskan dampak potensial secara netral dan terukur.\n\n## Sumber\n\n[Tautan sumber](https://)`,
+  },
 ];
 
 function slugify(value: string) {
@@ -74,7 +97,6 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
   const contentRef = useRef<HTMLTextAreaElement>(null);
   const [form, setForm] = useState<ArticleEditorData>(initialData ?? EMPTY_ARTICLE);
   const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
-  const [slugEdited, setSlugEdited] = useState(mode === 'edit');
   const [activeTab, setActiveTab] = useState<'write' | 'preview'>('write');
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
@@ -111,7 +133,7 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
     setForm((current) => ({
       ...current,
       title,
-      slug: slugEdited ? current.slug : slugify(title),
+      slug: slugify(title),
     }));
   };
 
@@ -129,8 +151,15 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
     });
   };
 
+  const applyTemplate = (content: string) => {
+    if (form.content.trim() && !window.confirm('Ganti isi editor dengan template ini?')) return;
+    updateField('content', content);
+    setActiveTab('write');
+    requestAnimationFrame(() => contentRef.current?.focus());
+  };
+
   const validate = () => {
-    if (!form.title.trim() || !form.slug.trim() || !form.category || !form.excerpt.trim() || !form.content.trim()) {
+    if (!form.title.trim() || !form.category || !form.excerpt.trim() || !form.content.trim()) {
       return 'Lengkapi semua bidang yang ditandai wajib.';
     }
     if (form.excerpt.trim().length < 30 || form.excerpt.trim().length > 320) {
@@ -151,10 +180,14 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
     setSubmitting(true);
     setMessage(null);
     try {
+      const payload = {
+        ...form,
+        slug: form.slug.trim() || slugify(form.title),
+      };
       const response = await fetch('/api/articles', {
         method: mode === 'create' ? 'POST' : 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Artikel gagal disimpan.');
@@ -173,53 +206,16 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-[1280px] space-y-5 pb-10">
-      <div className="flex flex-col gap-4 border-b border-border-custom pb-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <Link
-            href="/admin/articles"
-            className="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border-custom bg-card text-muted hover:border-acc-blue/40 hover:text-acc-blue"
-            aria-label="Kembali ke daftar artikel"
-          >
-            <ArrowLeft size={17} />
-          </Link>
-          <div>
-            <p className="text-xs font-semibold text-acc-blue">Konten / Artikel</p>
-            <h1 className="mt-0.5 text-xl font-bold tracking-tight text-main sm:text-2xl">
-              {mode === 'create' ? 'Tulis artikel baru' : 'Edit artikel'}
-            </h1>
-            <p className="mt-1 text-sm text-muted">Tulis konten yang ringkas, terstruktur, dan mudah dibaca.</p>
-          </div>
-        </div>
-        <button
-          type="submit"
-          disabled={submitting || categories.length === 0}
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-acc-blue px-5 text-sm font-semibold text-white transition-colors hover:bg-acc-blue/90 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {submitting ? <LoaderCircle size={17} className="animate-spin" /> : <Save size={17} />}
-          {submitting ? 'Menyimpan...' : form.status === 'PUBLISHED' ? 'Simpan & publikasikan' : 'Simpan draft'}
-        </button>
-      </div>
+      <AdminEditorHeader backHref="/admin/articles" eyebrow="Konten / Artikel" title={mode === 'create' ? 'Tulis artikel baru' : 'Edit artikel'} description="Tulis konten yang ringkas, terstruktur, dan mudah dibaca." actionLabel={form.status === 'PUBLISHED' ? 'Simpan & publikasikan' : 'Simpan draft'} submitting={submitting} disabled={categories.length === 0} />
 
-      {message && (
-        <div
-          className={`flex items-start gap-2.5 rounded-xl border px-4 py-3 text-sm ${
-            message.type === 'success'
-              ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40'
-              : 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900 dark:bg-rose-950/40'
-          }`}
-          role="alert"
-        >
-          <CheckCircle2 size={17} className="mt-0.5 shrink-0" />
-          <span>{message.text}</span>
-        </div>
-      )}
+      {message && <AdminCrudNotice type={message.type}>{message.text}</AdminCrudNotice>}
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-5">
           <section className="rounded-2xl border border-border-custom bg-card">
             <div className="border-b border-border-custom px-5 py-4 sm:px-6">
               <h2 className="text-sm font-bold text-main">Informasi utama</h2>
-              <p className="mt-0.5 text-xs text-muted">Judul, URL, dan ringkasan yang terlihat pada daftar artikel.</p>
+              <p className="mt-0.5 text-xs text-muted">Judul dan ringkasan yang terlihat pada daftar artikel.</p>
             </div>
             <div className="space-y-5 p-5 sm:p-6">
               <div className="space-y-1.5">
@@ -236,38 +232,6 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
                   autoFocus={mode === 'create'}
                 />
                 <div className="flex justify-end text-[11px] text-muted">{form.title.length}/160</div>
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between gap-3">
-                  <label htmlFor="article-slug" className="text-sm font-semibold text-main">
-                    Slug URL <span className="text-rose-500">*</span>
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSlugEdited(false);
-                      updateField('slug', slugify(form.title));
-                    }}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-acc-blue hover:underline"
-                  >
-                    <RotateCcw size={12} /> Buat ulang
-                  </button>
-                </div>
-                <div className="flex overflow-hidden rounded-xl border border-border-custom bg-card focus-within:border-acc-blue focus-within:ring-2 focus-within:ring-acc-blue/10">
-                  <span className="hidden items-center border-r border-border-custom bg-sub-slate px-3 text-xs text-muted sm:flex">/blog/</span>
-                  <input
-                    id="article-slug"
-                    value={form.slug}
-                    onChange={(event) => {
-                      setSlugEdited(true);
-                      updateField('slug', slugify(event.target.value));
-                    }}
-                    className="min-w-0 grow bg-transparent px-3.5 py-2.5 text-sm text-main outline-none"
-                    maxLength={180}
-                    placeholder="judul-artikel"
-                  />
-                </div>
               </div>
 
               <div className="space-y-1.5">
@@ -294,7 +258,7 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
             <div className="flex flex-col gap-3 border-b border-border-custom px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
               <div>
                 <h2 className="text-sm font-bold text-main">Isi artikel <span className="text-rose-500">*</span></h2>
-                <p className="mt-0.5 text-xs text-muted">Gunakan Markdown untuk heading, daftar, tautan, dan penekanan.</p>
+                <p className="mt-0.5 text-xs text-muted">Gunakan template dan Markdown untuk menyusun artikel yang rapi dan mudah dibaca.</p>
               </div>
               <div className="inline-flex w-fit rounded-lg bg-sub-slate p-1">
                 <button
@@ -316,6 +280,19 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
 
             {activeTab === 'write' ? (
               <>
+                <div className="flex flex-wrap items-center gap-1 border-b border-border-custom bg-card px-3 py-2">
+                  <span className="mr-1 px-1.5 text-[11px] font-semibold text-muted">Mulai dari:</span>
+                  {ARTICLE_TEMPLATES.map((template) => (
+                    <button
+                      key={template.label}
+                      type="button"
+                      onClick={() => applyTemplate(template.content)}
+                      className="h-7 rounded-md border border-border-custom px-2.5 text-xs font-semibold text-muted transition-colors hover:border-acc-blue/40 hover:bg-sub-blue hover:text-acc-blue"
+                    >
+                      Template {template.label}
+                    </button>
+                  ))}
+                </div>
                 <div className="flex flex-wrap gap-1 border-b border-border-custom bg-sub-slate/60 px-3 py-2">
                   {MARKDOWN_TOOLS.map(({ label, icon: Icon, before, after, fallback }) => (
                     <button
@@ -337,6 +314,9 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
                   placeholder={'Mulai menulis artikel...\n\n## Subjudul\n\nIsi paragraf artikel.'}
                   spellCheck
                 />
+                <div className="border-t border-border-custom bg-sub-slate/35 px-5 py-2.5 text-[11px] leading-5 text-muted">
+                  Tip: pilih teks sebelum menekan toolbar untuk membungkusnya. Gunakan gambar sampul untuk kartu artikel, atau masukkan URL gambar pada tombol Gambar untuk isi artikel.
+                </div>
               </>
             ) : (
               <article className="min-h-[440px] p-5 text-sm leading-7 text-main sm:p-7 [&_a]:text-acc-blue [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-acc-blue/30 [&_blockquote]:pl-4 [&_h1]:mb-4 [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:mb-3 [&_h2]:mt-7 [&_h2]:text-xl [&_h2]:font-bold [&_h3]:mb-2 [&_h3]:mt-5 [&_h3]:text-lg [&_h3]:font-bold [&_li]:ml-5 [&_ol]:list-decimal [&_p]:mb-4 [&_ul]:list-disc">
@@ -413,6 +393,21 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
                   placeholder="Tim Redaksi"
                 />
               </div>
+
+              <div className="pt-2 border-t border-border-custom">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="space-y-0.5">
+                    <span className="block text-xs font-semibold text-main">Pilihan teratas</span>
+                    <span className="block text-[11px] leading-4 text-muted">
+                      Maksimal 3 artikel. Hanya artikel published yang akan tampil pada sidebar blog.
+                    </span>
+                  </div>
+                  <ToggleSwitch
+                    checked={form.isTraderPick}
+                    onChange={(checked) => updateField('isTraderPick', checked)}
+                  />
+                </div>
+              </div>
             </div>
           </section>
 
@@ -433,16 +428,7 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
                   </div>
                 )}
               </div>
-              <div className="space-y-1.5">
-                <label htmlFor="article-cover" className="text-xs font-semibold text-main">URL atau path gambar</label>
-                <input
-                  id="article-cover"
-                  value={form.coverImage}
-                  onChange={(event) => updateField('coverImage', event.target.value)}
-                  className={fieldClass}
-                  placeholder="https://... atau /assets/..."
-                />
-              </div>
+              <ArticleCoverUploader value={form.coverImage} onChange={(coverImage) => updateField('coverImage', coverImage)} />
             </div>
           </section>
 
