@@ -6,6 +6,8 @@ import {
 } from '@/lib/cached-data';
 import LandingView from '@/components/landing/LandingView';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Hitungsaham.com | Kalkulator Penghitung Saham',
   description:
