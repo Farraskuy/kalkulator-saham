@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Link from 'next/link';
 import {
   CircleUserRound,
@@ -16,7 +16,21 @@ import ThemeToggle from '@/components/layout/ThemeToggle';
 
 export default function LandingHeader() {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
+  const [isClosing, setIsClosing] = useState<boolean>(false);
   const [loginModalOpen, setLoginModalOpen] = useState<boolean>(false);
+
+  const openDrawer = useCallback(() => {
+    setIsClosing(false);
+    setMobileOpen(true);
+  }, []);
+
+  const closeDrawer = useCallback(() => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setMobileOpen(false);
+      setIsClosing(false);
+    }, 250);
+  }, []);
 
   return (
     <>
@@ -46,7 +60,7 @@ export default function LandingHeader() {
             <button
               className="border-0 text-(--landing-text) bg-transparent cursor-pointer p-1"
               type="button"
-              onClick={() => setMobileOpen(!mobileOpen)}
+              onClick={() => mobileOpen ? closeDrawer() : openDrawer()}
               aria-label="Buka navigasi"
             >
               {mobileOpen ? <X size={22} /> : <Menu size={22} />}
@@ -60,12 +74,12 @@ export default function LandingHeader() {
         <div className="fixed inset-0 z-[200] flex justify-start">
           {/* Backdrop Overlay */}
           <div
-            className="fixed inset-0 bg-black/60 transition-opacity cursor-pointer"
-            onClick={() => setMobileOpen(false)}
+            className={`fixed inset-0 bg-black/60 cursor-pointer ${isClosing ? 'backdrop-exit' : 'backdrop-enter'}`}
+            onClick={closeDrawer}
           />
 
           {/* Offcanvas Drawer Content */}
-          <div className="relative z-10 flex h-full w-4/5 max-w-sm flex-col justify-between overflow-y-auto bg-page p-6 text-main shadow-2xl animate-in slide-in-from-left duration-300">
+          <div className={`relative z-10 flex h-full w-4/5 max-w-sm flex-col justify-between overflow-y-auto bg-page p-6 text-main shadow-2xl ${isClosing ? 'drawer-exit' : 'drawer-enter'}`}>
             <div className="space-y-6">
               {/* Header in Drawer */}
               <div className="flex items-center justify-between border-b border-border-custom pb-4">
@@ -74,7 +88,7 @@ export default function LandingHeader() {
                   <span>HitungSaham</span>
                 </div>
                 <button
-                  onClick={() => setMobileOpen(false)}
+                  onClick={closeDrawer}
                   className="cursor-pointer rounded-full p-2 text-main transition-colors hover:bg-sub-slate"
                   aria-label="Tutup menu"
                 >
@@ -86,7 +100,7 @@ export default function LandingHeader() {
               <nav className="flex flex-col space-y-2">
                 <Link
                   href="/#calculator"
-                  onClick={() => setMobileOpen(false)}
+                  onClick={closeDrawer}
                   className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-main transition-colors hover:bg-sub-slate"
                 >
                   <Calculator size={18} className="text-muted" />
@@ -95,7 +109,7 @@ export default function LandingHeader() {
 
                 <Link
                   href="/blog"
-                  onClick={() => setMobileOpen(false)}
+                  onClick={closeDrawer}
                   className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-main transition-colors hover:bg-sub-slate"
                 >
                   <BookOpen size={18} className="text-muted" />
@@ -104,7 +118,7 @@ export default function LandingHeader() {
 
                 <Link
                   href="/faq"
-                  onClick={() => setMobileOpen(false)}
+                  onClick={closeDrawer}
                   className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-main transition-colors hover:bg-sub-slate"
                 >
                   <HelpCircle size={18} className="text-muted" />
@@ -118,8 +132,8 @@ export default function LandingHeader() {
               <div className="flex items-center justify-between rounded-xl bg-sub-slate px-3 py-2 text-sm font-semibold text-main"><span>Tema tampilan</span><ThemeToggle /></div>
               <button
                 onClick={() => {
-                  setMobileOpen(false);
-                  setLoginModalOpen(true);
+                  closeDrawer();
+                  setTimeout(() => setLoginModalOpen(true), 260);
                 }}
                 className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-main px-4 py-3 text-xs font-extrabold text-page transition-colors"
               >
