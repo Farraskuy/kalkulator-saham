@@ -7,6 +7,8 @@ import FaqSection from '@/features/faq/components/FaqSection';
 import Footer from '@/components/layout/Footer';
 import { getCachedFaqs } from '@/lib/cached-data';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'FAQ Bantuan & Panduan | HitungSaham.com',
   description:
