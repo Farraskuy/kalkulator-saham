@@ -40,96 +40,99 @@ export default function LandingHeader() {
             </button>
           </div>
 
-          {/* Mobile Hamburger Button Trigger */}
-          <button
-            className="md:hidden border-0 text-(--landing-text) bg-transparent cursor-pointer"
-            type="button"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Buka navigasi"
-          >
-            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+          {/* Mobile: Theme Toggle + Hamburger */}
+          <div className="md:hidden flex items-center gap-1">
+            <ThemeToggle />
+            <button
+              className="border-0 text-(--landing-text) bg-transparent cursor-pointer p-1"
+              type="button"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label="Buka navigasi"
+            >
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
+      </header>
 
-        {/* OFFCANVAS MOBILE DRAWER MENU */}
-        {mobileOpen && (
-          <div className="fixed inset-0 z-50 flex justify-end">
-            {/* Backdrop Overlay */}
-            <div
-              className="fixed inset-0 bg-black/60 transition-opacity cursor-pointer"
-              onClick={() => setMobileOpen(false)}
-            />
+      {/* OFFCANVAS MOBILE DRAWER MENU — rendered outside header to avoid clipping */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-[200] flex justify-start">
+          {/* Backdrop Overlay */}
+          <div
+            className="fixed inset-0 bg-black/60 transition-opacity cursor-pointer"
+            onClick={() => setMobileOpen(false)}
+          />
 
-            {/* Offcanvas Drawer Content */}
-            <div className="relative z-10 flex h-full w-4/5 max-w-sm flex-col justify-between overflow-y-auto bg-page p-6 text-main shadow-2xl animate-in slide-in-from-right duration-300">
-              <div className="space-y-6">
-                {/* Header in Drawer */}
-                <div className="flex items-center justify-between border-b border-border-custom pb-4">
-                  <div className="flex items-center gap-2.5 text-lg font-bold text-main">
-                    <AppLogo size={28} variant="auto" />
-                    <span>HitungSaham</span>
-                  </div>
-                  <button
-                    onClick={() => setMobileOpen(false)}
-                    className="cursor-pointer rounded-full p-2 text-main transition-colors hover:bg-sub-slate"
-                    aria-label="Tutup menu"
-                  >
-                    <X size={20} />
-                  </button>
+          {/* Offcanvas Drawer Content */}
+          <div className="relative z-10 flex h-full w-4/5 max-w-sm flex-col justify-between overflow-y-auto bg-page p-6 text-main shadow-2xl animate-in slide-in-from-left duration-300">
+            <div className="space-y-6">
+              {/* Header in Drawer */}
+              <div className="flex items-center justify-between border-b border-border-custom pb-4">
+                <div className="flex items-center gap-2.5 text-lg font-bold text-main">
+                  <AppLogo size={28} variant="auto" />
+                  <span>HitungSaham</span>
                 </div>
-
-                {/* Nav Links */}
-                <nav className="flex flex-col space-y-2">
-                  <Link
-                    href="/#calculator"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-main transition-colors hover:bg-sub-slate"
-                  >
-                    <Calculator size={18} className="text-muted" />
-                    <span>Kalkulator Saham</span>
-                  </Link>
-
-                  <Link
-                    href="/blog"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-main transition-colors hover:bg-sub-slate"
-                  >
-                    <BookOpen size={18} className="text-muted" />
-                    <span>Blog &amp; Artikel</span>
-                  </Link>
-
-                  <Link
-                    href="/faq"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-main transition-colors hover:bg-sub-slate"
-                  >
-                    <HelpCircle size={18} className="text-muted" />
-                    <span>FAQ</span>
-                  </Link>
-                </nav>
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  className="cursor-pointer rounded-full p-2 text-main transition-colors hover:bg-sub-slate"
+                  aria-label="Tutup menu"
+                >
+                  <X size={20} />
+                </button>
               </div>
 
-              {/* Drawer Bottom Actions */}
-              <div className="space-y-3 border-t border-border-custom pt-6">
-                <div className="flex items-center justify-between rounded-xl bg-sub-slate px-3 py-2 text-sm font-semibold text-main"><span>Tema tampilan</span><ThemeToggle /></div>
-                <button
-                  onClick={() => {
-                    setMobileOpen(false);
-                    setLoginModalOpen(true);
-                  }}
-                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-main px-4 py-3 text-xs font-extrabold text-page transition-colors"
+              {/* Nav Links */}
+              <nav className="flex flex-col space-y-2">
+                <Link
+                  href="/#calculator"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-main transition-colors hover:bg-sub-slate"
                 >
-                  <CircleUserRound size={16} />
-                  <span>Masuk Google</span>
-                </button>
-                <div className="text-center text-[11px] text-muted">
-                  &copy; {new Date().getFullYear()} HitungSaham.com
-                </div>
+                  <Calculator size={18} className="text-muted" />
+                  <span>Kalkulator Saham</span>
+                </Link>
+
+                <Link
+                  href="/blog"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-main transition-colors hover:bg-sub-slate"
+                >
+                  <BookOpen size={18} className="text-muted" />
+                  <span>Blog &amp; Artikel</span>
+                </Link>
+
+                <Link
+                  href="/faq"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-main transition-colors hover:bg-sub-slate"
+                >
+                  <HelpCircle size={18} className="text-muted" />
+                  <span>FAQ</span>
+                </Link>
+              </nav>
+            </div>
+
+            {/* Drawer Bottom Actions */}
+            <div className="space-y-3 border-t border-border-custom pt-6">
+              <div className="flex items-center justify-between rounded-xl bg-sub-slate px-3 py-2 text-sm font-semibold text-main"><span>Tema tampilan</span><ThemeToggle /></div>
+              <button
+                onClick={() => {
+                  setMobileOpen(false);
+                  setLoginModalOpen(true);
+                }}
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-main px-4 py-3 text-xs font-extrabold text-page transition-colors"
+              >
+                <CircleUserRound size={16} />
+                <span>Masuk Google</span>
+              </button>
+              <div className="text-center text-[11px] text-muted">
+                &copy; {new Date().getFullYear()} HitungSaham.com
               </div>
             </div>
           </div>
-        )}
-      </header>
+        </div>
+      )}
 
       {/* GOOGLE LOGIN PROMO MODAL */}
       <LandingLoginModal
