@@ -4,17 +4,18 @@ import React, { useState } from 'react';
 import { ShieldAlert, TrendingUp, TrendingDown, HelpCircle, Calculator, RotateCcw } from 'lucide-react';
 import { Board, calculateAraArb } from '@/features/calculators';
 import { formatIDR, formatPercent, formatNumber } from '@/lib/utils/formatters';
-import type { FractionRule } from '@/types';
+import type { AraArbRuleMap, FractionRule } from '@/types';
 import ExportCardWrapper from '@/components/ui/ExportCardWrapper';
 
 interface Props {
   fractionRules?: FractionRule[];
+  araArbRules?: AraArbRuleMap;
 }
 
-export default function LandingAraArbCalculator({ fractionRules }: Props) {
+export default function LandingAraArbCalculator({ fractionRules, araArbRules }: Props) {
   const [ticker, setTicker] = useState<string>('');
   const [price, setPrice] = useState<number>(0);
-  const [board, setBoard] = useState<Board | ''>('');
+  const [board, setBoard] = useState<Board>('Utama');
   const [hasCalculated, setHasCalculated] = useState<boolean>(false);
   const [domainName, setDomainName] = useState<string>('HitungSaham.com');
 
@@ -24,7 +25,7 @@ export default function LandingAraArbCalculator({ fractionRules }: Props) {
     }
   }, []);
 
-  const result = calculateAraArb(price, board || 'Utama', fractionRules);
+  const result = calculateAraArb(price, board, fractionRules, araArbRules);
 
   const handleTickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const cleanTicker = e.target.value.replace(/[^a-zA-Z]/g, '').slice(0, 4).toUpperCase();
@@ -49,13 +50,22 @@ export default function LandingAraArbCalculator({ fractionRules }: Props) {
   const handleReset = () => {
     setTicker('');
     setPrice(0);
-    setBoard('');
+    setBoard('Utama');
     setHasCalculated(false);
   };
 
-  const cleanFileName = ticker
-    ? `kalkulator-ara-arb-${ticker}-${price}`
-    : `kalkulator-ara-arb-${price}`;
+  const cleanFileName = (() => {
+    const domain = domainName.toLowerCase();
+    const type = 'ARA-ARB';
+    const tickerVal = ticker ? ticker.toUpperCase() : 'NO-TICKER';
+    const priceVal = price || 0;
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const dateStr = `${yyyy}${mm}${dd}`;
+    return `${domain}-${type}-${tickerVal}-${priceVal}-${dateStr}`;
+  })();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-8">
@@ -102,7 +112,7 @@ export default function LandingAraArbCalculator({ fractionRules }: Props) {
                 <option value="" disabled>Pilih papan saham</option>
                 <option value="Utama">Utama / Pengembangan</option>
                 <option value="Akselerasi">Akselerasi</option>
-                <option value="Watchlist">FCA</option>
+                <option value="FCA">FCA</option>
               </select>
             </div>
           </div>
@@ -138,7 +148,7 @@ export default function LandingAraArbCalculator({ fractionRules }: Props) {
             <HelpCircle size={14} /> Aturan Pembulatan Fraksi:
           </div>
           <span className="text-sub text-[11px] leading-relaxed block">
-            ARA dibulatkan ke bawah (Math.floor) ke tick terdekat untuk mencegah harga melebihi batas persentase maksimal. ARB dibulatkan ke atas (Math.ceil).
+            Menghitung batas untuk satu sesi perdagangan dari harga previous. ARA dibulatkan ke bawah dan ARB ke atas sesuai fraksi harga agar tidak melewati batas maksimum; harga minimum papan ini adalah Rp50.
           </span>
         </div>
       </div>
@@ -149,6 +159,11 @@ export default function LandingAraArbCalculator({ fractionRules }: Props) {
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="ara-arb" embedded>
+          {ticker && (
+            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-main mb-3 uppercase">
+              {ticker}
+            </div>
+          )}
           {/* ARA Box (Solid Emerald, No Gradient, No Shadow, No Border) */}
           <div className="bg-[#059669] text-white rounded-xl p-4 flex items-center justify-between">
             <div>

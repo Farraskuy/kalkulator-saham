@@ -1,7 +1,7 @@
 import { unstable_cache } from 'next/cache';
 import { prisma } from '@/lib/db';
 import type { FaqItemData } from '@/types';
-import type { FractionRule } from '@/types';
+import type { AraArbRuleMap, FractionRule } from '@/types';
 
 /**
  * 1. Cached FAQs fetcher with Next.js Server Cache & Revalidation Tag
@@ -88,6 +88,27 @@ export const getCachedFractionRules = unstable_cache(
   {
     revalidate: 3600,
     tags: ['fraction-rules'],
+  }
+);
+
+export const getCachedAraArbRules = unstable_cache(
+  async (): Promise<AraArbRuleMap | undefined> => {
+    try {
+      const rules = await prisma.araArbRule.findMany({ orderBy: { board: 'asc' } });
+      const mapped: AraArbRuleMap = {};
+      for (const rule of rules) {
+        mapped[rule.board] = [{ ara: rule.ara, arb: rule.arb }];
+      }
+      return Object.keys(mapped).length > 0 ? mapped : undefined;
+    } catch (err) {
+      console.error('Error fetching cached ARA/ARB rules:', err);
+      return undefined;
+    }
+  },
+  ['ara-arb-rules-list-cache'],
+  {
+    revalidate: 3600,
+    tags: ['ara-arb-rules'],
   }
 );
 

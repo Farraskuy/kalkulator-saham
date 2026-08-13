@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { prisma } from '@/lib/db';
 import { verifySession } from '@/lib/auth';
 import { DEFAULT_FRACTION_RULES, DEFAULT_ARA_ARB_RULES } from '@/features/calculators';
@@ -82,6 +83,8 @@ export async function POST(request: Request) {
       // If DB error, proceed safely
     }
 
+    revalidateTag('fraction-rules', 'max');
+    revalidateTag('ara-arb-rules', 'max');
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(

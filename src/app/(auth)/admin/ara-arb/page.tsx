@@ -7,17 +7,17 @@ import { AdminCrudHeader } from '@/features/admin/components/AdminCrudHeader';
 
 export default function AdminAraArbPage() {
   const { showToast } = useToast();
-  // Papan Utama & Pengembangan (3 Rentang Harga Resmi BEI)
+  // Papan Utama, Ekonomi Baru, dan Pengembangan (3 rentang harga resmi BEI)
   const [araUtamaTier1, setAraUtamaTier1] = useState<number>(35); // Rp 50 - Rp 200
-  const [arbUtamaTier1, setArbUtamaTier1] = useState<number>(35);
+  const [arbUtamaTier1, setArbUtamaTier1] = useState<number>(15);
 
   const [araUtamaTier2, setAraUtamaTier2] = useState<number>(25); // Rp 200 - Rp 5.000
-  const [arbUtamaTier2, setArbUtamaTier2] = useState<number>(25);
+  const [arbUtamaTier2, setArbUtamaTier2] = useState<number>(15);
 
   const [araUtamaTier3, setAraUtamaTier3] = useState<number>(20); // > Rp 5.000
-  const [arbUtamaTier3, setArbUtamaTier3] = useState<number>(20);
+  const [arbUtamaTier3, setArbUtamaTier3] = useState<number>(15);
 
-  // Papan Akselerasi & FCA (Watchlist)
+  // Papan Akselerasi & FCA
   const [araAkselerasi, setAraAkselerasi] = useState<number>(10);
   const [arbAkselerasi, setArbAkselerasi] = useState<number>(10);
 
@@ -124,7 +124,7 @@ export default function AdminAraArbPage() {
         {/* SECTION 1: PAPAN UTAMA & PENGEMBANGAN */}
         <div className="space-y-4">
           <h4 className="font-extrabold text-xs text-muted uppercase tracking-wider">
-            Papan Utama &amp; Papan Pengembangan
+            Papan Utama, Ekonomi Baru, &amp; Papan Pengembangan
           </h4>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -223,7 +223,7 @@ export default function AdminAraArbPage() {
         {/* SECTION 2: PAPAN AKSELERASI & FCA */}
         <div className="space-y-4 pt-2">
           <h4 className="font-extrabold text-xs text-muted uppercase tracking-wider">
-            Papan Akselerasi &amp; Papan FCA (Watchlist)
+            Papan Akselerasi &amp; Papan FCA
           </h4>
 
           <div className="bg-sub-slate p-4 rounded-2xl border border-border-custom/60 max-w-md space-y-3">

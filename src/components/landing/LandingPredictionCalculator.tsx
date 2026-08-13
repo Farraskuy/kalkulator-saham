@@ -155,9 +155,18 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
     setHasCalculated(false);
   };
 
-  const cleanFileName = clientName
-    ? `kalkulator-prediksi-${ticker}-${clientName.replace(/\s+/g, '-')}`
-    : `kalkulator-prediksi-${ticker}`;
+  const cleanFileName = (() => {
+    const domain = domainName.toLowerCase();
+    const type = 'Rencana';
+    const tickerVal = ticker ? ticker.toUpperCase() : 'NO-TICKER';
+    const priceVal = hargaBeli || 0;
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const dateStr = `${yyyy}${mm}${dd}`;
+    return `${domain}-${type}-${tickerVal}-${priceVal}-${dateStr}`;
+  })();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-8">
@@ -394,10 +403,15 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="prediction" embedded>
+          {ticker && (
+            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-main mb-3 uppercase">
+              {ticker}
+            </div>
+          )}
           {/* Total Modal Banner (Solid Dark Slate, No Shadow, No Border) */}
           <div className="bg-slate-900 text-white rounded-xl p-4 flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300">Total Modal (+ Fee Beli)</div>
+              <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300">Total Investasi</div>
               <div className="text-base sm:text-2xl font-extrabold mt-1 text-white wrap-break-word">{formatIDR(result.rincian.totalModal)}</div>
             </div>
             <div className="shrink-0 text-white opacity-90">
@@ -410,7 +424,7 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
             <div className="flex items-start justify-between mb-3 gap-2 pb-2 border-b border-emerald-500/20">
               <div className="flex items-start gap-1.5 font-bold text-xs text-emerald-800 dark:text-emerald-300 min-w-0 pr-2">
                 <TrendingUp size={16} className="shrink-0 mt-0.5 text-emerald-700 dark:text-emerald-400" />
-                <span className="leading-tight whitespace-normal break-normal">TARGET UNTUNG (TAKE PROFIT)</span>
+                <span className="leading-tight whitespace-nowrap">TARGET UNTUNG (TAKE PROFIT)</span>
               </div>
               <span className="shrink-0 font-bold text-emerald-700 dark:text-emerald-400 text-xs bg-emerald-500/15 px-2 py-0.5 rounded-md whitespace-nowrap">
                 +{formatPercent(result.skenarioUntung.persentase)}
@@ -436,9 +450,16 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
             </div>
           </div>
 
-          <div className="flex justify-between border-y border-border-custom/30 py-1 text-[10px] font-medium text-muted">
-            <div>{domainName}</div>
-            <div>{new Date().toLocaleDateString('id-ID', { dateStyle: 'medium' })}</div>
+          <div className="border-y border-border-custom/30 py-1.5 text-[10px] font-medium text-muted space-y-1">
+            {clientName && (
+              <div className="font-semibold text-main dark:text-slate-300 pb-1 border-b border-border-custom/10">
+                Dihitung oleh: <span className="text-acc-blue font-bold">{clientName}</span>
+              </div>
+            )}
+            <div className="flex justify-between pt-0.5">
+              <div>{domainName}</div>
+              <div>{new Date().toLocaleDateString('id-ID', { dateStyle: 'medium' })}</div>
+            </div>
           </div>
 
           {/* Skenario Rugi Box (Solid Rose Light, No Border, No Shadow) */}
@@ -446,7 +467,7 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
             <div className="flex items-start justify-between mb-3 gap-2 pb-2 border-b border-rose-500/20">
               <div className="flex items-start gap-1.5 font-bold text-xs text-rose-800 dark:text-rose-300 min-w-0 pr-2">
                 <TrendingDown size={16} className="shrink-0 mt-0.5 text-rose-700 dark:text-rose-400" />
-                <span className="leading-tight whitespace-normal break-normal">BATAS RUGI (STOP LOSS)</span>
+                <span className="leading-tight whitespace-nowrap">BATAS RUGI (STOP LOSS)</span>
               </div>
               <div className="shrink-0 font-bold text-rose-700 dark:text-rose-400 text-xs bg-rose-500/15 px-2 py-0.5 rounded-md whitespace-nowrap">
                 -{formatPercent(result.skenarioRugi.persentase)}

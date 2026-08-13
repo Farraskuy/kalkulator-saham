@@ -6,12 +6,7 @@ import { calculateAverage, calculateTargetAverageLots, PurchaseRow } from '@/fea
 import { formatIDR, formatNumber } from '@/lib/utils/formatters';
 import ExportCardWrapper from '@/components/ui/ExportCardWrapper';
 
-interface Props {
-  fractionRules?: any;
-  tax?: number;
-}
-
-export default function LandingAvgCalculator({ fractionRules, tax = 0.0 }: Props) {
+export default function LandingAvgCalculator() {
   const [ticker, setTicker] = useState<string>('');
   const [rows, setRows] = useState<PurchaseRow[]>([
     { id: '1', price: 0, lot: 0 },
@@ -79,7 +74,18 @@ export default function LandingAvgCalculator({ fractionRules, tax = 0.0 }: Props
     result.totalInvestment
   );
 
-  const cleanFileName = ticker ? `kalkulator-average-${ticker}` : `kalkulator-average`;
+  const cleanFileName = (() => {
+    const domain = domainName.toLowerCase();
+    const type = 'Average';
+    const tickerVal = ticker ? ticker.toUpperCase() : 'NO-TICKER';
+    const priceVal = Math.round(result.avgPrice) || 0;
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const dateStr = `${yyyy}${mm}${dd}`;
+    return `${domain}-${type}-${tickerVal}-${priceVal}-${dateStr}`;
+  })();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-8">

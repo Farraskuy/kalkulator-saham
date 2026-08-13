@@ -10,6 +10,8 @@ export interface AraArbRule {
   arb: number;
 }
 
+export type AraArbRuleMap = Record<string, Array<{ ara: number; arb: number }>>;
+
 export interface AraArbResult {
   currentPrice: number;
   board: string;

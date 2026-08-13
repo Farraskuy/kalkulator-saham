@@ -14,10 +14,11 @@ import LandingAvgCalculator from './LandingAvgCalculator';
 import FaqSection from '@/features/faq/components/FaqSection';
 import AnalyticsTracker from '@/components/analytics/AnalyticsTracker';
 import Footer from '@/components/layout/Footer';
-import type { FractionRule } from '@/types';
+import type { AraArbRuleMap, FractionRule } from '@/types';
 
 interface LandingViewProps {
   fractionRules?: FractionRule[];
+  araArbRules?: AraArbRuleMap;
   tax?: number;
   faqs?: { id: string; question: string; answer: string }[];
 }
@@ -28,7 +29,7 @@ const tabs = [
   { id: 'average', label: 'Average Up / Down', icon: BarChart3 },
 ];
 
-export default function LandingView({ fractionRules, tax, faqs: faqsProp }: LandingViewProps) {
+export default function LandingView({ fractionRules, araArbRules, tax, faqs: faqsProp }: LandingViewProps) {
   const [activeTab, setActiveTab] = useState<string>('target');
   const faqs = faqsProp || [];
 
@@ -112,7 +113,7 @@ export default function LandingView({ fractionRules, tax, faqs: faqsProp }: Land
                 <LandingPredictionCalculator fractionRules={fractionRules} tax={tax} />
               </div>
               <div hidden={activeTab !== 'ara'}>
-                <LandingAraArbCalculator fractionRules={fractionRules} />
+                <LandingAraArbCalculator fractionRules={fractionRules} araArbRules={araArbRules} />
               </div>
               <div hidden={activeTab !== 'average'}>
                 <LandingAvgCalculator />
@@ -132,4 +133,3 @@ export default function LandingView({ fractionRules, tax, faqs: faqsProp }: Land
     </div>
   );
 }
-

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import {
   getCachedFaqs,
+  getCachedAraArbRules,
   getCachedFractionRules,
   getCachedTaxSetting,
 } from '@/lib/cached-data';
@@ -15,12 +16,12 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [fractionRules, tax, faqs] = await Promise.all([
+  const [fractionRules, araArbRules, tax, faqs] = await Promise.all([
     getCachedFractionRules(),
+    getCachedAraArbRules(),
     getCachedTaxSetting(),
     getCachedFaqs(),
   ]);
 
-  return <LandingView fractionRules={fractionRules} tax={tax} faqs={faqs} />;
+  return <LandingView fractionRules={fractionRules} araArbRules={araArbRules} tax={tax} faqs={faqs} />;
 }
-

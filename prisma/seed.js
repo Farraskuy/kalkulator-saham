@@ -65,11 +65,11 @@ async function main() {
 
   // 2. Seed Default Fractions
   const defaultFractions = [
-    { minPrice: 1, maxPrice: 200, tick: 1 },
-    { minPrice: 201, maxPrice: 500, tick: 2 },
-    { minPrice: 501, maxPrice: 2000, tick: 5 },
-    { minPrice: 2001, maxPrice: 5000, tick: 10 },
-    { minPrice: 5001, maxPrice: 99999999, tick: 25 },
+    { minPrice: 1, maxPrice: 199, tick: 1 },
+    { minPrice: 200, maxPrice: 499, tick: 2 },
+    { minPrice: 500, maxPrice: 1999, tick: 5 },
+    { minPrice: 2000, maxPrice: 4999, tick: 10 },
+    { minPrice: 5000, maxPrice: 99999999, tick: 25 },
   ];
 
   const existingFractions = await prisma.fractionRule.findMany();
@@ -86,10 +86,11 @@ async function main() {
 
   // 3. Seed Default ARA/ARB Rules
   const defaultAraArb = [
-    { board: 'Utama', ara: 25, arb: 15 },
-    { board: 'Pengembangan', ara: 25, arb: 15 },
+    { board: 'Utama_50_200', ara: 35, arb: 15 },
+    { board: 'Utama_200_5000', ara: 25, arb: 15 },
+    { board: 'Utama_5000', ara: 20, arb: 15 },
     { board: 'Akselerasi', ara: 10, arb: 10 },
-    { board: 'Watchlist', ara: 10, arb: 10 },
+    { board: 'FCA', ara: 10, arb: 10 },
   ];
 
   const existingAraArb = await prisma.araArbRule.findMany();
@@ -141,7 +142,7 @@ async function main() {
       id: 'faq-3',
       slug: 'aturan-fraksi-harga-dan-papan-perdagangan-bei-terbaru',
       question: 'Bagaimana Aturan Fraksi Harga & Papan Perdagangan BEI Terbaru?',
-      answer: 'Kalkulator kami selalu diperbarui mengikuti regulasi BEI. Saat ini, pergerakan harga saham dibatasi oleh fraksi harga berdasarkan rentang harga saham (misal: Rp1 untuk harga di bawah Rp200, Rp2 untuk harga Rp200-Rp500, dan seterusnya). Selain itu, batas ARA dan ARB berbeda bergantung pada papan pencatatan:\n\n- Papan Utama & Pengembangan: ARA hingga maksimal 20% - 35% dan ARB hingga maksimal 15%.\n- Papan Akselerasi: ARA dan ARB simetris di angka 10%.\n- Papan Pemantauan Khusus (FCA/Watchlist): ARA dan ARB dibatasi sebesar 10% untuk perdagangan Full Call Auction.\n- Pada rentang harga Rp 1-10: ARA dan ARB dibatasi simetris 1 papan tick.',
+      answer: 'Kalkulator kami selalu diperbarui mengikuti regulasi BEI. Saat ini, pergerakan harga saham dibatasi oleh fraksi harga berdasarkan rentang harga saham (misal: Rp1 untuk harga di bawah Rp200, Rp2 untuk harga Rp200-Rp500, dan seterusnya). Selain itu, batas ARA dan ARB berbeda bergantung pada papan pencatatan:\n\n- Papan Utama & Pengembangan: ARA hingga maksimal 20% - 35% dan ARB hingga maksimal 15%.\n- Papan Akselerasi: ARA dan ARB simetris di angka 10%.\n- FCA (Papan Pemantauan Khusus): ARA dan ARB dibatasi sebesar 10% untuk perdagangan Full Call Auction.\n- Pada rentang harga Rp 1-10: ARA dan ARB dibatasi simetris Rp1.',
       order: 3,
     },
     {

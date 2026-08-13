@@ -1,7 +1,7 @@
 import { FractionRule } from '@/types';
 export type { FractionRule };
 
-export type Board = 'Utama' | 'Pengembangan' | 'Akselerasi' | 'Watchlist';
+export type Board = 'Utama' | 'Pengembangan' | 'Akselerasi' | 'FCA';
 
 export interface AraArbRule {
   board: Board;
@@ -31,7 +31,7 @@ export const DEFAULT_ARA_ARB_RULES: Record<string, { ara: number; arb: number }[
     { ara: 20, arb: 15 },
   ],
   Akselerasi: [{ ara: 10, arb: 10 }],
-  Watchlist: [{ ara: 10, arb: 10 }],
+  FCA: [{ ara: 10, arb: 10 }],
 };
 
 export function getTickSize(price: number, rules: FractionRule[] = DEFAULT_FRACTION_RULES): number {
@@ -64,7 +64,7 @@ export function getAraArbPercentages(
   board: Board,
   customRules?: Record<string, { ara: number; arb: number }[]>
 ): { araPercent: number; arbPercent: number; fixedAmount?: number } {
-  if (board === 'Akselerasi' || board === 'Watchlist') {
+  if (board === 'Akselerasi' || board === 'FCA') {
     if (price <= 10) {
       return { araPercent: 0, arbPercent: 0, fixedAmount: 1 };
     }
@@ -74,21 +74,22 @@ export function getAraArbPercentages(
 
   // Papan Utama & Pengembangan (3 Rentang Harga Resmi BEI)
   if (price <= 200) {
-    const rule = customRules?.['Utama_50_200']?.[0] || customRules?.['Utama']?.[0];
-    return { araPercent: rule?.ara ?? 35, arbPercent: rule?.arb ?? 35 };
+    const rule = customRules?.['Utama_50_200']?.[0];
+    return { araPercent: rule?.ara ?? 35, arbPercent: rule?.arb ?? 15 };
   } else if (price <= 5000) {
-    const rule = customRules?.['Utama_200_5000']?.[0] || customRules?.['Utama']?.[0];
-    return { araPercent: rule?.ara ?? 25, arbPercent: rule?.arb ?? 25 };
+    const rule = customRules?.['Utama_200_5000']?.[0];
+    return { araPercent: rule?.ara ?? 25, arbPercent: rule?.arb ?? 15 };
   } else {
-    const rule = customRules?.['Utama_5000']?.[0] || customRules?.['Utama']?.[0];
-    return { araPercent: rule?.ara ?? 20, arbPercent: rule?.arb ?? 20 };
+    const rule = customRules?.['Utama_5000']?.[0];
+    return { araPercent: rule?.ara ?? 20, arbPercent: rule?.arb ?? 15 };
   }
 }
 
 export function calculateAraArb(
   previousPrice: number,
   board: Board,
-  fractionRules: FractionRule[] = DEFAULT_FRACTION_RULES
+  fractionRules: FractionRule[] = DEFAULT_FRACTION_RULES,
+  customRules?: Record<string, { ara: number; arb: number }[]>
 ) {
   if (previousPrice <= 0) {
     return {
@@ -105,7 +106,7 @@ export function calculateAraArb(
     };
   }
 
-  const { araPercent: araPercentMax, arbPercent: arbPercentMax, fixedAmount } = getAraArbPercentages(previousPrice, board);
+  const { araPercent: araPercentMax, arbPercent: arbPercentMax, fixedAmount } = getAraArbPercentages(previousPrice, board, customRules);
 
   const araRaw = fixedAmount
     ? previousPrice + fixedAmount
@@ -115,7 +116,10 @@ export function calculateAraArb(
     : previousPrice - previousPrice * (arbPercentMax / 100);
 
   const ara = bulatkanBEI(araRaw, 'floor', fractionRules);
-  const arb = bulatkanBEI(arbRaw, 'floor', fractionRules);
+  // Batas bawah dibulatkan naik ke fraksi valid terdekat agar penurunan
+  // aktual tidak melampaui batas maksimum ARB.
+  const minimumPrice = board === 'Akselerasi' || board === 'FCA' ? 1 : 50;
+  const arb = Math.max(minimumPrice, bulatkanBEI(arbRaw, 'ceil', fractionRules));
 
   const araPercentActual = ((ara - previousPrice) / previousPrice) * 100;
   const arbPercentActual = ((arb - previousPrice) / previousPrice) * 100;
