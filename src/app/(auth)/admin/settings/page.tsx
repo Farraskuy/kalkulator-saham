@@ -8,6 +8,7 @@ import { AdminCrudHeader } from '@/features/admin/components/AdminCrudHeader';
 export default function AdminSettingsPage() {
   const { showToast } = useToast();
   const [terms, setTerms] = useState('');
+  const [shareDisclaimer, setShareDisclaimer] = useState('');
   const [taxSetting, setTaxSetting] = useState<number>(0.0);
   const [saving, setSaving] = useState(false);
 
@@ -16,6 +17,7 @@ export default function AdminSettingsPage() {
       .then((res) => res.json())
       .then((data) => {
         if (data.terms) setTerms(data.terms);
+        if (data.shareDisclaimer) setShareDisclaimer(data.shareDisclaimer);
         if (data.tax) setTaxSetting(parseFloat(data.tax) || 0.0);
       })
       .catch((err) => console.error('Failed to load settings:', err));
@@ -29,7 +31,7 @@ export default function AdminSettingsPage() {
       const res = await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ terms, tax: taxSetting }),
+        body: JSON.stringify({ terms, shareDisclaimer, tax: taxSetting }),
       });
 
       if (res.ok) {
@@ -79,6 +81,19 @@ export default function AdminSettingsPage() {
                 rows={6}
                 value={terms}
                 onChange={(e) => setTerms(e.target.value)}
+                required
+                style={{ resize: 'vertical' }}
+              />
+            </div>
+
+            {/* Share Disclaimer Textarea */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-muted block">Teks Disclaimer Hasil Share Gambar (Watermark)</label>
+              <textarea
+                className="w-full bg-page rounded-xl px-4 py-3 text-main font-semibold outline-none focus:border-acc-blue text-xs"
+                rows={4}
+                value={shareDisclaimer}
+                onChange={(e) => setShareDisclaimer(e.target.value)}
                 required
                 style={{ resize: 'vertical' }}
               />

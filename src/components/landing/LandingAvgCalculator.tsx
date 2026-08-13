@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Layers, Plus, Trash2, Calculator, RotateCcw } from 'lucide-react';
+import { Layers, Plus, Trash2, Calculator, RotateCcw, Calendar } from 'lucide-react';
 import { calculateAverage, calculateTargetAverageLots, PurchaseRow } from '@/features/calculators';
 import { formatIDR, formatNumber } from '@/lib/utils/formatters';
 import ExportCardWrapper from '@/components/ui/ExportCardWrapper';
@@ -232,6 +232,21 @@ export default function LandingAvgCalculator() {
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="average" embedded>
+          <div className="flex justify-between items-start border-b border-border-custom/30 pb-3 mb-4 text-main">
+            {/* Left Side: Ticker */}
+            <div>
+              <div className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
+                {ticker}
+              </div>
+            </div>
+            {/* Right Side: Date */}
+            <div className="text-[10px] font-medium text-muted space-y-1 text-right">
+              <div className="flex items-center justify-end gap-1.5">
+                <Calendar size={12} className="text-muted/80" />
+                <span>{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+              </div>
+            </div>
+          </div>
           {/* Main Avg Price Card (Solid Purple, No Gradient, No Shadow, No Border) */}
           <div className="bg-[#7c3aed] text-white rounded-xl p-5 flex items-center justify-between">
             <div>
@@ -243,9 +258,8 @@ export default function LandingAvgCalculator() {
             </div>
           </div>
 
-          <div className="flex justify-between border-y border-border-custom/30 py-1 text-[10px] font-medium text-muted">
-            <div>{domainName}</div>
-            <div>{new Date().toLocaleDateString('id-ID', { dateStyle: 'medium' })}</div>
+          <div className="border-y border-border-custom/30 py-1 text-[10px] font-medium text-muted text-center">
+            {domainName}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">

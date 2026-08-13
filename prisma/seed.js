@@ -105,22 +105,30 @@ async function main() {
     console.log('✔ Persentase ARA/ARB sudah terisi.');
   }
 
-  // 4. Seed Terms and Conditions
-  const existingTerms = await prisma.systemSetting.findUnique({
+  // 4. Seed Terms and Conditions & Share Disclaimer
+  await prisma.systemSetting.upsert({
     where: { key: 'terms' },
+    update: {
+      value: 'HitungSaham.com menyediakan informasi, edukasi, dan simulasi terkait saham dan pasar modal. Seluruh hasil perhitungan bersifat ilustrasi berdasarkan asumsi dan data tertentu, dan tidak menjamin hasil investasi di masa mendatang. Konten di situs ini bukan merupakan rekomendasi, ajakan, penawaran, atau permintaan untuk membeli atau menjual saham maupun instrumen investasi lainnya. Setiap keputusan investasi sepenuhnya menjadi tanggung jawab pengguna, dan investasi di pasar modal mengandung risiko, termasuk kemungkinan kehilangan modal.',
+    },
+    create: {
+      key: 'terms',
+      value: 'HitungSaham.com menyediakan informasi, edukasi, dan simulasi terkait saham dan pasar modal. Seluruh hasil perhitungan bersifat ilustrasi berdasarkan asumsi dan data tertentu, dan tidak menjamin hasil investasi di masa mendatang. Konten di situs ini bukan merupakan rekomendasi, ajakan, penawaran, atau permintaan untuk membeli atau menjual saham maupun instrumen investasi lainnya. Setiap keputusan investasi sepenuhnya menjadi tanggung jawab pengguna, dan investasi di pasar modal mengandung risiko, termasuk kemungkinan kehilangan modal.',
+    },
   });
+  console.log('✔ Syarat dan Ketentuan (terms) default berhasil disimpan.');
 
-  if (!existingTerms) {
-    await prisma.systemSetting.create({
-      data: {
-        key: 'terms',
-        value: 'Website ini merupakan wadah berbagi catatan opini pribadi dan alat bantu kalkulasi matematis saham berdasarkan parameter input pengguna. Isi konten di website ini bukan merupakan instruksi atau rekomendasi beli/jual saham baku.',
-      },
-    });
-    console.log('✔ Syarat dan Ketentuan default berhasil disimpan.');
-  } else {
-    console.log('✔ Syarat dan Ketentuan sudah terisi.');
-  }
+  await prisma.systemSetting.upsert({
+    where: { key: 'shareDisclaimer' },
+    update: {
+      value: 'Disclaimer: HitungSaham.com menyediakan edukasi & simulasi saham. Hasil hanya ilustrasi, bukan jaminan atau rekomendasi investasi. Keputusan investasi sepenuhnya tanggung jawab pengguna. Instrumen investasi berisiko termasuk kehilangan modal.',
+    },
+    create: {
+      key: 'shareDisclaimer',
+      value: 'Disclaimer: HitungSaham.com menyediakan edukasi & simulasi saham. Hasil hanya ilustrasi, bukan jaminan atau rekomendasi investasi. Keputusan investasi sepenuhnya tanggung jawab pengguna. Instrumen investasi berisiko termasuk kehilangan modal.',
+    },
+  });
+  console.log('✔ Disclaimer share gambar default berhasil disimpan.');
 
   // 5. Seed Default FAQ Items
   const defaultFaqs = [

@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Target, TrendingUp, TrendingDown, Coins, Calculator, RotateCcw } from 'lucide-react';
+import { Target, TrendingUp, TrendingDown, Wallet, Calculator, RotateCcw, Calendar, User, Banknote } from 'lucide-react';
 import { kalkulasiTargetSaham } from '@/features/calculators';
 import { formatIDR, formatNumber, formatPercent, parseDecimalInput } from '@/lib/utils/formatters';
 import type { FractionRule } from '@/types';
-import ExportCardWrapper from '@/components/ui/ExportCardWrapper';
+import ExportCardWrapper, { ExportContext } from '@/components/ui/ExportCardWrapper';
 
 interface Props {
   fractionRules?: FractionRule[];
@@ -13,6 +13,7 @@ interface Props {
 }
 
 export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }: Props) {
+  const { isExporting } = React.useContext(ExportContext);
   const [ticker, setTicker] = useState<string>('');
   const [clientName, setClientName] = useState<string>('');
   const [hargaBeli, setHargaBeli] = useState<number>(0);
@@ -403,19 +404,50 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="prediction" embedded>
-          {ticker && (
-            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-main mb-3 uppercase">
-              {ticker}
+          <div className="flex justify-between items-start border-b border-border-custom/30 pb-3 mb-4 text-main">
+            {/* Left Side: Ticker */}
+            <div>
+              <div className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
+                {ticker}
+              </div>
             </div>
-          )}
+            {/* Right Side: Date & Author */}
+            <div className="text-[10px] font-medium text-muted space-y-1 text-right">
+              <div className="flex items-center justify-end gap-1.5">
+                <Calendar size={12} className="text-muted/80" />
+                <span>{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+              </div>
+              {clientName && (
+                <div className="flex items-center justify-end gap-1.5 font-semibold text-main dark:text-slate-300">
+                  <User size={12} className="text-muted/80" />
+                  <span>Dihitung oleh: <strong className="text-acc-blue">{clientName}</strong></span>
+                </div>
+              )}
+            </div>
+          </div>
           {/* Total Modal Banner (Solid Dark Slate, No Shadow, No Border) */}
-          <div className="bg-slate-900 text-white rounded-xl p-4 flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300">Total Investasi</div>
-              <div className="text-base sm:text-2xl font-extrabold mt-1 text-white wrap-break-word">{formatIDR(result.rincian.totalModal)}</div>
+          <div className="bg-slate-900 text-white rounded-xl p-4 flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300">Total Investasi</div>
+                <div className="text-base sm:text-2xl font-extrabold mt-1 text-white wrap-break-word">{formatIDR(result.rincian.totalModal)}</div>
+              </div>
+              <div className="shrink-0 text-white opacity-90">
+                <Wallet size={24} />
+              </div>
             </div>
-            <div className="shrink-0 text-white opacity-90">
-              <Coins size={24} />
+            <div className="border-t border-slate-700/50 pt-3 mt-1 flex items-center justify-between gap-4 text-[10px] text-slate-300">
+              <div className="flex-1 min-w-0">
+                <span className="font-medium block text-slate-400">Harga Beli</span>
+                <span className="text-xs sm:text-sm font-bold text-white block mt-0.5">{formatIDR(hargaBeli)}</span>
+              </div>
+              <div className="w-px h-8 bg-slate-700/50 shrink-0"></div>
+              <div className="flex-1 min-w-0 pl-2">
+                <span className="font-medium block text-slate-400">Jumlah Saham</span>
+                <span className="text-xs sm:text-sm font-bold text-white block mt-0.5">
+                  {formatNumber(lot)} lot ({formatNumber(result.rincian.totalLembar)} lembar)
+                </span>
+              </div>
             </div>
           </div>
 
@@ -431,35 +463,61 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">Harga Jual</span>
-                <div className="text-sm sm:text-base font-extrabold text-emerald-800 dark:text-emerald-300 wrap-break-word">
-                  {formatIDR(result.skenarioUntung.hargaBEI)}
+            <div className="flex items-center justify-between gap-4">
+              <div className="grid grid-cols-2 gap-3 flex-1 min-w-0">
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">Harga Jual</span>
+                  <div className="text-sm sm:text-base font-extrabold text-emerald-800 dark:text-emerald-300 wrap-break-word">
+                    {formatIDR(result.skenarioUntung.hargaBEI)}
+                  </div>
+                  <div className="text-[10px] text-emerald-700 dark:text-emerald-400 mt-0.5 wrap-break-word">
+                    Harga Exact: {formatIDR(result.skenarioUntung.hargaExact)}
+                  </div>
                 </div>
-                <div className="text-[10px] text-emerald-700 dark:text-emerald-400 mt-0.5 wrap-break-word">
-                  Harga Exact: {formatIDR(result.skenarioUntung.hargaExact)}
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">Profit Bersih</span>
+                  <div className="text-sm sm:text-base font-extrabold text-emerald-700 dark:text-emerald-400 wrap-break-word">
+                    +{formatIDR(result.skenarioUntung.labaBersihReal)}
+                  </div>
                 </div>
               </div>
-              <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">Profit Bersih</span>
-                <div className="text-sm sm:text-base font-extrabold text-emerald-700 dark:text-emerald-400 wrap-break-word">
-                  +{formatIDR(result.skenarioUntung.labaBersihReal)}
+              {/* Proyeksi Keuntungan Graph */}
+              {isExporting && (
+                <div className="shrink-0 flex flex-col items-start border-l border-emerald-500/20 pl-4 min-w-[100px] sm:min-w-[140px]">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400 mb-1.5 whitespace-nowrap">
+                    PROYEKSI KEUNTUNGAN
+                  </span>
+                  <svg viewBox="0 0 120 40" className="w-full h-10">
+                    <defs>
+                      <linearGradient id="green-grad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#10b981" stopOpacity="0.25"/>
+                        <stop offset="100%" stopColor="#10b981" stopOpacity="0"/>
+                      </linearGradient>
+                    </defs>
+                    <path d="M 2 36 C 15 30, 25 15, 40 18 C 55 20, 65 10, 80 12 C 95 14, 105 4, 116 4 L 116 40 L 2 40 Z" fill="url(#green-grad)" />
+                    <path d="M 2 36 C 15 30, 25 15, 40 18 C 55 20, 65 10, 80 12 C 95 14, 105 4, 116 4" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" />
+                    <circle cx="116" cy="4" r="3.5" fill="#10b981" stroke="#fff" strokeWidth="1.5" />
+                  </svg>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
-          <div className="border-y border-border-custom/30 py-1.5 text-[10px] font-medium text-muted space-y-1">
-            {clientName && (
-              <div className="font-semibold text-main dark:text-slate-300 pb-1 border-b border-border-custom/10">
-                Dihitung oleh: <span className="text-acc-blue font-bold">{clientName}</span>
-              </div>
-            )}
-            <div className="flex justify-between pt-0.5">
-              <div>{domainName}</div>
-              <div>{new Date().toLocaleDateString('id-ID', { dateStyle: 'medium' })}</div>
+          {/* New Take Profit Total Value Card */}
+          <div className="bg-emerald-500/5 rounded-xl p-3 flex items-center gap-3 border border-emerald-500/10 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
+              <Banknote size={18} />
             </div>
+            <div>
+              <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 block">Total Nilai Jika Terjual</span>
+              <span className="text-sm font-extrabold text-emerald-900 dark:text-emerald-200 block mt-0.5">
+                {formatIDR(result.rincian.totalModal + result.skenarioUntung.labaBersihReal)}
+              </span>
+            </div>
+          </div>
+
+          <div className="border-y border-border-custom/30 py-1 text-[10px] font-medium text-muted text-center">
+            {domainName}
           </div>
 
           {/* Skenario Rugi Box (Solid Rose Light, No Border, No Shadow) */}
@@ -474,22 +532,56 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider block text-rose-700 dark:text-rose-400">Harga Jual</span>
-                <div className="text-sm sm:text-base font-extrabold text-rose-800 dark:text-rose-300 wrap-break-word">
-                  {formatIDR(result.skenarioRugi.hargaBEI)}
+            <div className="flex items-center justify-between gap-4">
+              <div className="grid grid-cols-2 gap-3 flex-1 min-w-0">
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-rose-700 dark:text-rose-400">Harga Jual</span>
+                  <div className="text-sm sm:text-base font-extrabold text-rose-800 dark:text-rose-300 wrap-break-word">
+                    {formatIDR(result.skenarioRugi.hargaBEI)}
+                  </div>
+                  <div className="text-[10px] text-rose-700 dark:text-rose-400 mt-0.5 wrap-break-word">
+                    Harga Exact: {formatIDR(result.skenarioRugi.hargaExact)}
+                  </div>
                 </div>
-                <div className="text-[10px] text-rose-700 dark:text-rose-400 mt-0.5 wrap-break-word">
-                  Harga Exact: {formatIDR(result.skenarioRugi.hargaExact)}
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-rose-700 dark:text-rose-400">Rugi Bersih</span>
+                  <div className="text-sm sm:text-base font-extrabold text-rose-700 dark:text-rose-400 wrap-break-word">
+                    -{formatIDR(result.skenarioRugi.rugiBersihReal)}
+                  </div>
                 </div>
               </div>
-              <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider block text-rose-700 dark:text-rose-400">Rugi Bersih</span>
-                <div className="text-sm sm:text-base font-extrabold text-rose-700 dark:text-rose-400 wrap-break-word">
-                  -{formatIDR(result.skenarioRugi.rugiBersihReal)}
+              {/* Proyeksi Kerugian Graph */}
+              {isExporting && (
+                <div className="shrink-0 flex flex-col items-start border-l border-rose-500/20 pl-4 min-w-[100px] sm:min-w-[140px]">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-rose-700 dark:text-rose-400 mb-1.5 whitespace-nowrap">
+                    PROYEKSI KERUGIAN
+                  </span>
+                  <svg viewBox="0 0 120 40" className="w-full h-10">
+                    <defs>
+                      <linearGradient id="red-grad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#f43f5e" stopOpacity="0.25"/>
+                        <stop offset="100%" stopColor="#f43f5e" stopOpacity="0"/>
+                      </linearGradient>
+                    </defs>
+                    <path d="M 2 4 C 15 10, 25 25, 40 22 C 55 20, 65 30, 80 28 C 95 26, 105 36, 116 36 L 116 40 L 2 40 Z" fill="url(#red-grad)" />
+                    <path d="M 2 4 C 15 10, 25 25, 40 22 C 55 20, 65 30, 80 28 C 95 26, 105 36, 116 36" fill="none" stroke="#f43f5e" strokeWidth="2" strokeLinecap="round" />
+                    <circle cx="116" cy="36" r="3.5" fill="#f43f5e" stroke="#fff" strokeWidth="1.5" />
+                  </svg>
                 </div>
-              </div>
+              )}
+            </div>
+          </div>
+
+          {/* New Stop Loss Total Value Card */}
+          <div className="bg-rose-500/5 rounded-xl p-3 flex items-center gap-3 border border-rose-500/10 mt-3">
+            <div className="w-8 h-8 rounded-lg bg-rose-500/15 flex items-center justify-center text-rose-600 dark:text-rose-400 shrink-0">
+              <Banknote size={18} />
+            </div>
+            <div>
+              <span className="text-[10px] font-bold text-rose-800 dark:text-rose-300 block">Total Nilai Jika Terjual</span>
+              <span className="text-sm font-extrabold text-rose-900 dark:text-rose-200 block mt-0.5">
+                {formatIDR(result.rincian.totalModal - result.skenarioRugi.rugiBersihReal)}
+              </span>
             </div>
           </div>
         </ExportCardWrapper>

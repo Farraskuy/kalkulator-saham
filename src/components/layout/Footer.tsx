@@ -21,7 +21,7 @@ export default function Footer({ variant = 'default' }: FooterProps) {
           {/* BRAND COLUMN */}
           <div className="md:col-span-4 space-y-3">
             <div className="flex items-center gap-2.5 font-bold text-lg text-main">
-              <AppLogo size={24} variant="dark-icon" />
+              <AppLogo size={24} variant="auto" />
               <span>HitungSaham</span>
             </div>
             <p className="text-xs text-muted max-w-sm leading-relaxed font-medium">

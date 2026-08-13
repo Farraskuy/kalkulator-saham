@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { createContext, useRef, useState, useEffect } from 'react';
+
+export const ExportContext = createContext({ isExporting: false });
 import { Download, Share2, Check } from 'lucide-react';
 import { toPng, toBlob } from 'html-to-image';
 
@@ -19,10 +21,27 @@ export default function ExportCardWrapper({
   const cardRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [shareDisclaimer, setShareDisclaimer] = useState(
+    'Disclaimer: HitungSaham.com menyediakan edukasi & simulasi saham. Hasil hanya ilustrasi, bukan jaminan atau rekomendasi investasi. Keputusan investasi sepenuhnya tanggung jawab pengguna. Instrumen investasi berisiko termasuk kehilangan modal.'
+  );
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.shareDisclaimer) {
+          setShareDisclaimer(data.shareDisclaimer);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleDownloadImage = async () => {
     if (!cardRef.current) return;
     setDownloading(true);
+    setIsExporting(true);
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     try {
       const dataUrl = await toPng(cardRef.current, { cacheBust: true });
@@ -35,12 +54,16 @@ export default function ExportCardWrapper({
     } catch (err) {
       console.error('Failed to export PNG card image:', err);
     } finally {
+      setIsExporting(false);
       setDownloading(false);
     }
   };
 
   const handleShare = async () => {
     if (!cardRef.current) return;
+    setIsExporting(true);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     try {
       const blob = await toBlob(cardRef.current, { cacheBust: true });
       if (!blob) return;
@@ -67,11 +90,14 @@ export default function ExportCardWrapper({
       if ((err as Error).name !== 'AbortError') {
         console.error('Failed to share PNG image:', err);
       }
+    } finally {
+      setIsExporting(false);
     }
   };
 
   return (
-    <div className={`relative ${embedded ? '' : 'bg-card border border-border-custom/50 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6'}`}>
+    <ExportContext.Provider value={{ isExporting }}>
+      <div className={`relative ${embedded ? '' : 'bg-card border border-border-custom/50 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6'}`}>
       {/* CARD TOP HEADER */}
       <div className="pb-3 border-b border-border-custom/40">
         <div className="text-xs font-extrabold uppercase tracking-wider text-muted">
@@ -82,6 +108,11 @@ export default function ExportCardWrapper({
       {/* EXPORTABLE CARD CONTAINER */}
       <div ref={cardRef} className="p-2 sm:p-3 bg-card rounded-xl space-y-4">
         {children}
+        {isExporting && (
+          <div className="border-t border-border-custom/30 pt-3 text-[9px] text-muted leading-relaxed text-center italic mt-1 max-w-sm mx-auto">
+            {shareDisclaimer}
+          </div>
+        )}
       </div>
 
       {/* ACTION BUTTONS AT BOTTOM (PILL STYLED: UNDUH GAMBAR PNG & BAGIKAN) */}
@@ -108,5 +139,6 @@ export default function ExportCardWrapper({
         </button>
       </div>
     </div>
+    </ExportContext.Provider>
   );
 }

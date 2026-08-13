@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShieldAlert, TrendingUp, TrendingDown, HelpCircle, Calculator, RotateCcw } from 'lucide-react';
+import { ShieldAlert, TrendingUp, TrendingDown, HelpCircle, Calculator, RotateCcw, Calendar } from 'lucide-react';
 import { Board, calculateAraArb } from '@/features/calculators';
 import { formatIDR, formatPercent, formatNumber } from '@/lib/utils/formatters';
 import type { AraArbRuleMap, FractionRule } from '@/types';
@@ -159,11 +159,21 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="ara-arb" embedded>
-          {ticker && (
-            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-main mb-3 uppercase">
-              {ticker}
+          <div className="flex justify-between items-start border-b border-border-custom/30 pb-3 mb-4 text-main">
+            {/* Left Side: Ticker */}
+            <div>
+              <div className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
+                {ticker}
+              </div>
             </div>
-          )}
+            {/* Right Side: Date */}
+            <div className="text-[10px] font-medium text-muted space-y-1 text-right">
+              <div className="flex items-center justify-end gap-1.5">
+                <Calendar size={12} className="text-muted/80" />
+                <span>{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+              </div>
+            </div>
+          </div>
           {/* ARA Box (Solid Emerald, No Gradient, No Shadow, No Border) */}
           <div className="bg-[#059669] text-white rounded-xl p-4 flex items-center justify-between">
             <div>
@@ -182,9 +192,8 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
             </div>
           </div>
 
-          <div className="flex justify-between border-y border-border-custom/30 py-1 text-[10px] font-medium text-muted">
-            <div>{domainName}</div>
-            <div>{new Date().toLocaleDateString('id-ID', { dateStyle: 'medium' })}</div>
+          <div className="border-y border-border-custom/30 py-1 text-[10px] font-medium text-muted text-center">
+            {domainName}
           </div>
 
           {/* ARB Box (Solid Rose, No Gradient, No Shadow, No Border) */}

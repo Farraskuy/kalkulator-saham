@@ -4,7 +4,8 @@ import { verifySession } from '@/lib/auth';
 
 export async function GET() {
   try {
-    let terms = 'Website ini hanya merupakan alat bantu kalkulasi saham semata berdasarkan parameter input pengguna dan aturan fraksi BEI secara matematis, serta bukan merupakan rekomendasi, saran, atau tolak ukur baku untuk transaksi jual beli saham. Keputusan investasi sepenuhnya ada di tangan pengguna.';
+    let terms = 'HitungSaham.com menyediakan informasi, edukasi, dan simulasi terkait saham dan pasar modal. Seluruh hasil perhitungan bersifat ilustrasi berdasarkan asumsi dan data tertentu, dan tidak menjamin hasil investasi di masa mendatang. Konten di situs ini bukan merupakan rekomendasi, ajakan, penawaran, atau permintaan untuk membeli atau menjual saham maupun instrumen investasi lainnya. Setiap keputusan investasi sepenuhnya menjadi tanggung jawab pengguna, dan investasi di pasar modal mengandung risiko, termasuk kemungkinan kehilangan modal.';
+    let shareDisclaimer = 'Disclaimer: HitungSaham.com menyediakan edukasi & simulasi saham. Hasil hanya ilustrasi, bukan jaminan atau rekomendasi investasi. Keputusan investasi sepenuhnya tanggung jawab pengguna. Instrumen investasi berisiko termasuk kehilangan modal.';
     let tax = '0.0';
 
     try {
@@ -13,6 +14,13 @@ export async function GET() {
       });
       if (settingTerms) {
         terms = settingTerms.value;
+      }
+
+      const settingShare = await prisma.systemSetting.findUnique({
+        where: { key: 'shareDisclaimer' },
+      });
+      if (settingShare) {
+        shareDisclaimer = settingShare.value;
       }
 
       const settingTax = await prisma.systemSetting.findUnique({
@@ -25,7 +33,7 @@ export async function GET() {
       // Fallback to default
     }
 
-    return NextResponse.json({ terms, tax });
+    return NextResponse.json({ terms, shareDisclaimer, tax });
   } catch (error) {
     return NextResponse.json(
       { error: 'Gagal mengambil pengaturan: ' + (error as Error).message },
@@ -41,7 +49,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { terms, tax } = await request.json();
+    const { terms, shareDisclaimer, tax } = await request.json();
 
     try {
       if (terms !== undefined && terms !== null) {
@@ -49,6 +57,14 @@ export async function POST(request: Request) {
           where: { key: 'terms' },
           update: { value: terms },
           create: { key: 'terms', value: terms },
+        });
+      }
+
+      if (shareDisclaimer !== undefined && shareDisclaimer !== null) {
+        await prisma.systemSetting.upsert({
+          where: { key: 'shareDisclaimer' },
+          update: { value: shareDisclaimer },
+          create: { key: 'shareDisclaimer', value: shareDisclaimer },
         });
       }
 
