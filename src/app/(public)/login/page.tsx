@@ -38,8 +38,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-page px-4 sm:px-6 transition-colors duration-300">
-      <div className="w-full max-w-[420px] bg-card  rounded-3xl p-8 ">
+    <div className="min-h-screen flex items-center justify-center bg-page px-0 sm:px-6 transition-colors duration-300">
+      <div className="w-full min-h-screen sm:min-h-fit sm:max-w-[420px] bg-card rounded-none sm:rounded-3xl p-6 sm:p-8 flex flex-col justify-center shadow-none sm:shadow-md border-0 sm:border sm:border-border-custom/30">
         <div>
           <div className="mb-4">
             <AppLogo size={44} />

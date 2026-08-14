@@ -29,24 +29,24 @@ export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModal
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 transition-opacity animate-in fade-in duration-200">
-      <div className="bg-page text-main w-full max-w-md rounded-2xl border border-border-custom shadow-2xl overflow-hidden flex flex-col relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 transition-opacity animate-in fade-in duration-200">
+      <div className="bg-page text-main w-full max-w-md max-h-[92vh] rounded-2xl sm:rounded-3xl border border-border-custom shadow-2xl overflow-y-auto flex flex-col relative my-auto landing-scroller">
         {/* Close Button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 p-1.5 rounded-full bg-black/5 text-muted hover:text-main hover:bg-sub-slate transition-colors cursor-pointer z-10"
+          className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 p-1.5 rounded-full bg-black/5 dark:bg-white/10 text-muted hover:text-main hover:bg-sub-slate transition-colors cursor-pointer z-10"
           aria-label="Tutup popup"
         >
           <X size={18} />
         </button>
 
         {/* Modal Header */}
-        <div className="p-6 sm:p-7 pb-4 text-center space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#111210] text-white flex items-center justify-center mx-auto shadow-md">
-            <AppLogo size={32} variant="white-icon" />
+        <div className="p-5 sm:p-7 pb-3 sm:pb-4 text-center space-y-2.5 sm:space-y-3">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#111210] text-white flex items-center justify-center mx-auto shadow-md">
+            <AppLogo size={28} variant="white-icon" />
           </div>
           <div>
-            <h3 className="text-lg sm:text-xl font-bold text-main tracking-tight">
+            <h3 className="text-base sm:text-xl font-bold text-main tracking-tight">
               Masuk dengan Google
             </h3>
             <p className="text-xs text-muted mt-1 leading-relaxed">
@@ -56,33 +56,33 @@ export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModal
         </div>
 
         {/* Benefits List */}
-        <div className="px-6 sm:px-7 space-y-3 mb-5">
-          <div className="bg-sub-slate p-4 rounded-xl space-y-3 text-xs">
-            <div className="flex items-start gap-2.5">
+        <div className="px-4 sm:px-7 space-y-3 mb-4 sm:mb-5">
+          <div className="bg-sub-slate p-3.5 sm:p-4 rounded-xl space-y-2.5 sm:space-y-3 text-xs">
+            <div className="flex items-start gap-2 sm:gap-2.5">
               <CheckCircle2 size={16} className="text-emerald-700 shrink-0 mt-0.5" />
               <div>
-                <strong className="text-main block font-bold">Simpan Riwayat Perhitungan Otomatis</strong>
-                <span className="text-muted text-[11px] leading-relaxed block">
+                <strong className="text-main block font-bold text-[11px] sm:text-xs">Simpan Riwayat Perhitungan Otomatis</strong>
+                <span className="text-muted text-[10px] sm:text-[11px] leading-relaxed block mt-0.5">
                   Hasil simulasi target profit, ARA/ARB, dan average down tersimpan aman di akun Anda.
                 </span>
               </div>
             </div>
 
-            <div className="flex items-start gap-2.5">
+            <div className="flex items-start gap-2 sm:gap-2.5">
               <CheckCircle2 size={16} className="text-emerald-700 shrink-0 mt-0.5" />
               <div>
-                <strong className="text-main block font-bold">Akses Kapan Saja &amp; Gratis 100%</strong>
-                <span className="text-muted text-[11px] leading-relaxed block">
+                <strong className="text-main block font-bold text-[11px] sm:text-xs">Akses Kapan Saja &amp; Gratis 100%</strong>
+                <span className="text-muted text-[10px] sm:text-[11px] leading-relaxed block mt-0.5">
                   Buka kembali analisis portofolio dari HP maupun Laptop secara instan tanpa biaya.
                 </span>
               </div>
             </div>
 
-            <div className="flex items-start gap-2.5">
+            <div className="flex items-start gap-2 sm:gap-2.5">
               <CheckCircle2 size={16} className="text-emerald-700 shrink-0 mt-0.5" />
               <div>
-                <strong className="text-main block font-bold">Autentikasi Aman via Google OAuth</strong>
-                <span className="text-muted text-[11px] leading-relaxed block">
+                <strong className="text-main block font-bold text-[11px] sm:text-xs">Autentikasi Aman via Google OAuth</strong>
+                <span className="text-muted text-[10px] sm:text-[11px] leading-relaxed block mt-0.5">
                   Tanpa perlu membuat kata sandi baru, login praktis dan aman dengan akun Google.
                 </span>
               </div>
@@ -91,10 +91,10 @@ export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModal
         </div>
 
         {/* Actions & Checkbox */}
-        <div className="px-6 sm:px-7 pb-6 space-y-4">
+        <div className="px-4 sm:px-7 pb-5 sm:pb-6 space-y-3 sm:space-y-4">
           <button
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-2.5 bg-[#111210] hover:bg-black text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm transition-all cursor-pointer shadow-md"
+            className="w-full flex items-center justify-center gap-2.5 bg-[#111210] hover:bg-black text-white font-bold py-2.5 sm:py-3 px-4 rounded-xl text-xs sm:text-sm transition-all cursor-pointer shadow-md"
           >
             <svg className="w-4 h-4 bg-card rounded-full p-0.5" viewBox="0 0 24 24">
               <path
@@ -118,15 +118,15 @@ export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModal
           </button>
 
           {/* Don't show again checkbox */}
-          <div className="flex items-center justify-center gap-2 pt-1">
+          <div className="flex items-start sm:items-center justify-center gap-2 pt-1">
             <input
               id="dont-show-promo"
               type="checkbox"
               checked={dontShowAgain}
               onChange={(e) => setDontShowAgain(e.target.checked)}
-              className="h-4 w-4 cursor-pointer rounded border-border-custom text-main focus:ring-acc-blue"
+              className="h-4 w-4 cursor-pointer rounded border-border-custom text-main focus:ring-acc-blue mt-0.5 sm:mt-0 shrink-0"
             />
-            <label htmlFor="dont-show-promo" className="text-[11px] text-muted font-medium cursor-pointer select-none">
+            <label htmlFor="dont-show-promo" className="text-[10px] sm:text-[11px] text-muted font-medium cursor-pointer select-none leading-tight">
               Jangan tampilkan lagi pesan promosi ini
             </label>
           </div>
