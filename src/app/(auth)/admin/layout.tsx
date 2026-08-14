@@ -15,7 +15,9 @@ import {
   Menu,
   Percent,
   RefreshCw,
+  Shield,
   Tag,
+  Users,
   X,
 } from 'lucide-react';
 import AppLogo from '@/components/layout/AppLogo';
@@ -41,7 +43,8 @@ const navGroups = [
       { href: '/admin/fractions', label: 'Fraksi Harga BEI', icon: ListRestart },
       { href: '/admin/ara-arb', label: 'Aturan ARA / ARB', icon: Percent },
       { href: '/admin/settings', label: 'Syarat & Ketentuan', icon: FileText },
-      { href: '/admin/security', label: 'Keamanan Akun', icon: Lock },
+      { href: '/admin/users', label: 'Manajemen Pengguna', icon: Users },
+      { href: '/admin/roles', label: 'Role & Hak Akses', icon: Shield },
     ],
   },
 ];
