@@ -7,6 +7,7 @@ import { Calculator, ChevronRight } from 'lucide-react';
 import { ArticleData, CategoryData } from '@/types';
 import BlogSearchDropdown from './BlogSearchDropdown';
 import BlogPagination from './BlogPagination';
+import CategoryDropdownFilter from './CategoryDropdownFilter';
 
 interface LandingBlogFilterProps {
   allArticles: ArticleData[];
@@ -56,7 +57,17 @@ export default function LandingBlogFilter({
           />
         </div>
 
-        <nav className="flex flex-wrap items-center gap-2 w-full" aria-label="Jelajahi kategori artikel">
+        {/* MOBILE VIEW: CUSTOM DROPDOWN WITH SEARCH */}
+        <div className="block sm:hidden w-full">
+          <CategoryDropdownFilter
+            categories={categoryList}
+            totalArticles={totalArticles}
+            theme="acme"
+          />
+        </div>
+
+        {/* TABLET / DESKTOP VIEW: HORIZONTAL PILLS */}
+        <nav className="hidden sm:flex flex-wrap items-center gap-2 w-full" aria-label="Jelajahi kategori artikel">
           <Link href="/blog/search" className="inline-flex items-center justify-center px-5 py-[9px] rounded-full text-xs font-semibold text-(--landing-muted) bg-(--landing-soft) hover:bg-(--landing-soft-strong) hover:text-(--landing-text) no-underline whitespace-nowrap transition-all duration-200">
             Semua Artikel
           </Link>

@@ -153,8 +153,8 @@ export default async function PersonalBlogPage({
               {/* Secondary Stacked Posts */}
               <div className="flex flex-col gap-[24px]">
                 {secondaryPosts.map((post: ArticleData) => (
-                  <Link key={post.id} href={`/blog/${post.slug}`} className="bg-(--landing-card) rounded-[14px] p-5 no-underline text-inherit flex gap-[16px] transition-all duration-200  hover:bg-(--landing-soft)">
-                    <div className="relative w-[110px] h-[110px] rounded-lg overflow-hidden shrink-0 bg-(--landing-inverse-bg)">
+                  <Link key={post.id} href={`/blog/${post.slug}`} className="bg-(--landing-card) rounded-[14px] p-4 sm:p-5 no-underline text-inherit flex flex-col sm:flex-row gap-3.5 sm:gap-[16px] transition-all duration-200 hover:bg-(--landing-soft)">
+                    <div className="relative w-full sm:w-[110px] h-[160px] sm:h-[110px] rounded-lg overflow-hidden shrink-0 bg-(--landing-inverse-bg)">
                       <Image
                         src={post.coverImage || '/assets/images/img.png'}
                         alt={post.title}
@@ -162,11 +162,11 @@ export default async function PersonalBlogPage({
                         className="object-cover"
                       />
                     </div>
-                    <div className="flex flex-col justify-center gap-[6px]">
+                    <div className="flex flex-col justify-center gap-[6px] min-w-0">
                       <span className="inline-block px-[10px] py-[4px] rounded-md text-[11px] font-bold uppercase tracking-[0.5px] bg-(--landing-soft-strong) text-(--landing-text) w-fit">{post.category}</span>
-                      <h3 className="m-0 text-[15px] font-bold text-(--landing-text) leading-[1.35]">{post.title}</h3>
-                      <p className="m-0 text-xs text-(--landing-muted) line-clamp-2">{post.excerpt}</p>
-                      <div className="text-xs font-medium text-(--landing-faint) mt-auto pt-3">
+                      <h3 className="m-0 text-[15px] font-bold text-(--landing-text) leading-[1.35] break-words">{post.title}</h3>
+                      <p className="m-0 text-xs text-(--landing-muted) line-clamp-2 leading-relaxed">{post.excerpt}</p>
+                      <div className="text-xs font-medium text-(--landing-faint) mt-auto pt-2 sm:pt-3">
                         {new Date(post.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </div>
                     </div>

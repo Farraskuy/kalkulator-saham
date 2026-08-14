@@ -222,10 +222,10 @@ export function kalkulasiTargetSaham(
   const pctProfitMax = ((hargaUntungBEI - hargaBeli) / hargaBeli) * 100;
   const labaBersihReal = hargaUntungBEI * pengaliJual - totalModal;
 
-  const hargaRugiExact = (totalModal - targetRugiRp) / pengaliJual;
-  const hargaRugiBEI = bulatkanBEI(hargaRugiExact, 'ceil', fractionRules);
-  const pctLossMax = ((hargaBeli - hargaRugiBEI) / hargaBeli) * 100;
-  const rugiBersihReal = totalModal - hargaRugiBEI * pengaliJual;
+  const hargaRugiExact = Math.min(hargaBeli, (totalModal - targetRugiRp) / pengaliJual);
+  const hargaRugiBEI = Math.min(hargaBeli, bulatkanBEI(hargaRugiExact, 'floor', fractionRules));
+  const pctLossMax = Math.max(0, ((hargaBeli - hargaRugiBEI) / hargaBeli) * 100);
+  const rugiBersihReal = Math.max(0, totalModal - hargaRugiBEI * pengaliJual);
 
   return {
     rincian: {

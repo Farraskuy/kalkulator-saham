@@ -76,14 +76,14 @@ export default function FaqSection({ faqs, showHeader = false, theme = 'default'
             >
               <button
                 onClick={() => toggleAccordion(faq.id)}
-                className={`w-full flex items-center justify-between p-4 sm:p-4.5 text-left font-bold transition-colors cursor-pointer gap-3 sm:gap-4 ${
+                className={`w-full flex items-start sm:items-center justify-between p-4 sm:p-4.5 text-left font-bold transition-colors cursor-pointer gap-3 sm:gap-4 ${
                   isAcme
                     ? 'text-main hover:text-main'
                     : 'text-main hover:text-acc-blue'
                 }`}
                 aria-expanded={isOpen}
               >
-                <span className="text-xs sm:text-sm flex items-center gap-2.5 sm:gap-3 leading-snug font-bold">
+                <div className="flex flex-col sm:flex-row sm:items-center items-start gap-1.5 sm:gap-3 leading-snug font-bold min-w-0 flex-1">
                   <span
                     className={
                       isAcme
@@ -93,10 +93,10 @@ export default function FaqSection({ faqs, showHeader = false, theme = 'default'
                   >
                     #{index + 1}
                   </span>
-                  <span className="break-words">{faq.question}</span>
-                </span>
+                  <span className="text-xs sm:text-sm font-bold text-main break-words leading-snug">{faq.question}</span>
+                </div>
                 <div
-                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${
+                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 mt-0.5 sm:mt-0 ${
                     isAcme
                       ? isOpen
                         ? 'rotate-180 bg-[#111210] text-white'

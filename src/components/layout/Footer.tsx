@@ -93,12 +93,12 @@ export default function Footer({ variant = 'default' }: FooterProps) {
           </div>
         </div>
 
-        {/* BOTTOM SECTION (CENTERED COPYRIGHT & DISCLAIMER) */}
-        <div className="pt-6 border-t border-border-custom/40 flex flex-col items-center justify-center text-center space-y-2 text-[11px] text-muted font-medium">
+        {/* BOTTOM SECTION (LEFT-ALIGNED COPYRIGHT & DISCLAIMER) */}
+        <div className="pt-6 border-t border-border-custom/40 flex flex-col items-start justify-start text-left space-y-2.5 text-[11px] text-muted font-medium">
           <div>
             &copy; {year} HitungSaham.com • Catatan &amp; Kalkulator Saham
           </div>
-          <div className="max-w-2xl text-[10px] leading-relaxed">
+          <div className="max-w-3xl text-[10px] leading-relaxed text-left">
             <DynamicDisclaimer />
           </div>
         </div>

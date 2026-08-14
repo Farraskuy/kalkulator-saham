@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer';
 import LandingHeader from '@/components/landing/LandingHeader';
 import BlogSearchDropdown from '@/features/blog/components/BlogSearchDropdown';
 import BlogPagination from '@/features/blog/components/BlogPagination';
+import CategoryDropdownFilter from '@/features/blog/components/CategoryDropdownFilter';
 import { getCachedArticles, getCachedCategories } from '@/lib/cached-data';
 
 export async function generateMetadata({
@@ -113,8 +114,19 @@ export default async function BlogSearchPage({
           )}
         </div>
 
-        {/* CATEGORY PILLS BAR ACME STYLE */}
-        <div className="flex items-center gap-2 w-full overflow-x-auto overscroll-x-contain pb-2 snap-x snap-proximity landing-scroller [&>*]:shrink-0 [&>*]:snap-start">
+        {/* MOBILE VIEW: CUSTOM DROPDOWN WITH SEARCH */}
+        <div className="block sm:hidden w-full mb-4">
+          <CategoryDropdownFilter
+            categories={categories.map((c) => c.name)}
+            activeCategory={category}
+            searchQuery={q}
+            totalArticles={articles.length}
+            theme="acme"
+          />
+        </div>
+
+        {/* TABLET / DESKTOP: CATEGORY PILLS BAR */}
+        <div className="hidden sm:flex items-center gap-2 w-full overflow-x-auto overscroll-x-contain pb-2 snap-x snap-proximity landing-scroller [&>*]:shrink-0 [&>*]:snap-start">
           <Link
             href={q ? `/blog/search?q=${encodeURIComponent(q)}` : '/blog/search'}
             className={category === 'ALL' ? categoryPillActiveClass : categoryPillClass}
