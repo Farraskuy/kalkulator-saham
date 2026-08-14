@@ -5,7 +5,18 @@ import { Target, TrendingUp, TrendingDown, Wallet, Calculator, RotateCcw, Calend
 import { kalkulasiTargetSaham } from '@/features/calculators';
 import { formatIDR, formatNumber, formatPercent, parseDecimalInput } from '@/lib/utils/formatters';
 import type { FractionRule } from '@/types';
-import ExportCardWrapper, { ExportContext } from '@/components/ui/ExportCardWrapper';
+import ExportCardWrapper from '@/components/ui/ExportCardWrapper';
+
+const sanitizeDecimalInput = (val: string): string => {
+  let cleaned = val.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+  const firstCommaIndex = cleaned.indexOf(',');
+  if (firstCommaIndex !== -1) {
+    const before = cleaned.slice(0, firstCommaIndex + 1);
+    const after = cleaned.slice(firstCommaIndex + 1).replace(/,/g, '');
+    cleaned = before + after;
+  }
+  return cleaned;
+};
 
 interface Props {
   fractionRules?: FractionRule[];
@@ -13,7 +24,6 @@ interface Props {
 }
 
 export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }: Props) {
-  const { isExporting } = React.useContext(ExportContext);
   const [ticker, setTicker] = useState<string>('');
   const [clientName, setClientName] = useState<string>('');
   const [hargaBeli, setHargaBeli] = useState<number>(0);
@@ -186,7 +196,7 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="grid grid-cols-2 gap-3 mb-4 items-end">
             <div className="space-y-1">
               <label htmlFor="pred-ticker" className="text-[11px] font-bold text-muted block">
                 Kode Saham
@@ -268,7 +278,7 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="grid grid-cols-2 gap-3 mb-4 items-end">
             <div className="space-y-1">
               <label htmlFor="pred-feebeli" className="text-[11px] font-bold text-muted block">
                 Fee Beli (%)
@@ -281,8 +291,9 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
                 value={feeBeliInput}
                 placeholder="e.g. 0,15"
                 onChange={(e) => {
-                  setFeeBeliInput(e.target.value);
-                  setFeeBeli(parseDecimalInput(e.target.value));
+                  const sanitized = sanitizeDecimalInput(e.target.value);
+                  setFeeBeliInput(sanitized);
+                  setFeeBeli(parseDecimalInput(sanitized));
                 }}
               />
             </div>
@@ -299,8 +310,9 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
                 value={feeJualInput}
                 placeholder="e.g. 0,25"
                 onChange={(e) => {
-                  setFeeJualInput(e.target.value);
-                  setFeeJual(parseDecimalInput(e.target.value));
+                  const sanitized = sanitizeDecimalInput(e.target.value);
+                  setFeeJualInput(sanitized);
+                  setFeeJual(parseDecimalInput(sanitized));
                 }}
               />
             </div>
@@ -404,23 +416,25 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="prediction" embedded>
-          <div className="flex justify-between items-start border-b border-border-custom/30 pb-3 mb-4 text-main">
+          {({ isExporting }) => (
+            <>
+              <div className="flex flex-wrap justify-between items-start border-b border-border-custom/30 pb-3 mb-4 text-main gap-2">
             {/* Left Side: Ticker */}
-            <div>
-              <div className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
+            <div className="min-w-0">
+              <div className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase break-all">
                 {ticker}
               </div>
             </div>
             {/* Right Side: Date & Author */}
-            <div className="text-[10px] font-medium text-muted space-y-1 text-right">
-              <div className="flex items-center justify-end gap-1.5">
-                <Calendar size={12} className="text-muted/80" />
-                <span>{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+            <div className="text-[10px] font-medium text-muted space-y-1 text-left sm:text-right min-w-0">
+              <div className="flex flex-wrap items-center justify-start sm:justify-end gap-1.5 leading-tight">
+                <Calendar size={12} className="text-muted/80 shrink-0" />
+                <span className="whitespace-nowrap">{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
               </div>
               {clientName && (
-                <div className="flex items-center justify-end gap-1.5 font-semibold text-main dark:text-slate-300">
-                  <User size={12} className="text-muted/80" />
-                  <span>Dihitung oleh: <strong className="text-acc-blue">{clientName}</strong></span>
+                <div className="flex flex-wrap items-center justify-start sm:justify-end gap-1.5 font-semibold text-main dark:text-slate-300 leading-tight">
+                  <User size={12} className="text-muted/80 shrink-0" />
+                  <span>Dihitung oleh: <strong className="text-acc-blue font-bold">{clientName}</strong></span>
                 </div>
               )}
             </div>
@@ -429,65 +443,68 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
           <div className="bg-slate-900 text-white rounded-xl p-4 flex flex-col gap-3">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300">Total Investasi</div>
-                <div className="text-base sm:text-2xl font-extrabold mt-1 text-white wrap-break-word">{formatIDR(result.rincian.totalModal)}</div>
+                <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300 whitespace-nowrap">Total Investasi</div>
+                <div className="text-base sm:text-2xl font-extrabold mt-1 text-white whitespace-nowrap">{formatIDR(result.rincian.totalModal)}</div>
               </div>
               <div className="shrink-0 text-white opacity-90">
                 <Wallet size={24} />
               </div>
             </div>
-            <div className="border-t border-slate-700/50 pt-3 mt-1 flex items-center justify-between gap-4 text-[10px] text-slate-300">
-              <div className="flex-1 min-w-0">
-                <span className="font-medium block text-slate-400">Harga Beli</span>
-                <span className="text-xs sm:text-sm font-bold text-white block mt-0.5">{formatIDR(hargaBeli)}</span>
+            <div className="border-t border-slate-700/50 pt-3 mt-1 flex flex-wrap items-center justify-between gap-3 text-[10px] text-slate-300">
+              <div className="flex-1 min-w-[100px] text-left">
+                <span className="font-medium block text-slate-400 whitespace-nowrap">Harga Beli</span>
+                <span className="text-xs sm:text-sm font-bold text-white block mt-0.5 whitespace-nowrap">{formatIDR(hargaBeli)}</span>
               </div>
-              <div className="w-px h-8 bg-slate-700/50 shrink-0"></div>
-              <div className="flex-1 min-w-0 pl-2">
-                <span className="font-medium block text-slate-400">Jumlah Saham</span>
-                <span className="text-xs sm:text-sm font-bold text-white block mt-0.5">
-                  {formatNumber(lot)} lot ({formatNumber(result.rincian.totalLembar)} lembar)
-                </span>
+              <div className="w-px h-8 bg-slate-700/50 shrink-0 hidden sm:block"></div>
+              <div className="flex-1 min-w-[120px] text-right">
+                <span className="font-medium block text-slate-400 whitespace-nowrap">Jumlah Saham</span>
+                <div className="text-xs sm:text-sm font-bold text-white mt-0.5 leading-tight whitespace-nowrap">
+                  <div>{formatNumber(lot)} lot</div>
+                  <div className="text-[10px] text-slate-400 font-normal mt-0.5">({formatNumber(result.rincian.totalLembar)} lembar)</div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Skenario Untung Box (Solid Emerald Light, No Border, No Shadow) */}
           <div className="bg-emerald-500/10 rounded-xl p-3.5 sm:p-4 mt-4 mb-3">
-            <div className="flex items-start justify-between mb-3 gap-2 pb-2 border-b border-emerald-500/20">
-              <div className="flex items-start gap-1.5 font-bold text-xs text-emerald-800 dark:text-emerald-300 min-w-0 pr-2">
-                <TrendingUp size={16} className="shrink-0 mt-0.5 text-emerald-700 dark:text-emerald-400" />
-                <span className="leading-tight whitespace-nowrap">TARGET UNTUNG (TAKE PROFIT)</span>
+            <div className="flex flex-wrap items-center justify-between mb-3 gap-2 pb-2 border-b border-emerald-500/20">
+              <div className="flex items-center gap-1.5 font-bold text-[10px] sm:text-xs text-emerald-800 dark:text-emerald-300 min-w-0">
+                <TrendingUp size={14} className="shrink-0 text-emerald-700 dark:text-emerald-400" />
+                <div className="flex flex-wrap items-center gap-x-1 leading-tight">
+                  <span className="whitespace-nowrap">TARGET UNTUNG</span>
+                  <span className="whitespace-nowrap opacity-90">(TAKE PROFIT)</span>
+                </div>
               </div>
-              <span className="shrink-0 font-bold text-emerald-700 dark:text-emerald-400 text-xs bg-emerald-500/15 px-2 py-0.5 rounded-md whitespace-nowrap">
+              <span className="shrink-0 font-bold text-emerald-700 dark:text-emerald-400 text-[10px] sm:text-xs bg-emerald-500/15 px-2 py-0.5 rounded-md whitespace-nowrap">
                 +{formatPercent(result.skenarioUntung.persentase)}
               </span>
             </div>
 
-            <div className="flex items-center justify-between gap-4">
-              <div className="grid grid-cols-2 gap-3 flex-1 min-w-0">
-                <div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">Harga Jual</span>
-                  <div className="text-sm sm:text-base font-extrabold text-emerald-800 dark:text-emerald-300 wrap-break-word">
-                    {formatIDR(result.skenarioUntung.hargaBEI)}
+            {isExporting ? (
+              <div className="flex items-center justify-between gap-3">
+                {/* Sisi Kiri: Harga Jual & Profit Bersih Ter-stack */}
+                <div className="flex flex-col gap-2 min-w-0">
+                  <div className="text-left">
+                    <span className="text-[10px] font-bold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">Harga Jual</span>
+                    <div className="text-base sm:text-lg font-black text-emerald-900 dark:text-emerald-200 tracking-tight leading-tight">
+                      {formatIDR(result.skenarioUntung.hargaBEI)}
+                    </div>
                   </div>
-                  <div className="text-[10px] text-emerald-700 dark:text-emerald-400 mt-0.5 wrap-break-word">
-                    Harga Exact: {formatIDR(result.skenarioUntung.hargaExact)}
+                  <div className="text-left">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider block text-emerald-700/80 dark:text-emerald-400/80">Profit Bersih</span>
+                    <div className="text-xs sm:text-sm font-bold text-emerald-700 dark:text-emerald-400 leading-tight">
+                      +{formatIDR(result.skenarioUntung.labaBersihReal)}
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">Profit Bersih</span>
-                  <div className="text-sm sm:text-base font-extrabold text-emerald-700 dark:text-emerald-400 wrap-break-word">
-                    +{formatIDR(result.skenarioUntung.labaBersihReal)}
-                  </div>
-                </div>
-              </div>
-              {/* Proyeksi Keuntungan Graph */}
-              {isExporting && (
-                <div className="shrink-0 flex flex-col items-start border-l border-emerald-500/20 pl-4 min-w-[100px] sm:min-w-[140px]">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400 mb-1.5 whitespace-nowrap">
+
+                {/* Sisi Kanan: Proyeksi Keuntungan Graph */}
+                <div className="shrink-0 flex flex-col items-end pl-2">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400 mb-1 whitespace-nowrap text-right">
                     PROYEKSI KEUNTUNGAN
                   </span>
-                  <svg viewBox="0 0 120 40" className="w-full h-10">
+                  <svg viewBox="0 0 120 40" className="w-28 sm:w-32 h-10">
                     <defs>
                       <linearGradient id="green-grad" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="#10b981" stopOpacity="0.25"/>
@@ -499,18 +516,33 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
                     <circle cx="116" cy="4" r="3.5" fill="#10b981" stroke="#fff" strokeWidth="1.5" />
                   </svg>
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex-1 min-w-[100px] text-left">
+                  <span className="text-[10px] font-bold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">Harga Jual</span>
+                  <div className="text-base sm:text-lg font-black text-emerald-900 dark:text-emerald-200 tracking-tight break-all [overflow-wrap:anywhere] leading-tight">
+                    {formatIDR(result.skenarioUntung.hargaBEI)}
+                  </div>
+                </div>
+                <div className="flex-1 min-w-[100px] text-right">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider block text-emerald-700/80 dark:text-emerald-400/80">Profit Bersih</span>
+                  <div className="text-xs sm:text-sm font-medium text-emerald-700 dark:text-emerald-400 mt-0.5 break-all [overflow-wrap:anywhere] leading-tight">
+                    +{formatIDR(result.skenarioUntung.labaBersihReal)}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* New Take Profit Total Value Card */}
-          <div className="bg-emerald-500/5 rounded-xl p-3 flex items-center gap-3 border border-emerald-500/10 mb-3">
+          <div className="bg-emerald-500/5 rounded-xl p-3 flex items-center justify-center gap-1.5 border border-emerald-500/10 mb-3 text-center">
             <div className="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
               <Banknote size={18} />
             </div>
-            <div>
+            <div className="w-full min-w-0 text-center">
               <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 block">Total Nilai Jika Terjual</span>
-              <span className="text-sm font-extrabold text-emerald-900 dark:text-emerald-200 block mt-0.5">
+              <span className="text-sm sm:text-base font-extrabold text-emerald-900 dark:text-emerald-200 block mt-0.5 break-all [overflow-wrap:anywhere] leading-tight px-1">
                 {formatIDR(result.rincian.totalModal + result.skenarioUntung.labaBersihReal)}
               </span>
             </div>
@@ -522,41 +554,43 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
 
           {/* Skenario Rugi Box (Solid Rose Light, No Border, No Shadow) */}
           <div className="bg-rose-500/10 rounded-xl p-3.5 sm:p-4 mt-3">
-            <div className="flex items-start justify-between mb-3 gap-2 pb-2 border-b border-rose-500/20">
-              <div className="flex items-start gap-1.5 font-bold text-xs text-rose-800 dark:text-rose-300 min-w-0 pr-2">
-                <TrendingDown size={16} className="shrink-0 mt-0.5 text-rose-700 dark:text-rose-400" />
-                <span className="leading-tight whitespace-nowrap">BATAS RUGI (STOP LOSS)</span>
+            <div className="flex flex-wrap items-center justify-between mb-3 gap-2 pb-2 border-b border-rose-500/20">
+              <div className="flex items-center gap-1.5 font-bold text-[10px] sm:text-xs text-rose-800 dark:text-rose-300 min-w-0">
+                <TrendingDown size={14} className="shrink-0 text-rose-700 dark:text-rose-400" />
+                <div className="flex flex-wrap items-center gap-x-1 leading-tight">
+                  <span className="whitespace-nowrap">BATAS RUGI</span>
+                  <span className="whitespace-nowrap opacity-90">(STOP LOSS)</span>
+                </div>
               </div>
-              <div className="shrink-0 font-bold text-rose-700 dark:text-rose-400 text-xs bg-rose-500/15 px-2 py-0.5 rounded-md whitespace-nowrap">
-                -{formatPercent(result.skenarioRugi.persentase)}
+              <div className="shrink-0 font-bold text-rose-700 dark:text-rose-400 text-[10px] sm:text-xs bg-rose-500/15 px-2 py-0.5 rounded-md whitespace-nowrap">
+                -{formatPercent(Math.abs(result.skenarioRugi.persentase))}
               </div>
             </div>
 
-            <div className="flex items-center justify-between gap-4">
-              <div className="grid grid-cols-2 gap-3 flex-1 min-w-0">
-                <div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-rose-700 dark:text-rose-400">Harga Jual</span>
-                  <div className="text-sm sm:text-base font-extrabold text-rose-800 dark:text-rose-300 wrap-break-word">
-                    {formatIDR(result.skenarioRugi.hargaBEI)}
+            {isExporting ? (
+              <div className="flex items-center justify-between gap-3">
+                {/* Sisi Kiri: Harga Jual & Rugi Bersih Ter-stack */}
+                <div className="flex flex-col gap-2 min-w-0">
+                  <div className="text-left">
+                    <span className="text-[10px] font-bold uppercase tracking-wider block text-rose-700 dark:text-rose-400">Harga Jual</span>
+                    <div className="text-base sm:text-lg font-black text-rose-900 dark:text-rose-200 tracking-tight leading-tight">
+                      {formatIDR(result.skenarioRugi.hargaBEI)}
+                    </div>
                   </div>
-                  <div className="text-[10px] text-rose-700 dark:text-rose-400 mt-0.5 wrap-break-word">
-                    Harga Exact: {formatIDR(result.skenarioRugi.hargaExact)}
+                  <div className="text-left">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider block text-rose-700/80 dark:text-rose-400/80">Rugi Bersih</span>
+                    <div className="text-xs sm:text-sm font-bold text-rose-700 dark:text-rose-400 leading-tight">
+                      -{formatIDR(Math.abs(result.skenarioRugi.rugiBersihReal))}
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-rose-700 dark:text-rose-400">Rugi Bersih</span>
-                  <div className="text-sm sm:text-base font-extrabold text-rose-700 dark:text-rose-400 wrap-break-word">
-                    -{formatIDR(result.skenarioRugi.rugiBersihReal)}
-                  </div>
-                </div>
-              </div>
-              {/* Proyeksi Kerugian Graph */}
-              {isExporting && (
-                <div className="shrink-0 flex flex-col items-start border-l border-rose-500/20 pl-4 min-w-[100px] sm:min-w-[140px]">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-rose-700 dark:text-rose-400 mb-1.5 whitespace-nowrap">
+
+                {/* Sisi Kanan: Proyeksi Kerugian Graph */}
+                <div className="shrink-0 flex flex-col items-end pl-2">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-rose-700 dark:text-rose-400 mb-1 whitespace-nowrap text-right">
                     PROYEKSI KERUGIAN
                   </span>
-                  <svg viewBox="0 0 120 40" className="w-full h-10">
+                  <svg viewBox="0 0 120 40" className="w-28 sm:w-32 h-10">
                     <defs>
                       <linearGradient id="red-grad" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="#f43f5e" stopOpacity="0.25"/>
@@ -568,22 +602,39 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
                     <circle cx="116" cy="36" r="3.5" fill="#f43f5e" stroke="#fff" strokeWidth="1.5" />
                   </svg>
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex-1 min-w-[100px] text-left">
+                  <span className="text-[10px] font-bold uppercase tracking-wider block text-rose-700 dark:text-rose-400">Harga Jual</span>
+                  <div className="text-base sm:text-lg font-black text-rose-900 dark:text-rose-200 tracking-tight break-all [overflow-wrap:anywhere] leading-tight">
+                    {formatIDR(result.skenarioRugi.hargaBEI)}
+                  </div>
+                </div>
+                <div className="flex-1 min-w-[100px] text-right">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider block text-rose-700/80 dark:text-rose-400/80">Rugi Bersih</span>
+                  <div className="text-xs sm:text-sm font-medium text-rose-700 dark:text-rose-400 mt-0.5 break-all [overflow-wrap:anywhere] leading-tight">
+                    -{formatIDR(Math.abs(result.skenarioRugi.rugiBersihReal))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* New Stop Loss Total Value Card */}
-          <div className="bg-rose-500/5 rounded-xl p-3 flex items-center gap-3 border border-rose-500/10 mt-3">
+          <div className="bg-rose-500/5 rounded-xl p-3 flex items-center justify-center gap-1.5 border border-rose-500/10 mt-3 text-center">
             <div className="w-8 h-8 rounded-lg bg-rose-500/15 flex items-center justify-center text-rose-600 dark:text-rose-400 shrink-0">
               <Banknote size={18} />
             </div>
-            <div>
+            <div className="w-full min-w-0 text-center">
               <span className="text-[10px] font-bold text-rose-800 dark:text-rose-300 block">Total Nilai Jika Terjual</span>
-              <span className="text-sm font-extrabold text-rose-900 dark:text-rose-200 block mt-0.5">
+              <span className="text-sm sm:text-base font-extrabold text-rose-900 dark:text-rose-200 block mt-0.5 break-all [overflow-wrap:anywhere] leading-tight px-1">
                 {formatIDR(result.rincian.totalModal - result.skenarioRugi.rugiBersihReal)}
               </span>
             </div>
           </div>
+            </>
+          )}
         </ExportCardWrapper>
       </div>
     </div>

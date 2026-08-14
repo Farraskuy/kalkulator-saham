@@ -232,28 +232,28 @@ export default function LandingAvgCalculator() {
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="average" embedded>
-          <div className="flex justify-between items-start border-b border-border-custom/30 pb-3 mb-4 text-main">
+          <div className="flex flex-wrap justify-between items-start border-b border-border-custom/30 pb-3 mb-4 text-main gap-2">
             {/* Left Side: Ticker */}
-            <div>
-              <div className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
+            <div className="min-w-0">
+              <div className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase break-all">
                 {ticker}
               </div>
             </div>
             {/* Right Side: Date */}
-            <div className="text-[10px] font-medium text-muted space-y-1 text-right">
-              <div className="flex items-center justify-end gap-1.5">
-                <Calendar size={12} className="text-muted/80" />
-                <span>{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+            <div className="text-[10px] font-medium text-muted space-y-1 text-left sm:text-right min-w-0">
+              <div className="flex flex-wrap items-center justify-start sm:justify-end gap-1.5 leading-tight">
+                <Calendar size={12} className="text-muted/80 shrink-0" />
+                <span className="whitespace-nowrap">{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
               </div>
             </div>
           </div>
           {/* Main Avg Price Card (Solid Purple, No Gradient, No Shadow, No Border) */}
-          <div className="bg-[#7c3aed] text-white rounded-xl p-5 flex items-center justify-between">
-            <div>
+          <div className="bg-[#7c3aed] text-white rounded-xl p-5 flex items-center justify-between gap-3">
+            <div className="min-w-0">
               <div className="text-[10px] font-extrabold uppercase tracking-wider text-purple-100">Harga Rata-Rata per Lembar (Avg Price)</div>
-              <div className="text-2xl sm:text-3xl font-extrabold mt-1 text-white">{formatIDR(result.avgPrice)}</div>
+              <div className="text-2xl sm:text-3xl font-extrabold mt-1 text-white break-all [overflow-wrap:anywhere] leading-tight">{formatIDR(result.avgPrice)}</div>
             </div>
-            <div className="text-white opacity-95">
+            <div className="text-white opacity-95 shrink-0">
               <Layers size={26} />
             </div>
           </div>
@@ -265,11 +265,11 @@ export default function LandingAvgCalculator() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
             <div className="bg-violet-500/10 rounded-xl p-3.5 space-y-1">
               <span className="text-[10px] font-extrabold uppercase tracking-wider block text-violet-700 dark:text-violet-400">Total Lembar Saham</span>
-              <span className="text-base font-extrabold block text-violet-800 dark:text-violet-300 wrap-break-word">{formatNumber(result.totalLembar)} Lembar</span>
+              <span className="text-base font-extrabold block text-violet-800 dark:text-violet-300 break-all [overflow-wrap:anywhere] leading-tight">{formatNumber(result.totalLembar)} Lembar</span>
             </div>
-            <div className="bg-violet-500/10 rounded-xl p-3.5 space-y-1">
+            <div className="bg-violet-500/10 rounded-xl p-3.5 space-y-1 sm:text-right">
               <span className="text-[10px] font-extrabold uppercase tracking-wider block text-violet-700 dark:text-violet-400">Total Investasi Pembelian</span>
-              <span className="text-base font-extrabold block text-violet-800 dark:text-violet-300 wrap-break-word">{formatIDR(result.totalInvestment)}</span>
+              <span className="text-base font-extrabold block text-violet-800 dark:text-violet-300 break-all [overflow-wrap:anywhere] leading-tight">{formatIDR(result.totalInvestment)}</span>
             </div>
           </div>
 

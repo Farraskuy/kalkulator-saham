@@ -84,7 +84,7 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="grid grid-cols-2 gap-3 mb-4 items-end">
             <div className="space-y-1">
               <label htmlFor="ara-ticker" className="text-[11px] font-bold text-muted block">
                 Kode Saham
@@ -159,28 +159,28 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="ara-arb" embedded>
-          <div className="flex justify-between items-start border-b border-border-custom/30 pb-3 mb-4 text-main">
+          <div className="flex flex-wrap justify-between items-start border-b border-border-custom/30 pb-3 mb-4 text-main gap-2">
             {/* Left Side: Ticker */}
-            <div>
-              <div className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
+            <div className="min-w-0">
+              <div className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase break-all">
                 {ticker}
               </div>
             </div>
             {/* Right Side: Date */}
-            <div className="text-[10px] font-medium text-muted space-y-1 text-right">
-              <div className="flex items-center justify-end gap-1.5">
-                <Calendar size={12} className="text-muted/80" />
-                <span>{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+            <div className="text-[10px] font-medium text-muted space-y-1 text-left sm:text-right min-w-0">
+              <div className="flex flex-wrap items-center justify-start sm:justify-end gap-1.5 leading-tight">
+                <Calendar size={12} className="text-muted/80 shrink-0" />
+                <span className="whitespace-nowrap">{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
               </div>
             </div>
           </div>
           {/* ARA Box (Solid Emerald, No Gradient, No Shadow, No Border) */}
-          <div className="bg-[#059669] text-white rounded-xl p-4 flex items-center justify-between">
-            <div>
+          <div className="bg-[#059669] text-white rounded-xl p-4 flex items-center justify-between gap-3">
+            <div className="min-w-0">
               <div className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-100">Batas Auto Rejection Atas (ARA)</div>
-              <div className="text-xl sm:text-2xl font-extrabold mt-1 text-white">{formatIDR(result.ara)}</div>
+              <div className="text-xl sm:text-2xl font-extrabold mt-1 text-white break-all [overflow-wrap:anywhere] leading-tight">{formatIDR(result.ara)}</div>
             </div>
-            <div className="text-white opacity-95">
+            <div className="text-white opacity-95 shrink-0">
               <TrendingUp size={24} />
             </div>
           </div>
@@ -188,7 +188,7 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
           <div className="mt-4 mb-4">
             <div className="bg-emerald-500/10 rounded-xl p-3.5 space-y-1">
               <span className="text-[10px] font-extrabold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">Persentase ARA</span>
-              <span className="text-sm font-extrabold block text-emerald-800 dark:text-emerald-300 wrap-break-word">+{formatPercent(result.araPercent)}</span>
+              <span className="text-sm sm:text-base font-extrabold block text-emerald-800 dark:text-emerald-300 break-all [overflow-wrap:anywhere] leading-tight">+{formatPercent(result.araPercent)}</span>
             </div>
           </div>
 
@@ -198,9 +198,9 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
 
           {/* ARB Box (Solid Rose, No Gradient, No Shadow, No Border) */}
           <div className="bg-[#e11d48] text-white rounded-xl p-4 flex items-center justify-between gap-3">
-            <div>
+            <div className="min-w-0">
               <div className="text-[10px] font-extrabold uppercase tracking-wider text-rose-100">Batas Auto Rejection Bawah (ARB)</div>
-              <div className="text-lg sm:text-2xl font-extrabold mt-1 text-white wrap-break-word">{formatIDR(result.arb)}</div>
+              <div className="text-lg sm:text-2xl font-extrabold mt-1 text-white break-all [overflow-wrap:anywhere] leading-tight">{formatIDR(result.arb)}</div>
             </div>
             <div className="shrink-0 text-white opacity-95">
               <TrendingDown size={24} />
@@ -210,7 +210,7 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
           <div className="mt-4">
             <div className="bg-rose-500/10 rounded-xl p-3.5 space-y-1">
               <span className="text-[10px] font-extrabold uppercase tracking-wider block text-rose-700 dark:text-rose-400">Persentase ARB</span>
-              <span className="text-sm font-extrabold block text-rose-800 dark:text-rose-300 wrap-break-word">-{formatPercent(Math.abs(result.arbPercent))}</span>
+              <span className="text-sm sm:text-base font-extrabold block text-rose-800 dark:text-rose-300 break-all [overflow-wrap:anywhere] leading-tight">-{formatPercent(Math.abs(result.arbPercent))}</span>
             </div>
           </div>
         </ExportCardWrapper>
