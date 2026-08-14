@@ -10,6 +10,7 @@ export interface AdminCrudHeaderProps {
   description: string;
   actionHref?: string;
   actionLabel?: string;
+  onActionClick?: () => void;
   icon?: LucideIcon;
 }
 
@@ -18,6 +19,7 @@ export function AdminCrudHeader({
   description,
   actionHref,
   actionLabel,
+  onActionClick,
   icon: Icon,
 }: AdminCrudHeaderProps) {
   return (
@@ -29,12 +31,17 @@ export function AdminCrudHeader({
         </div>
         <p className="mt-1 text-sm leading-6 text-muted">{description}</p>
       </div>
-      {actionHref && actionLabel && (
+      {actionHref && actionLabel ? (
         <Link href={actionHref} className={primaryButtonClass}>
           <Plus size={16} />
           <span>{actionLabel}</span>
         </Link>
-      )}
+      ) : onActionClick && actionLabel ? (
+        <button type="button" onClick={onActionClick} className={primaryButtonClass}>
+          <Plus size={16} />
+          <span>{actionLabel}</span>
+        </button>
+      ) : null}
     </div>
   );
 }
