@@ -44,7 +44,7 @@ export default function Footer({ variant = 'default' }: FooterProps) {
           </div>
 
           {/* NAV COLUMNS */}
-          <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs">
+          <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-8 text-xs">
             <div>
               <div className="font-bold text-main mb-3 text-xs">
                 Kalkulator Saham
@@ -94,15 +94,6 @@ export default function Footer({ variant = 'default' }: FooterProps) {
                   </Link>
                 </li>
               </ul>
-            </div>
-
-            <div>
-              <div className="font-bold text-main mb-3 text-xs">
-                Profil Pengelola
-              </div>
-              <p className="text-xs text-muted leading-relaxed font-medium">
-                Dikelola secara mandiri sebagai ruang berbagi catatan artikel opini pribadi dan penyedia alat kalkulasi matematis saham.
-              </p>
             </div>
           </div>
         </div>
