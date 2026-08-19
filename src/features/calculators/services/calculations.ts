@@ -222,8 +222,21 @@ export function kalkulasiTargetSaham(
   const pctProfitMax = ((hargaUntungBEI - hargaBeli) / hargaBeli) * 100;
   const labaBersihReal = hargaUntungBEI * pengaliJual - totalModal;
 
-  const hargaRugiExact = Math.min(hargaBeli, (totalModal - targetRugiRp) / pengaliJual);
-  const hargaRugiBEI = Math.min(hargaBeli, bulatkanBEI(hargaRugiExact, 'floor', fractionRules));
+  // Harga Jual Rugi (Stop Loss):
+  // 1. Hitung harga rugi eksak berdasarkan budget batas rugi maksimal
+  const hargaRugiExact = (totalModal - targetRugiRp) / pengaliJual;
+  
+  // 2. Pembulatan batas rugi BEI:
+  // Gunakan 'ceil' (dibulatkan ke fraksi terdekat ke atas) agar kerugian bersih aktual
+  // TIDAK MELEBIHI batas rugi nominal (targetRugiRp) yang telah ditetapkan user.
+  let hargaRugiBEI = bulatkanBEI(hargaRugiExact, 'ceil', fractionRules);
+
+  // 3. Aturan: harga jual rugi = harga beli jika nilai batas rugi belum lebih besar
+  // dari penurunan 1 tick harga BEI.
+  if (hargaRugiBEI >= hargaBeli) {
+    hargaRugiBEI = hargaBeli;
+  }
+
   const pctLossMax = Math.max(0, ((hargaBeli - hargaRugiBEI) / hargaBeli) * 100);
   const rugiBersihReal = Math.max(0, totalModal - hargaRugiBEI * pengaliJual);
 
