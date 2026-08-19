@@ -416,9 +416,7 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="prediction" embedded>
-          {({ isExporting }) => (
-            <>
-              <div className="flex items-start justify-between border-b border-border-custom/30 pb-3 mb-4 text-main gap-3">
+          <div className="flex items-start justify-between border-b border-border-custom/30 pb-3 mb-4 text-main gap-3">
             {/* Left Side: Ticker */}
             <div className="min-w-0">
               <div className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase whitespace-nowrap">
@@ -557,8 +555,6 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
               </span>
             </div>
           </div>
-            </>
-          )}
         </ExportCardWrapper>
       </div>
     </div>
