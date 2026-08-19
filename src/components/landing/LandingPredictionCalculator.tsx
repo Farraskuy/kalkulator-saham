@@ -418,10 +418,10 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
         <ExportCardWrapper fileName={cleanFileName} calculatorType="prediction" embedded>
           {({ isExporting }) => (
             <>
-              <div className="flex flex-wrap justify-between items-start border-b border-border-custom/30 pb-3 mb-4 text-main gap-2">
+              <div className="flex items-start justify-between border-b border-border-custom/30 pb-3 mb-4 text-main gap-3">
             {/* Left Side: Ticker */}
             <div className="min-w-0">
-              <div className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase break-all">
+              <div className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase whitespace-nowrap">
                 {ticker}
               </div>
             </div>
@@ -481,58 +481,20 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
               </span>
             </div>
 
-            {isExporting ? (
-              <div className="flex items-center justify-between gap-3">
-                {/* Sisi Kiri: Harga Jual & Profit Bersih Ter-stack */}
-                <div className="flex flex-col gap-2 min-w-0">
-                  <div className="text-left">
-                    <span className="text-[10px] font-bold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">Harga Jual</span>
-                    <div className="text-base sm:text-lg font-black text-emerald-900 dark:text-emerald-200 tracking-tight leading-tight">
-                      {formatIDR(result.skenarioUntung.hargaBEI)}
-                    </div>
-                  </div>
-                  <div className="text-left">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider block text-emerald-700/80 dark:text-emerald-400/80">Profit Bersih</span>
-                    <div className="text-xs sm:text-sm font-bold text-emerald-700 dark:text-emerald-400 leading-tight">
-                      +{formatIDR(result.skenarioUntung.labaBersihReal)}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Sisi Kanan: Proyeksi Keuntungan Graph */}
-                <div className="shrink-0 flex flex-col items-end pl-2">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400 mb-1 whitespace-nowrap text-right">
-                    PROYEKSI KEUNTUNGAN
-                  </span>
-                  <svg viewBox="0 0 120 40" className="w-28 sm:w-32 h-10">
-                    <defs>
-                      <linearGradient id="green-grad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#10b981" stopOpacity="0.25"/>
-                        <stop offset="100%" stopColor="#10b981" stopOpacity="0"/>
-                      </linearGradient>
-                    </defs>
-                    <path d="M 2 36 C 15 30, 25 15, 40 18 C 55 20, 65 10, 80 12 C 95 14, 105 4, 116 4 L 116 40 L 2 40 Z" fill="url(#green-grad)" />
-                    <path d="M 2 36 C 15 30, 25 15, 40 18 C 55 20, 65 10, 80 12 C 95 14, 105 4, 116 4" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" />
-                    <circle cx="116" cy="4" r="3.5" fill="#10b981" stroke="#fff" strokeWidth="1.5" />
-                  </svg>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="min-w-0 text-left">
+                <span className="text-[10px] font-bold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">Harga Jual</span>
+                <div className="text-base sm:text-lg font-black text-emerald-900 dark:text-emerald-200 tracking-tight leading-tight">
+                  {formatIDR(result.skenarioUntung.hargaBEI)}
                 </div>
               </div>
-            ) : (
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex-1 min-w-[100px] text-left">
-                  <span className="text-[10px] font-bold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">Harga Jual</span>
-                  <div className="text-base sm:text-lg font-black text-emerald-900 dark:text-emerald-200 tracking-tight break-all [overflow-wrap:anywhere] leading-tight">
-                    {formatIDR(result.skenarioUntung.hargaBEI)}
-                  </div>
-                </div>
-                <div className="flex-1 min-w-[100px] text-right">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider block text-emerald-700/80 dark:text-emerald-400/80">Profit Bersih</span>
-                  <div className="text-xs sm:text-sm font-medium text-emerald-700 dark:text-emerald-400 mt-0.5 break-all [overflow-wrap:anywhere] leading-tight">
-                    +{formatIDR(result.skenarioUntung.labaBersihReal)}
-                  </div>
+              <div className="min-w-0 text-right">
+                <span className="text-[10px] font-semibold uppercase tracking-wider block text-emerald-700/80 dark:text-emerald-400/80">Profit Bersih</span>
+                <div className="text-xs sm:text-sm font-bold text-emerald-700 dark:text-emerald-400 mt-0.5 leading-tight">
+                  +{formatIDR(result.skenarioUntung.labaBersihReal)}
                 </div>
               </div>
-            )}
+            </div>
           </div>
 
           {/* New Take Profit Total Value Card */}
@@ -542,7 +504,7 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
             </div>
             <div className="w-full min-w-0 text-center">
               <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 block">Total Nilai Jika Terjual</span>
-              <span className="text-sm sm:text-base font-extrabold text-emerald-900 dark:text-emerald-200 block mt-0.5 break-all [overflow-wrap:anywhere] leading-tight px-1">
+              <span className="text-sm sm:text-base font-extrabold text-emerald-900 dark:text-emerald-200 block mt-0.5 leading-tight px-1">
                 {formatIDR(result.rincian.totalModal + result.skenarioUntung.labaBersihReal)}
               </span>
             </div>
@@ -567,58 +529,20 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
               </div>
             </div>
 
-            {isExporting ? (
-              <div className="flex items-center justify-between gap-3">
-                {/* Sisi Kiri: Harga Jual & Rugi Bersih Ter-stack */}
-                <div className="flex flex-col gap-2 min-w-0">
-                  <div className="text-left">
-                    <span className="text-[10px] font-bold uppercase tracking-wider block text-rose-700 dark:text-rose-400">Harga Jual</span>
-                    <div className="text-base sm:text-lg font-black text-rose-900 dark:text-rose-200 tracking-tight leading-tight">
-                      {formatIDR(result.skenarioRugi.hargaBEI)}
-                    </div>
-                  </div>
-                  <div className="text-left">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider block text-rose-700/80 dark:text-rose-400/80">Rugi Bersih</span>
-                    <div className="text-xs sm:text-sm font-bold text-rose-700 dark:text-rose-400 leading-tight">
-                      -{formatIDR(Math.abs(result.skenarioRugi.rugiBersihReal))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Sisi Kanan: Proyeksi Kerugian Graph */}
-                <div className="shrink-0 flex flex-col items-end pl-2">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider block text-rose-700 dark:text-rose-400 mb-1 whitespace-nowrap text-right">
-                    PROYEKSI KERUGIAN
-                  </span>
-                  <svg viewBox="0 0 120 40" className="w-28 sm:w-32 h-10">
-                    <defs>
-                      <linearGradient id="red-grad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#f43f5e" stopOpacity="0.25"/>
-                        <stop offset="100%" stopColor="#f43f5e" stopOpacity="0"/>
-                      </linearGradient>
-                    </defs>
-                    <path d="M 2 4 C 15 10, 25 25, 40 22 C 55 20, 65 30, 80 28 C 95 26, 105 36, 116 36 L 116 40 L 2 40 Z" fill="url(#red-grad)" />
-                    <path d="M 2 4 C 15 10, 25 25, 40 22 C 55 20, 65 30, 80 28 C 95 26, 105 36, 116 36" fill="none" stroke="#f43f5e" strokeWidth="2" strokeLinecap="round" />
-                    <circle cx="116" cy="36" r="3.5" fill="#f43f5e" stroke="#fff" strokeWidth="1.5" />
-                  </svg>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="min-w-0 text-left">
+                <span className="text-[10px] font-bold uppercase tracking-wider block text-rose-700 dark:text-rose-400">Harga Jual</span>
+                <div className="text-base sm:text-lg font-black text-rose-900 dark:text-rose-200 tracking-tight leading-tight">
+                  {formatIDR(result.skenarioRugi.hargaBEI)}
                 </div>
               </div>
-            ) : (
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex-1 min-w-[100px] text-left">
-                  <span className="text-[10px] font-bold uppercase tracking-wider block text-rose-700 dark:text-rose-400">Harga Jual</span>
-                  <div className="text-base sm:text-lg font-black text-rose-900 dark:text-rose-200 tracking-tight break-all [overflow-wrap:anywhere] leading-tight">
-                    {formatIDR(result.skenarioRugi.hargaBEI)}
-                  </div>
-                </div>
-                <div className="flex-1 min-w-[100px] text-right">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider block text-rose-700/80 dark:text-rose-400/80">Rugi Bersih</span>
-                  <div className="text-xs sm:text-sm font-medium text-rose-700 dark:text-rose-400 mt-0.5 break-all [overflow-wrap:anywhere] leading-tight">
-                    -{formatIDR(Math.abs(result.skenarioRugi.rugiBersihReal))}
-                  </div>
+              <div className="min-w-0 text-right">
+                <span className="text-[10px] font-semibold uppercase tracking-wider block text-rose-700/80 dark:text-rose-400/80">Rugi Bersih</span>
+                <div className="text-xs sm:text-sm font-bold text-rose-700 dark:text-rose-400 mt-0.5 leading-tight">
+                  -{formatIDR(Math.abs(result.skenarioRugi.rugiBersihReal))}
                 </div>
               </div>
-            )}
+            </div>
           </div>
 
           {/* New Stop Loss Total Value Card */}
@@ -628,7 +552,7 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
             </div>
             <div className="w-full min-w-0 text-center">
               <span className="text-[10px] font-bold text-rose-800 dark:text-rose-300 block">Total Nilai Jika Terjual</span>
-              <span className="text-sm sm:text-base font-extrabold text-rose-900 dark:text-rose-200 block mt-0.5 break-all [overflow-wrap:anywhere] leading-tight px-1">
+              <span className="text-sm sm:text-base font-extrabold text-rose-900 dark:text-rose-200 block mt-0.5 leading-tight px-1">
                 {formatIDR(result.rincian.totalModal - result.skenarioRugi.rugiBersihReal)}
               </span>
             </div>

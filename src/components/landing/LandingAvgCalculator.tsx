@@ -232,16 +232,16 @@ export default function LandingAvgCalculator() {
         className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
       >
         <ExportCardWrapper fileName={cleanFileName} calculatorType="average" embedded>
-          <div className="flex flex-wrap justify-between items-start border-b border-border-custom/30 pb-3 mb-4 text-main gap-2">
+          <div className="flex items-start justify-between border-b border-border-custom/30 pb-3 mb-4 text-main gap-3">
             {/* Left Side: Ticker */}
             <div className="min-w-0">
-              <div className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase break-all">
+              <div className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase whitespace-nowrap">
                 {ticker}
               </div>
             </div>
             {/* Right Side: Date */}
-            <div className="text-[10px] font-medium text-muted space-y-1 text-left sm:text-right min-w-0">
-              <div className="flex flex-wrap items-center justify-start sm:justify-end gap-1.5 leading-tight">
+            <div className="text-[10px] font-medium text-muted space-y-1 text-right min-w-0">
+              <div className="flex items-center justify-end gap-1.5 leading-tight">
                 <Calendar size={12} className="text-muted/80 shrink-0" />
                 <span className="whitespace-nowrap">{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
               </div>

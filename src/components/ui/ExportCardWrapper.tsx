@@ -140,7 +140,7 @@ export default function ExportCardWrapper({
       </div>
 
       {/* EXPORTABLE CARD CONTAINER */}
-      <div ref={cardRef} className={`p-3 sm:p-4 bg-card rounded-xl space-y-4 ${isExporting ? 'w-[420px] max-w-[420px] shrink-0' : 'w-full'}`}>
+      <div ref={cardRef} className="p-3 sm:p-4 bg-card rounded-xl space-y-4 w-full">
         {typeof children === 'function' ? children({ isExporting }) : children}
         {isExporting && (
           <div className="border-t border-border-custom/30 pt-3 text-[9px] text-muted leading-relaxed text-center mt-1 max-w-sm mx-auto">
