@@ -11,12 +11,14 @@ export default function DynamicDisclaimer() {
     fetch('/api/settings')
       .then((res) => res.json())
       .then((data) => {
-        if (data.settings?.terms) {
+        if (data.terms) {
+          setTerms(data.terms);
+        } else if (data.settings?.terms) {
           setTerms(data.settings.terms);
         }
       })
       .catch(() => {
-        // Fallback fallback default
+        // Fallback default
       });
   }, []);
 

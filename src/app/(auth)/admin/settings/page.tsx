@@ -7,6 +7,7 @@ import { AdminCrudHeader } from '@/features/admin/components/AdminCrudHeader';
 
 export default function AdminSettingsPage() {
   const { showToast } = useToast();
+  const [siteDescription, setSiteDescription] = useState('');
   const [terms, setTerms] = useState('');
   const [shareDisclaimer, setShareDisclaimer] = useState('');
   const [taxSetting, setTaxSetting] = useState<number>(0.0);
@@ -16,6 +17,7 @@ export default function AdminSettingsPage() {
     fetch('/api/settings')
       .then((res) => res.json())
       .then((data) => {
+        if (data.siteDescription) setSiteDescription(data.siteDescription);
         if (data.terms) setTerms(data.terms);
         if (data.shareDisclaimer) setShareDisclaimer(data.shareDisclaimer);
         if (data.tax) setTaxSetting(parseFloat(data.tax) || 0.0);
@@ -31,11 +33,11 @@ export default function AdminSettingsPage() {
       const res = await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ terms, shareDisclaimer, tax: taxSetting }),
+        body: JSON.stringify({ siteDescription, terms, shareDisclaimer, tax: taxSetting }),
       });
 
       if (res.ok) {
-        showToast('Pengaturan Syarat, Ketentuan & Pajak berhasil diperbarui!', 'success');
+        showToast('Pengaturan Syarat, Ketentuan, Deskripsi & Pajak berhasil diperbarui!', 'success');
       } else {
         showToast('Gagal menyimpan pengaturan.', 'error');
       }
@@ -48,11 +50,24 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-6 animate-fade-in max-w-4xl">
-      <AdminCrudHeader title="Syarat & Ketentuan" description="Kelola nilai pajak transaksi global dan teks disclaimer yang ditampilkan di website." icon={FileText} />
+      <AdminCrudHeader title="Pengaturan & Disclaimer" description="Kelola deskripsi platform footer, nilai pajak transaksi global, dan teks disclaimer yang ditampilkan di website." icon={FileText} />
 
       <div className="bg-card rounded-3xl p-6 border border-border-custom max-w-3xl">
 
           <form onSubmit={handleSaveSettings} className="space-y-5">
+            {/* Site Description Textarea */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-muted block">Deskripsi Platform (Bawah Logo HitungSaham di Footer)</label>
+              <textarea
+                className="w-full bg-page rounded-xl px-4 py-3 text-main font-semibold outline-none focus:border-acc-blue text-xs"
+                rows={3}
+                value={siteDescription}
+                onChange={(e) => setSiteDescription(e.target.value)}
+                placeholder="Platform personal berisi kalkulator simulasi matematis saham serta artikel & blog opini pribadi."
+                style={{ resize: 'vertical' }}
+              />
+            </div>
+
             {/* Tax Setting Box */}
             <div className="bg-sub-slate p-5 rounded-2xl">
               <h4 className="font-extrabold text-xs text-main tracking-wide mb-2">
@@ -75,7 +90,7 @@ export default function AdminSettingsPage() {
 
             {/* Terms & Conditions Textarea */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted block">Teks Syarat & Ketentuan (Disclaimer)</label>
+              <label className="text-[10px] font-bold text-muted block">Teks Syarat & Ketentuan (Disclaimer Footer)</label>
               <textarea
                 className="w-full bg-page rounded-xl px-4 py-3 text-main font-semibold outline-none focus:border-acc-blue text-xs"
                 rows={6}

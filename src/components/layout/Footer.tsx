@@ -12,6 +12,20 @@ interface FooterProps {
 export default function Footer({ variant = 'default' }: FooterProps) {
   const isAcme = variant === 'acme';
   const year = new Date().getFullYear();
+  const [siteDescription, setSiteDescription] = React.useState(
+    'Platform personal berisi kalkulator simulasi matematis saham serta artikel & blog opini pribadi.'
+  );
+
+  React.useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.siteDescription) {
+          setSiteDescription(data.siteDescription);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <footer className="w-full bg-page text-main border-t border-border-custom/50 mt-16 pt-12 pb-10">
@@ -25,7 +39,7 @@ export default function Footer({ variant = 'default' }: FooterProps) {
               <span>HitungSaham</span>
             </div>
             <p className="text-xs text-muted max-w-sm leading-relaxed font-medium">
-              Platform personal berisi kalkulator simulasi matematis saham serta artikel &amp; blog opini pribadi.
+              {siteDescription}
             </p>
           </div>
 
@@ -96,7 +110,7 @@ export default function Footer({ variant = 'default' }: FooterProps) {
         {/* BOTTOM SECTION (LEFT-ALIGNED COPYRIGHT & DISCLAIMER) */}
         <div className="pt-6 border-t border-border-custom/40 flex flex-col items-start justify-start text-left space-y-2.5 text-[11px] text-muted font-medium">
           <div>
-            &copy; {year} HitungSaham.com • Catatan &amp; Kalkulator Saham
+            &copy; {year} HitungSaham.com
           </div>
           <div className="max-w-3xl text-[10px] leading-relaxed text-left">
             <DynamicDisclaimer />
