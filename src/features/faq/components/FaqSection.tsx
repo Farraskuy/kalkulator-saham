@@ -96,13 +96,13 @@ export default function FaqSection({ faqs, showHeader = false, theme = 'default'
                   <span className="text-xs sm:text-sm font-bold text-main break-words leading-snug">{faq.question}</span>
                 </div>
                 <div
-                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 mt-0.5 sm:mt-0 ${
+                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 sm:mt-0 ${
                     isAcme
                       ? isOpen
-                        ? 'rotate-180 bg-[#111210] text-white'
+                        ? 'bg-[#111210] text-white'
                         : 'bg-sub-slate text-muted'
                       : isOpen
-                      ? 'rotate-180 bg-sub-blue text-acc-blue'
+                      ? 'bg-sub-blue text-acc-blue'
                       : 'bg-sub-slate text-muted'
                   }`}
                 >
@@ -112,7 +112,7 @@ export default function FaqSection({ faqs, showHeader = false, theme = 'default'
 
               {isOpen && (
                 <div
-                  className={`px-5 pb-5 pt-3 text-xs sm:text-sm leading-relaxed border-t animate-fade-in space-y-2 ${
+                  className={`px-5 pb-5 pt-3 text-xs sm:text-sm leading-relaxed border-t space-y-2 ${
                     isAcme
                       ? 'border-border-custom text-muted bg-page'
                       : 'border-border-custom/50 text-sub'
