@@ -20,7 +20,7 @@ export const getCachedFaqs = unstable_cache(
   },
   ["faqs-list-cache"],
   {
-    revalidate: 3600, // 1 hour cache TTL
+    revalidate: 60, // 60 seconds TTL
     tags: ["faqs"],
   },
 );
@@ -42,7 +42,7 @@ export const getCachedArticles = unstable_cache(
   },
   ["articles-list-cache"],
   {
-    revalidate: 3600,
+    revalidate: 60,
     tags: ["articles"],
   },
 );
@@ -58,19 +58,19 @@ export const getCachedArticleBySlug = (slug: string) =>
           where: { slug, status: "PUBLISHED" },
         });
       } catch (err) {
-        console.error(`Error fetching cached Article by slug [${slug}]:`, err);
+        console.error("Error fetching cached Article by slug:", err);
         return null;
       }
     },
-    [`article-slug-cache-${slug}`],
+    [`article-${slug}-cache`],
     {
-      revalidate: 3600,
-      tags: ["articles", `article-${slug}`],
+      revalidate: 60,
+      tags: ["articles"],
     },
   )();
 
 /**
- * 4. Cached Fraction Rules fetcher
+ * 4. Cached Fractions & ARA/ARB Rules fetchers
  */
 export const getCachedFractionRules = unstable_cache(
   async (): Promise<FractionRule[] | undefined> => {
@@ -78,15 +78,15 @@ export const getCachedFractionRules = unstable_cache(
       const rules = await prisma.fractionRule.findMany({
         orderBy: { minPrice: "asc" },
       });
-      return rules.length > 0 ? (rules as FractionRule[]) : undefined;
+      return rules && rules.length > 0 ? rules : undefined;
     } catch (err) {
-      console.error("Error fetching cached fraction rules:", err);
+      console.error("Error fetching cached Fraction rules:", err);
       return undefined;
     }
   },
   ["fraction-rules-list-cache"],
   {
-    revalidate: 3600,
+    revalidate: 60,
     tags: ["fraction-rules"],
   },
 );
@@ -109,7 +109,7 @@ export const getCachedAraArbRules = unstable_cache(
   },
   ["ara-arb-rules-list-cache"],
   {
-    revalidate: 3600,
+    revalidate: 60,
     tags: ["ara-arb-rules"],
   },
 );
@@ -131,7 +131,7 @@ export const getCachedTaxSetting = unstable_cache(
   },
   ["tax-setting-cache"],
   {
-    revalidate: 3600,
+    revalidate: 60,
     tags: ["system-settings"],
   },
 );
@@ -152,7 +152,7 @@ export const getCachedCategories = unstable_cache(
   },
   ["categories-list-cache"],
   {
-    revalidate: 3600,
+    revalidate: 60,
     tags: ["categories"],
   },
 );
@@ -177,7 +177,7 @@ export const getCachedSiteDescription = unstable_cache(
   },
   ["site-description-cache"],
   {
-    revalidate: 3600,
+    revalidate: 60,
     tags: ["system-settings"],
   },
 );
