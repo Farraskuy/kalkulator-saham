@@ -44,35 +44,44 @@ async function main() {
   // 1. Seed Admin User
   const email = process.env.ADMIN_EMAIL;
   const adminPassword = process.env.ADMIN_PASSWORD;
-  if (!email || !adminPassword || adminPassword.length < 12) {
-    throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD (at least 12 characters) must be configured before seeding');
-  }
 
-  let passwordHash;
-  if (bcrypt && typeof bcrypt.hash === 'function') {
-    passwordHash = await bcrypt.hash(adminPassword, 10);
+  const existingAdminCount = await prisma.adminUser.count();
+
+  if (email && adminPassword) {
+    if (adminPassword.length < 8) {
+      console.warn('⚠ ADMIN_PASSWORD minimal 8 karakter.');
+    } else {
+      let passwordHash;
+      if (bcrypt && typeof bcrypt.hash === 'function') {
+        passwordHash = await bcrypt.hash(adminPassword, 10);
+      } else {
+        passwordHash = crypto.createHash('sha256').update(adminPassword).digest('hex');
+      }
+
+      const existingAdmin = await prisma.adminUser.findUnique({
+        where: { email },
+      });
+
+      if (!existingAdmin) {
+        await prisma.adminUser.create({
+          data: {
+            email,
+            passwordHash,
+          },
+        });
+        console.log(`✔ Akun Admin (${email}) berhasil dibuat.`);
+      } else {
+        await prisma.adminUser.update({
+          where: { id: existingAdmin.id },
+          data: { passwordHash },
+        });
+        console.log(`✔ Password Akun Admin (${email}) berhasil diperbarui.`);
+      }
+    }
+  } else if (existingAdminCount > 0) {
+    console.log(`✔ ${existingAdminCount} akun admin sudah ada di database, melewati langkah ini.`);
   } else {
-    passwordHash = crypto.createHash('sha256').update(adminPassword).digest('hex');
-  }
-
-  const existingAdmin = await prisma.adminUser.findUnique({
-    where: { email },
-  });
-
-  if (!existingAdmin) {
-    await prisma.adminUser.create({
-      data: {
-        email,
-        passwordHash,
-      },
-    });
-    console.log('✔ Akun Admin default berhasil dibuat.');
-  } else {
-    await prisma.adminUser.update({
-      where: { id: existingAdmin.id },
-      data: { passwordHash },
-    });
-    console.log('Admin password updated from environment configuration.');
+    console.log('ℹ ADMIN_EMAIL dan ADMIN_PASSWORD tidak diisi, silakan buat akun admin via register/CMS.');
   }
 
   // 2. Seed Default Fractions
