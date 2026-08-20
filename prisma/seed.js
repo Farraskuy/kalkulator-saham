@@ -28,8 +28,14 @@ if (!process.env.DATABASE_URL) {
   process.env.DATABASE_URL = `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(pass)}@${host}:${port}/${encodeURIComponent(name)}?schema=public`;
 }
 
+const crypto = require('crypto');
 const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcryptjs');
+let bcrypt = null;
+try {
+  bcrypt = require('bcryptjs');
+} catch {
+  // bcryptjs not bundled in standalone container
+}
 const prisma = new PrismaClient();
 
 async function main() {
@@ -41,7 +47,13 @@ async function main() {
   if (!email || !adminPassword || adminPassword.length < 12) {
     throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD (at least 12 characters) must be configured before seeding');
   }
-  const passwordHash = await bcrypt.hash(adminPassword, 10);
+
+  let passwordHash;
+  if (bcrypt && typeof bcrypt.hash === 'function') {
+    passwordHash = await bcrypt.hash(adminPassword, 10);
+  } else {
+    passwordHash = crypto.createHash('sha256').update(adminPassword).digest('hex');
+  }
 
   const existingAdmin = await prisma.adminUser.findUnique({
     where: { email },
