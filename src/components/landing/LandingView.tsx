@@ -7,6 +7,7 @@ import LandingHeader from "./LandingHeader";
 import LandingPredictionCalculator from "./LandingPredictionCalculator";
 import LandingAraArbCalculator from "./LandingAraArbCalculator";
 import LandingAvgCalculator from "./LandingAvgCalculator";
+import LandingSeoSection from "./LandingSeoSection";
 import FaqSection from "@/features/faq/components/FaqSection";
 import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
 import Footer from "@/components/layout/Footer";
@@ -145,6 +146,9 @@ export default function LandingView({
           </div>
         </section>
 
+        {/* SEO EDUCATIONAL & RUMUS SECTION */}
+        <LandingSeoSection />
+
         {/* FAQ ACCORDION SECTION */}
         <div
           className="max-w-[1200px] mx-auto px-4 sm:px-8 md:px-16 pb-20"
@@ -159,3 +163,4 @@ export default function LandingView({
     </div>
   );
 }
+

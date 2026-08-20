@@ -12,21 +12,39 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const description = await getCachedSiteDescription();
+  const title =
+    "Kalkulator Saham BEI: Hitung Target Profit, ARA ARB & Average Down | HitungSaham";
+  const desc =
+    description ||
+    "Kalkulator saham online gratis & terlengkap untuk investor & trader BEI. Hitung simulasi target profit, batas ARA & ARB otomatis, average down, serta fee broker secara akurat.";
+
   return {
-    title: "Hitungsaham.com | Kalkulator Penghitung Saham",
-    description,
+    title,
+    description: desc,
+    alternates: {
+      canonical: "https://hitungsaham.com",
+    },
     openGraph: {
-      title: "Hitungsaham.com | Kalkulator Penghitung Saham",
-      description,
+      title,
+      description: desc,
       url: "https://hitungsaham.com",
       siteName: "HitungSaham",
       locale: "id_ID",
       type: "website",
+      images: [
+        {
+          url: "https://hitungsaham.com/opengraph-image.png",
+          width: 1200,
+          height: 630,
+          alt: "HitungSaham - Kalkulator Saham BEI",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
-      title: "Hitungsaham.com | Kalkulator Penghitung Saham",
-      description,
+      title,
+      description: desc,
+      images: ["https://hitungsaham.com/opengraph-image.png"],
     },
   };
 }
@@ -39,12 +57,37 @@ export default async function HomePage() {
     getCachedFaqs(),
   ]);
 
+  const faqJsonLd =
+    faqs && faqs.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqs.map((faq) => ({
+            "@type": "Question",
+            name: faq.question,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: faq.answer,
+            },
+          })),
+        }
+      : null;
+
   return (
-    <LandingView
-      fractionRules={fractionRules}
-      araArbRules={araArbRules}
-      tax={tax}
-      faqs={faqs}
-    />
+    <>
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
+      <LandingView
+        fractionRules={fractionRules}
+        araArbRules={araArbRules}
+        tax={tax}
+        faqs={faqs}
+      />
+    </>
   );
 }
+
