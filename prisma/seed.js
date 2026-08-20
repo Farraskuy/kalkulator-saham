@@ -203,77 +203,12 @@ async function main() {
   }
   console.log('✔ Default Categories berhasil disimpan.');
 
-  // 7. Seed Personal Stock Blog Posts & Educational Articles
+  // 7. Seed Personal Stock Blog Posts & Educational Articles (Dikosongkan untuk Production)
   const resetSeedArticles = process.env.RESET_SEED_ARTICLES === 'true';
-  if (resetSeedArticles) await prisma.article.deleteMany({});
-  if (resetSeedArticles) console.log('Artikel lama dibersihkan karena RESET_SEED_ARTICLES=true.');
-
-  const defaultArticles = [
-    {
-      id: 'art-1',
-      slug: 'catatan-pengalaman-5-tahun-di-pasar-saham',
-      title: 'Catatan Pengalaman 5 Tahun di Pasar Saham: Dari Loss Hingga Konsisten',
-      category: 'Catatan & Artikel',
-      type: 'BLOG',
-      author: 'HitungSaham',
-      source: 'Pengalaman Pribadi',
-      excerpt: 'Sharing perjalanan 5 tahun bertransaksi di bursa saham. Mengenali kesalahan awal pemula, pentingnya catatan personal, hingga membentuk sistem analisis yang disiplin.',
-      content: 'Selama 5 tahun bertransaksi di pasar saham, satu pelajaran terbesar yang saya dapatkan adalah bahwa **psikologi dan manajemen posisi jauh lebih penting daripada sekadar menebak arah harga saham**.\n\n### 1. Fase Pemula: Terjebak Impulsif\nDi awal perjalanan pada tahun 2021, saya sering terjebak membeli saham di harga pucuk hanya karena melihat pergerakan mendadak. Hasilnya, modal tergerus signifikan saat saham balik arah kena ARB.\n\n### 2. Membangun Catatan & Aturan Risk/Reward\nTitik balik terjadi ketika saya mulai mencatat setiap evaluasi posisi dan menetapkan batas *stop loss* maksimal 3-5%. Menggunakan kalkulator prediksi target jual/beli membantu saya menghitung *risk/reward ratio* secara objektif sebelum melakukan keputusan.\n\n### 3. Kesimpulan\nPasar saham adalah maraton, bukan lari cepat. Disiplin pada sistem analisis jauh lebih menjamin keberlanjutan modal dibanding mencoba untung instan.',
-    },
-    {
-      id: 'art-2',
-      slug: 'psikologi-menghadapi-saham-arb-berjilid',
-      title: 'Psikologi Menghadapi Saham ARB Berjilid-jilid: Cara Saya Mengelola Modal',
-      category: 'Pengalaman',
-      type: 'BLOG',
-      author: 'HitungSaham',
-      source: 'Catatan Opini Pribadi',
-      excerpt: 'Bagaimana menjaga ketenangan emosi dan alokasi dana ketika posisi saham yang dipegang terkena Auto Rejection Bawah berturut-turut.',
-      content: 'Melihat portofolio merah akibat saham terkunci ARB berjilid-jilid pasti menimbulkan kepanikan. Berikut adalah langkah yang biasa saya lakukan untuk mengamankan psikologi dan modal:\n\n1. **Jangan Langsung Average Down**: Menambah posisi pada saham yang masih terkunci ARB tanpa konfirmasi volume reversal hanya akan memperbesar risiko kerugian.\n2. **Ukur Batas Maksimal Kerugian**: Gunakan kalkulator untuk mengetahui nilai absolut penurunan dan evaluasi apakah skenario *cut loss* lebih bijak daripada menahan terus.\n3. **Fokus Pada Cash Flow**: Selalu sisakan *cash ratio* minimal 30% dari total portofolio agar tidak panik saat pasar mengalami volatilitas ekstrem.',
-    },
-    {
-      id: 'art-3',
-      slug: 'kesalahan-fatal-pemula-saat-average-down',
-      title: '5 Kesalahan Fatal Pemula Saat Average Down Saham yang Sedang Downtrend',
-      category: 'Tips & Trik',
-      type: 'BLOG',
-      author: 'HitungSaham',
-      source: 'Tips & Trik',
-      excerpt: 'Jangan asal menambah lot! Pelajari kesalahan umum saat melakukan average down dan cara mengkalkulasi lot yang rasional.',
-      content: 'Banyak orang terjebak dengan ilusi bahwa *average down* selalu menyelesaikan masalah harga saham yang turun. Padahal tanpa perhitungan presisi, *average down* justru mempercepat habisnya modal.\n\nBerikut 5 kesalahan yang wajib dihindari:\n1. Membeli tanpa memperhitungkan target harga rata-rata baru.\n2. Kehabisan amunisi di tahap awal penurunan.\n3. Mengabaikan *support level* teknikal.\n4. Mengabaikan biaya komisi sekuritas.\n5. Tidak memiliki rencana *stop loss* cadangan.',
-    },
-    {
-      id: 'art-4',
-      slug: 'ketentuan-baru-jam-perdagangan-dan-fraksi-harga',
-      title: 'Ketentuan Jam Perdagangan & Mekanisme ARA ARB Simetris',
-      category: 'Edukasi Saham',
-      type: 'ARTICLE',
-      author: 'Tim Analis',
-      source: 'HitungSaham Edu',
-      excerpt: 'Penjelasan ringkas mengenai fraksi harga resmi bursa, rentang pergerakan tick, serta persentase batas auto rejection terbaru.',
-      content: 'Bursa Efek memberlakukan ketentuan fraksi harga dan batasan Auto Rejection Atas (ARA) serta Auto Rejection Bawah (ARB) untuk menjaga ketertiban transaksi.\n\n### Tabel Fraksi Harga:\n- **Harga < Rp 200**: Kelipatan Rp 1\n- **Harga Rp 200 - Rp 500**: Kelipatan Rp 2\n- **Harga Rp 500 - Rp 2.000**: Kelipatan Rp 5\n- **Harga Rp 2.000 - Rp 5.000**: Kelipatan Rp 10\n- **Harga > Rp 5.000**: Kelipatan Rp 25',
-    },
-    {
-      id: 'art-5',
-      slug: 'tips-menghitung-lot-pembelian-rata-rata-saat-saham-arb',
-      title: 'Tips Menghitung Lot Pembelian Rata-Rata Saat Saham ARB',
-      category: 'Tips & Trik',
-      type: 'ARTICLE',
-      author: 'Tim Analis',
-      source: 'HitungSaham Edu',
-      excerpt: 'Panduan matematika sederhana menghitung jumlah lot pembelian tambahan untuk menurunkan harga average sesuai target yang realistis.',
-      content: 'Menghitung kebutuhan lot tambahan saat melakukan average down dapat dilakukan menggunakan rumus matematis sederhana:\n\n`Lot Tambahan = (Target Avg * Total Lembar Saham - Total Investasi Awal) / (100 * (Harga Pembelian Baru - Target Avg))`\n\nAnda dapat memanfaatkan kalkulator otomatis di platform ini untuk hasil instan tanpa perlu menghitung manual.',
-    },
-  ];
-
-  for (const art of defaultArticles) {
-    await prisma.article.upsert({
-      where: { id: art.id },
-      update: resetSeedArticles ? { ...art, status: 'PUBLISHED' } : {},
-      create: { ...art, status: 'PUBLISHED' },
-    });
+  if (resetSeedArticles) {
+    await prisma.article.deleteMany({});
+    console.log('✔ Artikel dan blog dikosongkan.');
   }
-  console.log('✔ Personal Stock Blog & Educational Articles berhasil disimpan.');
 
   console.log('Seeding selesai!');
 }
