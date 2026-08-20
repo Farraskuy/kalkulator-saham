@@ -5,6 +5,7 @@ export type CMSFeature =
   | 'faqs'
   | 'fractions'
   | 'ara_arb'
+  | 'taxes'
   | 'settings'
   | 'users';
 
@@ -60,9 +61,16 @@ export const CMS_FEATURES: FeatureDefinition[] = [
     path: '/admin/ara-arb',
   },
   {
+    id: 'taxes',
+    label: 'Pajak Transaksi',
+    description: 'Mengatur persentase tarif pajak transaksi global pada kalkulator saham.',
+    category: 'Konfigurasi',
+    path: '/admin/taxes',
+  },
+  {
     id: 'settings',
-    label: 'Syarat & Ketentuan',
-    description: 'Mengubah teks sanggahan disclaimer dan pengaturan web.',
+    label: 'Pengaturan Web & SEO',
+    description: 'Mengubah deskripsi platform SEO, teks disclaimer footer dan watermark share.',
     category: 'Konfigurasi',
     path: '/admin/settings',
   },
