@@ -105,7 +105,27 @@ async function main() {
     console.log('✔ Persentase ARA/ARB sudah terisi.');
   }
 
-  // 4. Seed Terms and Conditions & Share Disclaimer
+  // 4. Seed Platform Description, Terms, Share Disclaimer & Tax
+  await prisma.systemSetting.upsert({
+    where: { key: 'siteDescription' },
+    update: {},
+    create: {
+      key: 'siteDescription',
+      value: 'Platform personal berisi kalkulator simulasi matematis saham serta artikel & blog opini pribadi.',
+    },
+  });
+  console.log('✔ Deskripsi platform global (siteDescription) default berhasil disimpan.');
+
+  await prisma.systemSetting.upsert({
+    where: { key: 'tax' },
+    update: {},
+    create: {
+      key: 'tax',
+      value: '0.0',
+    },
+  });
+  console.log('✔ Tarif pajak transaksi (tax) default berhasil disimpan.');
+
   await prisma.systemSetting.upsert({
     where: { key: 'terms' },
     update: {

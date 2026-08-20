@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import {
   BarChart3,
   BookOpen,
+  ChartCandlestick,
   ChevronDown,
   Coins,
   FileText,
@@ -46,7 +47,7 @@ const navGroups = [
       { href: '/admin/fractions', label: 'Fraksi Harga BEI', icon: ListRestart },
       { href: '/admin/ara-arb', label: 'Aturan ARA / ARB', icon: Percent },
       { href: '/admin/taxes', label: 'Pajak Transaksi', icon: Coins },
-      { href: '/admin/settings', label: 'Pengaturan Web & SEO', icon: Settings },
+      { href: '/admin/settings', label: 'Pengaturan Web', icon: Settings },
     ],
   },
   {
