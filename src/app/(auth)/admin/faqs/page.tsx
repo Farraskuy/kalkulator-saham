@@ -77,14 +77,6 @@ export default function AdminFaqPage() {
         ),
       },
       {
-        id: "slug",
-        label: "Slug",
-        getValue: (item) => item.slug,
-        render: (item) => (
-          <span className="font-mono text-xs text-muted">{item.slug}</span>
-        ),
-      },
-      {
         id: "answer",
         label: "Jawaban",
         getValue: (item) => item.answer,
