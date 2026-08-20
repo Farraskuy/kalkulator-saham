@@ -88,11 +88,6 @@ export default function Footer({ variant = 'default' }: FooterProps) {
                     Pusat Bantuan &amp; FAQ
                   </Link>
                 </li>
-                <li>
-                  <Link href="/admin" className="hover:text-main transition-colors">
-                    Admin Panel CMS
-                  </Link>
-                </li>
               </ul>
             </div>
           </div>
