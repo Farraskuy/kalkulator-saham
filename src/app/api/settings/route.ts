@@ -95,6 +95,14 @@ export async function POST(request: Request) {
       console.error('Database write error:', dbErr);
     }
 
+    try {
+      const { revalidateTag, revalidatePath } = await import('next/cache');
+      revalidateTag('system-settings', 'max');
+      revalidatePath('/', 'layout');
+    } catch {
+      // Cache revalidation fallback
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(

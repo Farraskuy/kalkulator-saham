@@ -7,7 +7,9 @@ import {
   BarChart3,
   BookOpen,
   ChevronDown,
+  Coins,
   FileText,
+  GitGraphIcon,
   HelpCircle,
   ListRestart,
   Lock,
@@ -15,6 +17,7 @@ import {
   Menu,
   Percent,
   RefreshCw,
+  Settings,
   Shield,
   Tag,
   Users,
@@ -42,7 +45,12 @@ const navGroups = [
     items: [
       { href: '/admin/fractions', label: 'Fraksi Harga BEI', icon: ListRestart },
       { href: '/admin/ara-arb', label: 'Aturan ARA / ARB', icon: Percent },
-      { href: '/admin/settings', label: 'Syarat & Ketentuan', icon: FileText },
+      { href: '/admin/settings', label: 'Pengaturan & SEO', icon: FileText },
+    ],
+  },
+  {
+    label: 'User Management',
+    items: [
       { href: '/admin/users', label: 'Manajemen Pengguna', icon: Users },
       { href: '/admin/roles', label: 'Role & Hak Akses', icon: Shield },
     ],

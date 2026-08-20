@@ -4,16 +4,32 @@ import {
   getCachedAraArbRules,
   getCachedFractionRules,
   getCachedTaxSetting,
+  getCachedSiteDescription,
 } from '@/lib/cached-data';
 import LandingView from '@/components/landing/LandingView';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: 'Hitungsaham.com | Kalkulator Penghitung Saham',
-  description:
-    'Kalkulator penghitung saham untuk ARA/ARB, average up/down, target jual, target profit, dan stop loss.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const description = await getCachedSiteDescription();
+  return {
+    title: 'Hitungsaham.com | Kalkulator Penghitung Saham',
+    description,
+    openGraph: {
+      title: 'Hitungsaham.com | Kalkulator Penghitung Saham',
+      description,
+      url: 'https://hitungsaham.com',
+      siteName: 'HitungSaham',
+      locale: 'id_ID',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Hitungsaham.com | Kalkulator Penghitung Saham',
+      description,
+    },
+  };
+}
 
 export default async function HomePage() {
   const [fractionRules, araArbRules, tax, faqs] = await Promise.all([

@@ -154,3 +154,25 @@ export const getCachedCategories = unstable_cache(
     tags: ['categories'],
   }
 );
+
+/**
+ * 7. Cached Site Description fetcher (SEO, Metadata & Footer)
+ */
+export const getCachedSiteDescription = unstable_cache(
+  async (): Promise<string> => {
+    try {
+      const setting = await prisma.systemSetting.findUnique({
+        where: { key: 'siteDescription' },
+      });
+      return setting?.value?.trim() || 'Platform personal berisi kalkulator simulasi matematis saham serta artikel & blog opini pribadi.';
+    } catch (err) {
+      console.error('Error fetching cached site description:', err);
+      return 'Platform personal berisi kalkulator simulasi matematis saham serta artikel & blog opini pribadi.';
+    }
+  },
+  ['site-description-cache'],
+  {
+    revalidate: 3600,
+    tags: ['system-settings'],
+  }
+);

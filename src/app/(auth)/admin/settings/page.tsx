@@ -55,9 +55,13 @@ export default function AdminSettingsPage() {
       <div className="bg-card rounded-3xl p-6 border border-border-custom max-w-3xl">
 
           <form onSubmit={handleSaveSettings} className="space-y-5">
-            {/* Site Description Textarea */}
+            {/* Global SEO & Platform Description Textarea */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted block">Deskripsi Platform (Bawah Logo HitungSaham di Footer)</label>
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] font-bold text-muted block">
+                  Deskripsi Global Website (SEO Google / Mesin Pencari &amp; Footer)
+                </label>
+              </div>
               <textarea
                 className="w-full bg-page rounded-xl px-4 py-3 text-main font-semibold outline-none focus:border-acc-blue text-xs"
                 rows={3}
@@ -66,6 +70,9 @@ export default function AdminSettingsPage() {
                 placeholder="Platform personal berisi kalkulator simulasi matematis saham serta artikel & blog opini pribadi."
                 style={{ resize: 'vertical' }}
               />
+              <p className="text-[10px] text-muted leading-relaxed pt-0.5">
+                Teks deskripsi ini digunakan sebagai <strong>Meta Description SEO</strong> di Google / mesin pencari, kartu preview link media sosial (OpenGraph / Twitter), dan profil platform di bawah logo footer.
+              </p>
             </div>
 
             {/* Tax Setting Box */}
