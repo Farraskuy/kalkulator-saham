@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { X, CheckCircle2 } from 'lucide-react';
-import AppLogo from '@/components/layout/AppLogo';
+import React from "react";
+import { X, CheckCircle2 } from "lucide-react";
+import AppLogo from "@/components/layout/AppLogo";
 
 interface Props {
   isOpen: boolean;
@@ -13,7 +13,7 @@ export default function LoginPromoModal({ isOpen, onClose }: Props) {
   if (!isOpen) return null;
 
   const handleGoogleLogin = () => {
-    window.location.href = '/api/auth/google';
+    window.location.href = "/api/auth/google";
   };
 
   return (
@@ -36,7 +36,8 @@ export default function LoginPromoModal({ isOpen, onClose }: Props) {
               Simpan Histori Perhitungan Kamu secara Otomatis!
             </h3>
             <p className="text-xs sm:text-sm text-muted leading-relaxed">
-              Masuk dengan akun Google untuk membuka fitur penyimpanan riwayat kalkulasi ARA/ARB, Average Down, dan Target Profit tanpa batas.
+              Masuk dengan akun Google untuk membuka fitur penyimpanan riwayat
+              kalkulasi ARA/ARB, Average Down, dan Target Profit tanpa batas.
             </p>
           </div>
 

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 export interface AdminCrudLoadingProps {
   label: string;
@@ -6,7 +6,11 @@ export interface AdminCrudLoadingProps {
 
 export function AdminCrudLoading({ label }: AdminCrudLoadingProps) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-border-custom bg-card" role="status" aria-label={label}>
+    <div
+      className="overflow-hidden rounded-2xl border border-border-custom bg-card"
+      role="status"
+      aria-label={label}
+    >
       <div className="border-b border-border-custom px-4 py-3.5">
         <div className="h-4 w-36 animate-pulse rounded bg-sub-slate" />
         <div className="mt-2 h-3 w-56 animate-pulse rounded bg-sub-slate" />
@@ -21,16 +25,22 @@ export function AdminCrudLoading({ label }: AdminCrudLoadingProps) {
       <div className="overflow-hidden">
         <div className="grid grid-cols-4 gap-4 border-b border-border-custom bg-sub-slate/60 px-4 py-3">
           {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="h-3 animate-pulse rounded bg-sub-slate" />
+            <div
+              key={index}
+              className="h-3 animate-pulse rounded bg-sub-slate"
+            />
           ))}
         </div>
         {Array.from({ length: 6 }).map((_, row) => (
-          <div key={row} className="grid grid-cols-4 gap-4 border-b border-border-custom px-4 py-4 last:border-0">
+          <div
+            key={row}
+            className="grid grid-cols-4 gap-4 border-b border-border-custom px-4 py-4 last:border-0"
+          >
             {Array.from({ length: 4 }).map((_, column) => (
               <div
                 key={column}
                 className={`h-4 animate-pulse rounded bg-sub-slate ${
-                  column === 0 ? 'w-4/5' : column === 3 ? 'w-2/3' : 'w-full'
+                  column === 0 ? "w-4/5" : column === 3 ? "w-2/3" : "w-full"
                 }`}
               />
             ))}

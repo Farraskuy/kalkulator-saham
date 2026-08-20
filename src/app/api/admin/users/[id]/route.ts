@@ -1,16 +1,16 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
-import { verifySession } from '@/lib/auth';
-import { hashPassword } from '@/lib/password';
-import { UserRole } from '@/lib/rbac';
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { verifySession } from "@/lib/auth";
+import { hashPassword } from "@/lib/password";
+import { UserRole } from "@/lib/rbac";
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await verifySession();
   if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
@@ -24,7 +24,10 @@ export async function PUT(
     ]);
 
     if (!adminTarget && !userTarget) {
-      return NextResponse.json({ error: 'Pengguna tidak ditemukan.' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Pengguna tidak ditemukan." },
+        { status: 404 },
+      );
     }
 
     // Update password if provided
@@ -52,18 +55,18 @@ export async function PUT(
           where: { id: matchingUser.id },
           data: {
             name: name || matchingUser.name,
-            role: (role as UserRole) === 'ADMIN' ? 'ADMIN' : 'USER',
+            role: (role as UserRole) === "ADMIN" ? "ADMIN" : "USER",
           },
         });
       }
     } else if (userTarget) {
-      const isUpgradingToAdmin = role === 'ADMIN';
+      const isUpgradingToAdmin = role === "ADMIN";
 
       await prisma.user.update({
         where: { id: userTarget.id },
         data: {
           name: name !== undefined ? name : userTarget.name,
-          role: isUpgradingToAdmin ? 'ADMIN' : 'USER',
+          role: isUpgradingToAdmin ? "ADMIN" : "USER",
         },
       });
 
@@ -91,21 +94,24 @@ export async function PUT(
 
     return NextResponse.json({
       success: true,
-      message: 'Data pengguna dan peran berhasil diperbarui.',
+      message: "Data pengguna dan peran berhasil diperbarui.",
     });
   } catch (error) {
-    console.error('Error updating user:', error);
-    return NextResponse.json({ error: 'Gagal memperbarui data pengguna.' }, { status: 500 });
+    console.error("Error updating user:", error);
+    return NextResponse.json(
+      { error: "Gagal memperbarui data pengguna." },
+      { status: 500 },
+    );
   }
 }
 
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await verifySession();
   if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
@@ -116,22 +122,29 @@ export async function DELETE(
     if (adminTarget) {
       // PROTECTED: Role Admin tidak dapat dihapus
       return NextResponse.json(
-        { error: 'Role Admin terproteksi oleh sistem dan tidak dapat dihapus.' },
-        { status: 403 }
+        {
+          error: "Role Admin terproteksi oleh sistem dan tidak dapat dihapus.",
+        },
+        { status: 403 },
       );
     }
 
     // Check if target is in User
     const userTarget = await prisma.user.findUnique({ where: { id } });
     if (!userTarget) {
-      return NextResponse.json({ error: 'Pengguna tidak ditemukan.' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Pengguna tidak ditemukan." },
+        { status: 404 },
+      );
     }
 
     // Check if user has ADMIN role
-    if (userTarget.role === 'ADMIN') {
+    if (userTarget.role === "ADMIN") {
       return NextResponse.json(
-        { error: 'Role Admin terproteksi oleh sistem dan tidak dapat dihapus.' },
-        { status: 403 }
+        {
+          error: "Role Admin terproteksi oleh sistem dan tidak dapat dihapus.",
+        },
+        { status: 403 },
       );
     }
 
@@ -145,7 +158,10 @@ export async function DELETE(
       message: `Pengguna ${userTarget.email} berhasil dihapus.`,
     });
   } catch (error) {
-    console.error('Error deleting user:', error);
-    return NextResponse.json({ error: 'Gagal menghapus pengguna.' }, { status: 500 });
+    console.error("Error deleting user:", error);
+    return NextResponse.json(
+      { error: "Gagal menghapus pengguna." },
+      { status: 500 },
+    );
   }
 }

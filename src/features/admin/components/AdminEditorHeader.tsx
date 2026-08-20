@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { ArrowLeft, LoaderCircle, Save } from 'lucide-react';
-import { primaryButtonClass } from './AdminCrudClasses';
+import Link from "next/link";
+import { ArrowLeft, LoaderCircle, Save } from "lucide-react";
+import { primaryButtonClass } from "./AdminCrudClasses";
 
 export interface AdminEditorHeaderProps {
   backHref: string;
@@ -35,13 +35,23 @@ export function AdminEditorHeader({
         </Link>
         <div>
           <p className="text-xs font-semibold text-acc-blue">{eyebrow}</p>
-          <h1 className="mt-0.5 text-xl font-bold tracking-tight text-main sm:text-2xl">{title}</h1>
+          <h1 className="mt-0.5 text-xl font-bold tracking-tight text-main sm:text-2xl">
+            {title}
+          </h1>
           <p className="mt-1 text-sm leading-6 text-muted">{description}</p>
         </div>
       </div>
-      <button type="submit" disabled={submitting || disabled} className={primaryButtonClass}>
-        {submitting ? <LoaderCircle size={16} className="animate-spin" /> : <Save size={16} />}
-        {submitting ? 'Menyimpan...' : actionLabel}
+      <button
+        type="submit"
+        disabled={submitting || disabled}
+        className={primaryButtonClass}
+      >
+        {submitting ? (
+          <LoaderCircle size={16} className="animate-spin" />
+        ) : (
+          <Save size={16} />
+        )}
+        {submitting ? "Menyimpan..." : actionLabel}
       </button>
     </header>
   );

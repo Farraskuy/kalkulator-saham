@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { Save, ShieldAlert, SlidersHorizontal, Info } from 'lucide-react';
-import { useToast } from '@/components/ui/Toast';
-import { AdminCrudHeader } from '@/features/admin/components/AdminCrudHeader';
+import React, { useEffect, useState } from "react";
+import { Save, ShieldAlert, SlidersHorizontal, Info } from "lucide-react";
+import { useToast } from "@/components/ui/Toast";
+import { AdminCrudHeader } from "@/features/admin/components/AdminCrudHeader";
 
 export default function AdminAraArbPage() {
   const { showToast } = useToast();
@@ -24,7 +24,7 @@ export default function AdminAraArbPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetch('/api/rules')
+    fetch("/api/rules")
       .then((res) => res.json())
       .then((data) => {
         if (data.araArb) {
@@ -50,7 +50,7 @@ export default function AdminAraArbPage() {
           }
         }
       })
-      .catch((err) => console.error('Failed to load ARA/ARB rules:', err));
+      .catch((err) => console.error("Failed to load ARA/ARB rules:", err));
   }, []);
 
   const handlePresetSimetris = () => {
@@ -62,7 +62,10 @@ export default function AdminAraArbPage() {
     setArbUtamaTier3(20);
     setAraAkselerasi(10);
     setArbAkselerasi(10);
-    showToast('Preset ARB Simetris resmi BEI telah diterapkan! Silakan klik Simpan.', 'success');
+    showToast(
+      "Preset ARB Simetris resmi BEI telah diterapkan! Silakan klik Simpan.",
+      "success",
+    );
   };
 
   const handlePresetAsimetris = () => {
@@ -74,33 +77,74 @@ export default function AdminAraArbPage() {
     setArbUtamaTier3(15);
     setAraAkselerasi(10);
     setArbAkselerasi(10);
-    showToast('Preset ARB Asimetris 15% telah diterapkan! Silakan klik Simpan.', 'success');
+    showToast(
+      "Preset ARB Asimetris 15% telah diterapkan! Silakan klik Simpan.",
+      "success",
+    );
   };
 
   const handleSaveRules = async () => {
     setSaving(true);
     try {
       const araArbData = {
-        Utama_50_200: [{ minPrice: 50, maxPrice: 200, ara: araUtamaTier1, arb: arbUtamaTier1 }],
-        Utama_200_5000: [{ minPrice: 200, maxPrice: 5000, ara: araUtamaTier2, arb: arbUtamaTier2 }],
-        Utama_5000: [{ minPrice: 5000, maxPrice: Infinity, ara: araUtamaTier3, arb: arbUtamaTier3 }],
-        Utama: [{ minPrice: 1, maxPrice: Infinity, ara: araUtamaTier2, arb: arbUtamaTier2 }],
-        Akselerasi: [{ minPrice: 1, maxPrice: Infinity, ara: araAkselerasi, arb: arbAkselerasi }],
+        Utama_50_200: [
+          {
+            minPrice: 50,
+            maxPrice: 200,
+            ara: araUtamaTier1,
+            arb: arbUtamaTier1,
+          },
+        ],
+        Utama_200_5000: [
+          {
+            minPrice: 200,
+            maxPrice: 5000,
+            ara: araUtamaTier2,
+            arb: arbUtamaTier2,
+          },
+        ],
+        Utama_5000: [
+          {
+            minPrice: 5000,
+            maxPrice: Infinity,
+            ara: araUtamaTier3,
+            arb: arbUtamaTier3,
+          },
+        ],
+        Utama: [
+          {
+            minPrice: 1,
+            maxPrice: Infinity,
+            ara: araUtamaTier2,
+            arb: arbUtamaTier2,
+          },
+        ],
+        Akselerasi: [
+          {
+            minPrice: 1,
+            maxPrice: Infinity,
+            ara: araAkselerasi,
+            arb: arbAkselerasi,
+          },
+        ],
       };
 
-      const res = await fetch('/api/rules', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/rules", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ araArb: araArbData }),
       });
 
       if (res.ok) {
-        showToast('Seluruh rentang harga persentase ARA/ARB berhasil disimpan!', 'success');
+        showToast(
+          "Seluruh rentang harga persentase ARA/ARB berhasil disimpan!",
+          "success",
+        );
       } else {
-        showToast('Gagal menyimpan aturan ARA/ARB.', 'error');
+        showToast("Gagal menyimpan aturan ARA/ARB.", "error");
       }
     } catch {
-      showToast('Terjadi kesalahan jaringan.', 'error');
+      showToast("Terjadi kesalahan jaringan.", "error");
     } finally {
       setSaving(false);
     }
@@ -108,7 +152,11 @@ export default function AdminAraArbPage() {
 
   return (
     <div className="space-y-6 animate-fade-in max-w-4xl">
-      <AdminCrudHeader title="Aturan ARA / ARB" description="Atur persentase Auto Rejection Atas (ARA) dan Auto Rejection Bawah (ARB) untuk masing-masing klasifikasi papan & rentang harga." icon={ShieldAlert} />
+      <AdminCrudHeader
+        title="Aturan ARA / ARB"
+        description="Atur persentase Auto Rejection Atas (ARA) dan Auto Rejection Bawah (ARB) untuk masing-masing klasifikasi papan & rentang harga."
+        icon={ShieldAlert}
+      />
 
       <div className="bg-card rounded-3xl p-6 border border-border-custom space-y-6">
         <div>
@@ -117,7 +165,8 @@ export default function AdminAraArbPage() {
             Pengaturan Persentase Batas Auto Rejection
           </h3>
           <p className="text-xs text-muted leading-relaxed">
-            Sesuaikan persentase ARA dan ARB untuk setiap rentang harga dan papan pencatatan secara presisi.
+            Sesuaikan persentase ARA dan ARB untuk setiap rentang harga dan
+            papan pencatatan secara presisi.
           </p>
         </div>
 
@@ -131,28 +180,40 @@ export default function AdminAraArbPage() {
             {/* TIER 1 */}
             <div className="bg-sub-slate p-4 rounded-2xl border border-border-custom/60 space-y-3">
               <div className="border-b border-border-custom/50 pb-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-acc-blue block">Rentang Tier 1</span>
-                <strong className="text-xs font-extrabold text-main">Rp 50 – Rp 200</strong>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-acc-blue block">
+                  Rentang Tier 1
+                </span>
+                <strong className="text-xs font-extrabold text-main">
+                  Rp 50 – Rp 200
+                </strong>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted block">ARA (%)</label>
+                  <label className="text-[10px] font-bold text-muted block">
+                    ARA (%)
+                  </label>
                   <input
                     type="number"
                     step="0.1"
                     className="w-full bg-card rounded-xl px-3 py-2 text-xs text-main font-bold outline-none border border-border-custom focus:border-acc-blue"
                     value={araUtamaTier1}
-                    onChange={(e) => setAraUtamaTier1(parseFloat(e.target.value) || 0)}
+                    onChange={(e) =>
+                      setAraUtamaTier1(parseFloat(e.target.value) || 0)
+                    }
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted block">ARB (%)</label>
+                  <label className="text-[10px] font-bold text-muted block">
+                    ARB (%)
+                  </label>
                   <input
                     type="number"
                     step="0.1"
                     className="w-full bg-card rounded-xl px-3 py-2 text-xs text-main font-bold outline-none border border-border-custom focus:border-acc-blue"
                     value={arbUtamaTier1}
-                    onChange={(e) => setArbUtamaTier1(parseFloat(e.target.value) || 0)}
+                    onChange={(e) =>
+                      setArbUtamaTier1(parseFloat(e.target.value) || 0)
+                    }
                   />
                 </div>
               </div>
@@ -161,28 +222,40 @@ export default function AdminAraArbPage() {
             {/* TIER 2 */}
             <div className="bg-sub-slate p-4 rounded-2xl border border-border-custom/60 space-y-3">
               <div className="border-b border-border-custom/50 pb-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-acc-blue block">Rentang Tier 2</span>
-                <strong className="text-xs font-extrabold text-main">Rp 200 – Rp 5.000</strong>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-acc-blue block">
+                  Rentang Tier 2
+                </span>
+                <strong className="text-xs font-extrabold text-main">
+                  Rp 200 – Rp 5.000
+                </strong>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted block">ARA (%)</label>
+                  <label className="text-[10px] font-bold text-muted block">
+                    ARA (%)
+                  </label>
                   <input
                     type="number"
                     step="0.1"
                     className="w-full bg-card rounded-xl px-3 py-2 text-xs text-main font-bold outline-none border border-border-custom focus:border-acc-blue"
                     value={araUtamaTier2}
-                    onChange={(e) => setAraUtamaTier2(parseFloat(e.target.value) || 0)}
+                    onChange={(e) =>
+                      setAraUtamaTier2(parseFloat(e.target.value) || 0)
+                    }
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted block">ARB (%)</label>
+                  <label className="text-[10px] font-bold text-muted block">
+                    ARB (%)
+                  </label>
                   <input
                     type="number"
                     step="0.1"
                     className="w-full bg-card rounded-xl px-3 py-2 text-xs text-main font-bold outline-none border border-border-custom focus:border-acc-blue"
                     value={arbUtamaTier2}
-                    onChange={(e) => setArbUtamaTier2(parseFloat(e.target.value) || 0)}
+                    onChange={(e) =>
+                      setArbUtamaTier2(parseFloat(e.target.value) || 0)
+                    }
                   />
                 </div>
               </div>
@@ -191,28 +264,40 @@ export default function AdminAraArbPage() {
             {/* TIER 3 */}
             <div className="bg-sub-slate p-4 rounded-2xl border border-border-custom/60 space-y-3">
               <div className="border-b border-border-custom/50 pb-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-acc-blue block">Rentang Tier 3</span>
-                <strong className="text-xs font-extrabold text-main">&gt; Rp 5.000</strong>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-acc-blue block">
+                  Rentang Tier 3
+                </span>
+                <strong className="text-xs font-extrabold text-main">
+                  &gt; Rp 5.000
+                </strong>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted block">ARA (%)</label>
+                  <label className="text-[10px] font-bold text-muted block">
+                    ARA (%)
+                  </label>
                   <input
                     type="number"
                     step="0.1"
                     className="w-full bg-card rounded-xl px-3 py-2 text-xs text-main font-bold outline-none border border-border-custom focus:border-acc-blue"
                     value={araUtamaTier3}
-                    onChange={(e) => setAraUtamaTier3(parseFloat(e.target.value) || 0)}
+                    onChange={(e) =>
+                      setAraUtamaTier3(parseFloat(e.target.value) || 0)
+                    }
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted block">ARB (%)</label>
+                  <label className="text-[10px] font-bold text-muted block">
+                    ARB (%)
+                  </label>
                   <input
                     type="number"
                     step="0.1"
                     className="w-full bg-card rounded-xl px-3 py-2 text-xs text-main font-bold outline-none border border-border-custom focus:border-acc-blue"
                     value={arbUtamaTier3}
-                    onChange={(e) => setArbUtamaTier3(parseFloat(e.target.value) || 0)}
+                    onChange={(e) =>
+                      setArbUtamaTier3(parseFloat(e.target.value) || 0)
+                    }
                   />
                 </div>
               </div>
@@ -228,28 +313,40 @@ export default function AdminAraArbPage() {
 
           <div className="bg-sub-slate p-4 rounded-2xl border border-border-custom/60 max-w-md space-y-3">
             <div className="border-b border-border-custom/50 pb-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-acc-purple block">Ketentuan Khusus</span>
-              <strong className="text-xs font-extrabold text-main">Papan Akselerasi &amp; FCA / Papan Pemantauan Khusus</strong>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-acc-purple block">
+                Ketentuan Khusus
+              </span>
+              <strong className="text-xs font-extrabold text-main">
+                Papan Akselerasi &amp; FCA / Papan Pemantauan Khusus
+              </strong>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted block">ARA (%)</label>
+                <label className="text-[10px] font-bold text-muted block">
+                  ARA (%)
+                </label>
                 <input
                   type="number"
                   step="0.1"
                   className="w-full bg-card rounded-xl px-3 py-2 text-xs text-main font-bold outline-none border border-border-custom focus:border-acc-blue"
                   value={araAkselerasi}
-                  onChange={(e) => setAraAkselerasi(parseFloat(e.target.value) || 0)}
+                  onChange={(e) =>
+                    setAraAkselerasi(parseFloat(e.target.value) || 0)
+                  }
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted block">ARB (%)</label>
+                <label className="text-[10px] font-bold text-muted block">
+                  ARB (%)
+                </label>
                 <input
                   type="number"
                   step="0.1"
                   className="w-full bg-card rounded-xl px-3 py-2 text-xs text-main font-bold outline-none border border-border-custom focus:border-acc-blue"
                   value={arbAkselerasi}
-                  onChange={(e) => setArbAkselerasi(parseFloat(e.target.value) || 0)}
+                  onChange={(e) =>
+                    setArbAkselerasi(parseFloat(e.target.value) || 0)
+                  }
                 />
               </div>
             </div>
@@ -263,7 +360,11 @@ export default function AdminAraArbPage() {
             className="flex items-center justify-center gap-2 bg-acc-blue hover:bg-acc-blue/90 text-white font-bold py-3 px-6 rounded-xl text-xs transition-colors cursor-pointer disabled:opacity-50"
           >
             <Save size={16} />
-            <span>{saving ? 'Menyimpan Aturan...' : 'Simpan Semua Persentase ARA/ARB'}</span>
+            <span>
+              {saving
+                ? "Menyimpan Aturan..."
+                : "Simpan Semua Persentase ARA/ARB"}
+            </span>
           </button>
         </div>
       </div>

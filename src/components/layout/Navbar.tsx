@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useRef } from 'react';
-import Link from 'next/link';
+import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 import {
   Menu,
   X,
@@ -15,17 +15,22 @@ import {
   Calculator,
   LayoutGrid,
   HelpCircle,
-} from 'lucide-react';
-import ThemeToggle from './ThemeToggle';
-import HistoryModal from '@/features/calculators/components/HistoryModal';
-import LoginPromoModal from '@/components/feedback/LoginPromoModal';
-import AppLogo from '@/components/layout/AppLogo';
+} from "lucide-react";
+import ThemeToggle from "./ThemeToggle";
+import HistoryModal from "@/features/calculators/components/HistoryModal";
+import LoginPromoModal from "@/components/feedback/LoginPromoModal";
+import AppLogo from "@/components/layout/AppLogo";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [calcDropdownOpen, setCalcDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [user, setUser] = useState<{ id: string; email: string; name?: string; image?: string } | null>(null);
+  const [user, setUser] = useState<{
+    id: string;
+    email: string;
+    name?: string;
+    image?: string;
+  } | null>(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
 
@@ -34,7 +39,7 @@ export default function Navbar() {
 
   const fetchUser = async () => {
     try {
-      const res = await fetch('/api/auth/me-user');
+      const res = await fetch("/api/auth/me-user");
       if (res.ok) {
         const data = await res.json();
         setUser(data.user);
@@ -50,19 +55,25 @@ export default function Navbar() {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (navHeaderRef.current && !navHeaderRef.current.contains(event.target as Node)) {
+      if (
+        navHeaderRef.current &&
+        !navHeaderRef.current.contains(event.target as Node)
+      ) {
         setCalcDropdownOpen(false);
       }
-      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
+      if (
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(event.target as Node)
+      ) {
         setUserDropdownOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleLogout = async () => {
-    await fetch('/api/auth/me-user', { method: 'DELETE' });
+    await fetch("/api/auth/me-user", { method: "DELETE" });
     setUser(null);
     setUserDropdownOpen(false);
     window.location.reload();
@@ -70,32 +81,32 @@ export default function Navbar() {
 
   const calculatorItems = [
     {
-      title: 'Target Jual / Beli',
-      desc: 'Hitung estimasi target profit & rekomendasi harga jual/beli.',
-      href: '/#prediction',
+      title: "Target Jual / Beli",
+      desc: "Hitung estimasi target profit & rekomendasi harga jual/beli.",
+      href: "/#prediction",
       icon: TrendingUp,
-      color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
+      color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
     },
     {
-      title: 'Auto Rejection (ARA / ARB)',
-      desc: 'Batas atas & bawah pergerakan harga saham simetris.',
-      href: '/#ara-arb',
+      title: "Auto Rejection (ARA / ARB)",
+      desc: "Batas atas & bawah pergerakan harga saham simetris.",
+      href: "/#ara-arb",
       icon: ShieldAlert,
-      color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+      color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
     },
     {
-      title: 'Average Up / Down',
-      desc: 'Hitung harga rata-rata posisi baru & modal lot tambahan.',
-      href: '/#avg-up-down',
+      title: "Average Up / Down",
+      desc: "Hitung harga rata-rata posisi baru & modal lot tambahan.",
+      href: "/#avg-up-down",
       icon: Calculator,
-      color: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
+      color: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
     },
     {
-      title: 'Semua Alat Kalkulasi',
-      desc: 'Ringkasan lengkap suite kalkulator analisis saham.',
-      href: '/#calculator',
+      title: "Semua Alat Kalkulasi",
+      desc: "Ringkasan lengkap suite kalkulator analisis saham.",
+      href: "/#calculator",
       icon: LayoutGrid,
-      color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+      color: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
     },
   ];
 
@@ -109,7 +120,10 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
             <div className="flex gap-8 items-center">
               {/* Logo Brand */}
-              <Link href="/" className="flex items-center gap-2.5 font-extrabold text-lg text-main">
+              <Link
+                href="/"
+                className="flex items-center gap-2.5 font-extrabold text-lg text-main"
+              >
                 <AppLogo size={32} />
                 <span>Hitungsaham</span>
               </Link>
@@ -125,15 +139,15 @@ export default function Navbar() {
                     onClick={() => setCalcDropdownOpen(!calcDropdownOpen)}
                     className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer focus:outline-none ${
                       calcDropdownOpen
-                        ? 'bg-sub-blue text-acc-blue'
-                        : 'text-sub hover:bg-sub-blue hover:text-acc-blue'
+                        ? "bg-sub-blue text-acc-blue"
+                        : "text-sub hover:bg-sub-blue hover:text-acc-blue"
                     }`}
                     aria-expanded={calcDropdownOpen}
                   >
                     <span>Kalkulator</span>
                     <ChevronDown
                       size={14}
-                      className={`transition-transform duration-200 ${calcDropdownOpen ? 'rotate-180' : ''}`}
+                      className={`transition-transform duration-200 ${calcDropdownOpen ? "rotate-180" : ""}`}
                     />
                   </button>
                 </div>
@@ -169,10 +183,14 @@ export default function Navbar() {
                   >
                     {user.image ? (
                       /* eslint-disable-next-line @next/next/no-img-element */
-                      <img src={user.image} alt={user.name || 'User'} className="w-9 h-9 rounded-full border border-border-custom object-cover" />
+                      <img
+                        src={user.image}
+                        alt={user.name || "User"}
+                        className="w-9 h-9 rounded-full border border-border-custom object-cover"
+                      />
                     ) : (
                       <div className="w-9 h-9 rounded-full bg-sub-blue text-acc-blue flex items-center justify-center font-bold text-sm">
-                        {user.name?.[0]?.toUpperCase() || 'U'}
+                        {user.name?.[0]?.toUpperCase() || "U"}
                       </div>
                     )}
                   </button>
@@ -180,8 +198,12 @@ export default function Navbar() {
                   {userDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-56 bg-card rounded-2xl border border-border-custom/60 shadow-xl py-2 z-50 animate-fade-in text-main divide-y divide-border-custom/50">
                       <div className="px-4 py-3 space-y-0.5">
-                        <div className="text-sm font-bold truncate text-main">{user.name || 'Pengguna'}</div>
-                        <div className="text-xs text-muted truncate font-medium">{user.email}</div>
+                        <div className="text-sm font-bold truncate text-main">
+                          {user.name || "Pengguna"}
+                        </div>
+                        <div className="text-xs text-muted truncate font-medium">
+                          {user.email}
+                        </div>
                       </div>
 
                       <div className="py-1">
@@ -272,7 +294,9 @@ export default function Navbar() {
                       onClick={() => setCalcDropdownOpen(false)}
                       className="p-4 rounded-2xl bg-sub-slate/50 hover:bg-sub-blue/80 hover:border-acc-blue/30 border border-transparent transition-all flex flex-col gap-3 group cursor-pointer"
                     >
-                      <div className={`w-10 h-10 rounded-xl ${item.color} flex items-center justify-center shrink-0`}>
+                      <div
+                        className={`w-10 h-10 rounded-xl ${item.color} flex items-center justify-center shrink-0`}
+                      >
                         <IconComponent size={20} />
                       </div>
                       <div className="space-y-1">
@@ -299,15 +323,23 @@ export default function Navbar() {
                 <div className="flex items-center gap-3 px-1">
                   {user.image ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
-                    <img src={user.image} alt={user.name || 'User'} className="w-10 h-10 rounded-full border border-border-custom" />
+                    <img
+                      src={user.image}
+                      alt={user.name || "User"}
+                      className="w-10 h-10 rounded-full border border-border-custom"
+                    />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-sub-blue text-acc-blue flex items-center justify-center font-bold text-sm">
-                      {user.name?.[0]?.toUpperCase() || 'U'}
+                      {user.name?.[0]?.toUpperCase() || "U"}
                     </div>
                   )}
                   <div className="min-w-0">
-                    <div className="text-sm font-bold text-main truncate">{user.name}</div>
-                    <div className="text-xs text-muted truncate">{user.email}</div>
+                    <div className="text-sm font-bold text-main truncate">
+                      {user.name}
+                    </div>
+                    <div className="text-xs text-muted truncate">
+                      {user.email}
+                    </div>
                   </div>
                 </div>
 
@@ -386,8 +418,14 @@ export default function Navbar() {
         )}
       </header>
 
-      <HistoryModal isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
-      <LoginPromoModal isOpen={isPromoModalOpen} onClose={() => setIsPromoModalOpen(false)} />
+      <HistoryModal
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+      />
+      <LoginPromoModal
+        isOpen={isPromoModalOpen}
+        onClose={() => setIsPromoModalOpen(false)}
+      />
     </>
   );
 }

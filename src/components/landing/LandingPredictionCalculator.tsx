@@ -1,18 +1,33 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Target, TrendingUp, TrendingDown, Wallet, Calculator, RotateCcw, Calendar, User, Banknote } from 'lucide-react';
-import { kalkulasiTargetSaham } from '@/features/calculators';
-import { formatIDR, formatNumber, formatPercent, parseDecimalInput } from '@/lib/utils/formatters';
-import type { FractionRule } from '@/types';
-import ExportCardWrapper from '@/components/ui/ExportCardWrapper';
+import React, { useState } from "react";
+import {
+  Target,
+  TrendingUp,
+  TrendingDown,
+  Wallet,
+  Calculator,
+  RotateCcw,
+  Calendar,
+  User,
+  Banknote,
+} from "lucide-react";
+import { kalkulasiTargetSaham } from "@/features/calculators";
+import {
+  formatIDR,
+  formatNumber,
+  formatPercent,
+  parseDecimalInput,
+} from "@/lib/utils/formatters";
+import type { FractionRule } from "@/types";
+import ExportCardWrapper from "@/components/ui/ExportCardWrapper";
 
 const sanitizeDecimalInput = (val: string): string => {
-  let cleaned = val.replace(/\./g, ',').replace(/[^0-9,]/g, '');
-  const firstCommaIndex = cleaned.indexOf(',');
+  let cleaned = val.replace(/\./g, ",").replace(/[^0-9,]/g, "");
+  const firstCommaIndex = cleaned.indexOf(",");
   if (firstCommaIndex !== -1) {
     const before = cleaned.slice(0, firstCommaIndex + 1);
-    const after = cleaned.slice(firstCommaIndex + 1).replace(/,/g, '');
+    const after = cleaned.slice(firstCommaIndex + 1).replace(/,/g, "");
     cleaned = before + after;
   }
   return cleaned;
@@ -23,24 +38,27 @@ interface Props {
   tax?: number;
 }
 
-export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }: Props) {
-  const [ticker, setTicker] = useState<string>('');
-  const [clientName, setClientName] = useState<string>('');
+export default function LandingPredictionCalculator({
+  fractionRules,
+  tax = 0.0,
+}: Props) {
+  const [ticker, setTicker] = useState<string>("");
+  const [clientName, setClientName] = useState<string>("");
   const [hargaBeli, setHargaBeli] = useState<number>(0);
   const [lot, setLot] = useState<number>(0);
   const [feeBeli, setFeeBeli] = useState<number>(0);
   const [feeJual, setFeeJual] = useState<number>(0);
-  const [feeBeliInput, setFeeBeliInput] = useState<string>('');
-  const [feeJualInput, setFeeJualInput] = useState<string>('');
+  const [feeBeliInput, setFeeBeliInput] = useState<string>("");
+  const [feeJualInput, setFeeJualInput] = useState<string>("");
   const [targetUntungRp, setTargetUntungRp] = useState<number>(0);
   const [targetRugiRp, setTargetRugiRp] = useState<number>(0);
   const [profitPercent, setProfitPercent] = useState<number | null>(null);
   const [lossPercent, setLossPercent] = useState<number | null>(null);
   const [hasCalculated, setHasCalculated] = useState<boolean>(false);
-  const [domainName, setDomainName] = useState<string>('HitungSaham.com');
+  const [domainName, setDomainName] = useState<string>("HitungSaham.com");
 
   React.useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.hostname) {
+    if (typeof window !== "undefined" && window.location.hostname) {
       setDomainName(window.location.hostname);
     }
   }, []);
@@ -55,16 +73,19 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
       targetRugiRp,
       pajak: tax,
     },
-    fractionRules
+    fractionRules,
   );
 
   const handleTickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const cleanTicker = e.target.value.replace(/[^a-zA-Z]/g, '').slice(0, 4).toUpperCase();
+    const cleanTicker = e.target.value
+      .replace(/[^a-zA-Z]/g, "")
+      .slice(0, 4)
+      .toUpperCase();
     setTicker(cleanTicker);
   };
 
   const handleHargaBeliChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawVal = e.target.value.replace(/\D/g, '');
+    const rawVal = e.target.value.replace(/\D/g, "");
     const newPrice = rawVal ? parseInt(rawVal, 10) : 0;
     setHargaBeli(newPrice);
 
@@ -80,7 +101,7 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
   };
 
   const handleLotInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawVal = e.target.value.replace(/\D/g, '');
+    const rawVal = e.target.value.replace(/\D/g, "");
     const newLot = rawVal ? parseInt(rawVal, 10) : 0;
     setLot(newLot);
 
@@ -143,22 +164,22 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
   const handleCalculate = () => {
     setHasCalculated(true);
     setTimeout(() => {
-      const el = document.getElementById('prediction-result');
+      const el = document.getElementById("prediction-result");
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
     }, 50);
   };
 
   const handleReset = () => {
-    setTicker('');
-    setClientName('');
+    setTicker("");
+    setClientName("");
     setHargaBeli(0);
     setLot(0);
     setFeeBeli(0);
     setFeeJual(0);
-    setFeeBeliInput('');
-    setFeeJualInput('');
+    setFeeBeliInput("");
+    setFeeJualInput("");
     setTargetUntungRp(0);
     setTargetRugiRp(0);
     setProfitPercent(null);
@@ -168,13 +189,13 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
 
   const cleanFileName = (() => {
     const domain = domainName.toLowerCase();
-    const type = 'Rencana';
-    const tickerVal = ticker ? ticker.toUpperCase() : 'NO-TICKER';
+    const type = "Rencana";
+    const tickerVal = ticker ? ticker.toUpperCase() : "NO-TICKER";
     const priceVal = hargaBeli || 0;
     const today = new Date();
     const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
     const dateStr = `${yyyy}${mm}${dd}`;
     return `${domain}-${type}-${tickerVal}-${priceVal}-${dateStr}`;
   })();
@@ -189,16 +210,26 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
               <div className="w-7 h-7 rounded-md flex items-center justify-center bg-slate-900 text-white">
                 <Target size={16} />
               </div>
-              <span className="font-bold text-main text-sm">Parameter Risk &amp; Reward</span>
+              <span className="font-bold text-main text-sm">
+                Parameter Risk &amp; Reward
+              </span>
             </div>
-            <button type="button" onClick={handleReset} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold text-muted transition-colors hover:bg-sub-slate hover:text-main" title="Reset kalkulator">
+            <button
+              type="button"
+              onClick={handleReset}
+              className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold text-muted transition-colors hover:bg-sub-slate hover:text-main"
+              title="Reset kalkulator"
+            >
               <RotateCcw size={13} /> Reset
             </button>
           </div>
 
           <div className="grid grid-cols-2 gap-3 mb-4 items-end">
             <div className="space-y-1">
-              <label htmlFor="pred-ticker" className="text-[11px] font-bold text-muted block">
+              <label
+                htmlFor="pred-ticker"
+                className="text-[11px] font-bold text-muted block"
+              >
                 Kode Saham
               </label>
               <input
@@ -212,7 +243,10 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="pred-name" className="text-[11px] font-bold text-muted block">
+              <label
+                htmlFor="pred-name"
+                className="text-[11px] font-bold text-muted block"
+              >
                 Nama (Opsional)
               </label>
               <input
@@ -228,7 +262,10 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div className="space-y-1">
-              <label htmlFor="pred-price" className="text-[11px] font-bold text-muted block">
+              <label
+                htmlFor="pred-price"
+                className="text-[11px] font-bold text-muted block"
+              >
                 Harga Beli (Rp)
               </label>
               <input
@@ -236,14 +273,17 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
                 type="text"
                 inputMode="numeric"
                 className="w-full h-10 bg-card rounded-lg px-3 py-2 text-sm text-main font-semibold outline-none focus:ring-1 focus:ring-acc-blue border border-border-custom transition-all"
-                value={hargaBeli ? formatNumber(hargaBeli) : ''}
+                value={hargaBeli ? formatNumber(hargaBeli) : ""}
                 onChange={handleHargaBeliChange}
                 placeholder="e.g. 1.000"
               />
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="pred-lot" className="text-[11px] font-bold text-muted block">
+              <label
+                htmlFor="pred-lot"
+                className="text-[11px] font-bold text-muted block"
+              >
                 Jumlah Lot
               </label>
               <input
@@ -251,13 +291,15 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
                 type="text"
                 inputMode="numeric"
                 className="w-full h-10 bg-card rounded-lg px-3 py-2 text-sm text-main font-semibold outline-none focus:ring-1 focus:ring-acc-blue border border-border-custom transition-all"
-                value={lot ? formatNumber(lot) : ''}
+                value={lot ? formatNumber(lot) : ""}
                 onChange={handleLotInputChange}
                 placeholder="e.g. 10"
               />
               {/* Shortcut Lot Presets (Hanya Angka) */}
               <div className="pt-1">
-                <span className="text-[9px] font-extrabold text-muted uppercase tracking-wider block mb-1">Shortcut Lot:</span>
+                <span className="text-[9px] font-extrabold text-muted uppercase tracking-wider block mb-1">
+                  Shortcut Lot:
+                </span>
                 <div className="flex flex-wrap gap-1">
                   {[10, 50, 100, 500, 1000].map((unit) => (
                     <button
@@ -266,8 +308,8 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
                       onClick={() => applyLotPreset(unit)}
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-colors cursor-pointer ${
                         lot === unit
-                          ? 'bg-slate-900 text-white border-slate-900 dark:bg-acc-blue dark:border-acc-blue'
-                          : 'border-border-custom bg-sub-slate text-main hover:bg-border-custom/50'
+                          ? "bg-slate-900 text-white border-slate-900 dark:bg-acc-blue dark:border-acc-blue"
+                          : "border-border-custom bg-sub-slate text-main hover:bg-border-custom/50"
                       }`}
                     >
                       {formatNumber(unit)}
@@ -280,7 +322,10 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
 
           <div className="grid grid-cols-2 gap-3 mb-4 items-end">
             <div className="space-y-1">
-              <label htmlFor="pred-feebeli" className="text-[11px] font-bold text-muted block">
+              <label
+                htmlFor="pred-feebeli"
+                className="text-[11px] font-bold text-muted block"
+              >
                 Fee Beli (%)
               </label>
               <input
@@ -299,7 +344,10 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="pred-feejual" className="text-[11px] font-bold text-muted block">
+              <label
+                htmlFor="pred-feejual"
+                className="text-[11px] font-bold text-muted block"
+              >
                 Fee Jual (%)
               </label>
               <input
@@ -320,7 +368,10 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
             <div className="space-y-1">
-              <label htmlFor="pred-profit" className="text-[11px] font-bold text-muted block">
+              <label
+                htmlFor="pred-profit"
+                className="text-[11px] font-bold text-muted block"
+              >
                 Target Untung (Rp)
               </label>
               <input
@@ -328,9 +379,9 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
                 type="text"
                 inputMode="numeric"
                 className="w-full h-10 bg-card rounded-lg px-3 py-2 text-sm text-main font-semibold outline-none focus:ring-1 focus:ring-acc-blue border border-border-custom transition-all"
-                value={targetUntungRp ? formatNumber(targetUntungRp) : ''}
+                value={targetUntungRp ? formatNumber(targetUntungRp) : ""}
                 onChange={(e) => {
-                  const rawVal = e.target.value.replace(/\D/g, '');
+                  const rawVal = e.target.value.replace(/\D/g, "");
                   setTargetUntungRp(rawVal ? parseInt(rawVal, 10) : 0);
                   setProfitPercent(null);
                 }}
@@ -338,7 +389,9 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
               />
               {/* Preset Target Profit (+% TP) */}
               <div className="pt-1">
-                <span className="text-[9px] font-extrabold text-muted uppercase tracking-wider block mb-1">Shortcut Target (+% TP):</span>
+                <span className="text-[9px] font-extrabold text-muted uppercase tracking-wider block mb-1">
+                  Shortcut Target (+% TP):
+                </span>
                 <div className="flex flex-wrap gap-1">
                   {[2, 5, 10, 15, 20].map((pct) => (
                     <button
@@ -347,8 +400,8 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
                       onClick={() => applyProfitPercent(pct)}
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-colors cursor-pointer ${
                         profitPercent === pct
-                          ? 'bg-emerald-600 text-white border-emerald-600'
-                          : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/25'
+                          ? "bg-emerald-600 text-white border-emerald-600"
+                          : "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/25"
                       }`}
                     >
                       +{pct}%
@@ -359,7 +412,10 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="pred-loss" className="text-[11px] font-bold text-muted block">
+              <label
+                htmlFor="pred-loss"
+                className="text-[11px] font-bold text-muted block"
+              >
                 Batas Rugi (Rp)
               </label>
               <input
@@ -367,9 +423,9 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
                 type="text"
                 inputMode="numeric"
                 className="w-full h-10 bg-card rounded-lg px-3 py-2 text-sm text-main font-semibold outline-none focus:ring-1 focus:ring-acc-blue border border-border-custom transition-all"
-                value={targetRugiRp ? formatNumber(targetRugiRp) : ''}
+                value={targetRugiRp ? formatNumber(targetRugiRp) : ""}
                 onChange={(e) => {
-                  const rawVal = e.target.value.replace(/\D/g, '');
+                  const rawVal = e.target.value.replace(/\D/g, "");
                   setTargetRugiRp(rawVal ? parseInt(rawVal, 10) : 0);
                   setLossPercent(null);
                 }}
@@ -377,7 +433,9 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
               />
               {/* Preset Stop Loss (-% SL) */}
               <div className="pt-1">
-                <span className="text-[9px] font-extrabold text-muted uppercase tracking-wider block mb-1">Shortcut Rugi (-% SL):</span>
+                <span className="text-[9px] font-extrabold text-muted uppercase tracking-wider block mb-1">
+                  Shortcut Rugi (-% SL):
+                </span>
                 <div className="flex flex-wrap gap-1">
                   {[2, 3, 5, 7].map((pct) => (
                     <button
@@ -386,8 +444,8 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
                       onClick={() => applyLossPercent(pct)}
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-colors cursor-pointer ${
                         lossPercent === pct
-                          ? 'bg-rose-600 text-white border-rose-600'
-                          : 'border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/25'
+                          ? "bg-rose-600 text-white border-rose-600"
+                          : "border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/25"
                       }`}
                     >
                       -{pct}%
@@ -413,9 +471,13 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
       {/* Right Output Card (Hidden on mobile until Hitung is clicked) */}
       <div
         id="prediction-result"
-        className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
+        className={`w-full transition-all duration-300 ${hasCalculated ? "block" : "hidden lg:block"}`}
       >
-        <ExportCardWrapper fileName={cleanFileName} calculatorType="prediction" embedded>
+        <ExportCardWrapper
+          fileName={cleanFileName}
+          calculatorType="prediction"
+          embedded
+        >
           <div className="flex items-start justify-between border-b border-border-custom/30 pb-3 mb-4 text-main gap-3">
             {/* Left Side: Ticker */}
             <div className="min-w-0">
@@ -427,12 +489,23 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
             <div className="text-[10px] font-medium text-muted space-y-1 text-left sm:text-right min-w-0">
               <div className="flex flex-wrap items-center justify-start sm:justify-end gap-1.5 leading-tight">
                 <Calendar size={12} className="text-muted/80 shrink-0" />
-                <span className="whitespace-nowrap">{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                <span className="whitespace-nowrap">
+                  {new Date().toLocaleDateString("id-ID", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </span>
               </div>
               {clientName && (
                 <div className="flex flex-wrap items-center justify-start sm:justify-end gap-1.5 font-semibold text-main dark:text-slate-300 leading-tight">
                   <User size={12} className="text-muted/80 shrink-0" />
-                  <span>Dihitung oleh: <strong className="text-acc-blue font-bold">{clientName}</strong></span>
+                  <span>
+                    Dihitung oleh:{" "}
+                    <strong className="text-acc-blue font-bold">
+                      {clientName}
+                    </strong>
+                  </span>
                 </div>
               )}
             </div>
@@ -441,8 +514,12 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
           <div className="bg-slate-900 text-white rounded-xl p-4 flex flex-col gap-3">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300 whitespace-nowrap">Total Investasi</div>
-                <div className="text-base sm:text-2xl font-extrabold mt-1 text-white whitespace-nowrap">{formatIDR(result.rincian.totalModal)}</div>
+                <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300 whitespace-nowrap">
+                  Total Investasi
+                </div>
+                <div className="text-base sm:text-2xl font-extrabold mt-1 text-white whitespace-nowrap">
+                  {formatIDR(result.rincian.totalModal)}
+                </div>
               </div>
               <div className="shrink-0 text-white opacity-90">
                 <Wallet size={24} />
@@ -450,15 +527,23 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
             </div>
             <div className="border-t border-slate-700/50 pt-3 mt-1 flex flex-wrap items-center justify-between gap-3 text-[10px] text-slate-300">
               <div className="flex-1 min-w-[100px] text-left">
-                <span className="font-medium block text-slate-400 whitespace-nowrap">Harga Beli</span>
-                <span className="text-xs sm:text-sm font-bold text-white block mt-0.5 whitespace-nowrap">{formatIDR(hargaBeli)}</span>
+                <span className="font-medium block text-slate-400 whitespace-nowrap">
+                  Harga Beli
+                </span>
+                <span className="text-xs sm:text-sm font-bold text-white block mt-0.5 whitespace-nowrap">
+                  {formatIDR(hargaBeli)}
+                </span>
               </div>
               <div className="w-px h-8 bg-slate-700/50 shrink-0 hidden sm:block"></div>
               <div className="flex-1 min-w-[120px] text-right">
-                <span className="font-medium block text-slate-400 whitespace-nowrap">Jumlah Saham</span>
+                <span className="font-medium block text-slate-400 whitespace-nowrap">
+                  Jumlah Saham
+                </span>
                 <div className="text-xs sm:text-sm font-bold text-white mt-0.5 leading-tight whitespace-nowrap">
                   <div>{formatNumber(lot)} lot</div>
-                  <div className="text-[10px] text-slate-400 font-normal mt-0.5">({formatNumber(result.rincian.totalLembar)} lembar)</div>
+                  <div className="text-[10px] text-slate-400 font-normal mt-0.5">
+                    ({formatNumber(result.rincian.totalLembar)} lembar)
+                  </div>
                 </div>
               </div>
             </div>
@@ -468,10 +553,15 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
           <div className="bg-emerald-500/10 rounded-xl p-3.5 sm:p-4 mt-4 mb-3">
             <div className="flex flex-wrap items-center justify-between mb-3 gap-2 pb-2 border-b border-emerald-500/20">
               <div className="flex items-center gap-1.5 font-bold text-[10px] sm:text-xs text-emerald-800 dark:text-emerald-300 min-w-0">
-                <TrendingUp size={14} className="shrink-0 text-emerald-700 dark:text-emerald-400" />
+                <TrendingUp
+                  size={14}
+                  className="shrink-0 text-emerald-700 dark:text-emerald-400"
+                />
                 <div className="flex flex-wrap items-center gap-x-1 leading-tight">
                   <span className="whitespace-nowrap">TARGET UNTUNG</span>
-                  <span className="whitespace-nowrap opacity-90">(TAKE PROFIT)</span>
+                  <span className="whitespace-nowrap opacity-90">
+                    (TAKE PROFIT)
+                  </span>
                 </div>
               </div>
               <span className="shrink-0 font-bold text-emerald-700 dark:text-emerald-400 text-[10px] sm:text-xs bg-emerald-500/15 px-2 py-0.5 rounded-md whitespace-nowrap">
@@ -481,13 +571,17 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
 
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="min-w-0 text-left">
-                <span className="text-[10px] font-bold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">Harga Jual</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">
+                  Harga Jual
+                </span>
                 <div className="text-base sm:text-lg font-black text-emerald-900 dark:text-emerald-200 tracking-tight leading-tight">
                   {formatIDR(result.skenarioUntung.hargaBEI)}
                 </div>
               </div>
               <div className="min-w-0 text-right">
-                <span className="text-[10px] font-semibold uppercase tracking-wider block text-emerald-700/80 dark:text-emerald-400/80">Profit Bersih</span>
+                <span className="text-[10px] font-semibold uppercase tracking-wider block text-emerald-700/80 dark:text-emerald-400/80">
+                  Profit Bersih
+                </span>
                 <div className="text-xs sm:text-sm font-bold text-emerald-700 dark:text-emerald-400 mt-0.5 leading-tight">
                   +{formatIDR(result.skenarioUntung.labaBersihReal)}
                 </div>
@@ -501,9 +595,14 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
               <Banknote size={18} />
             </div>
             <div className="w-full min-w-0 text-center">
-              <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 block">Total Nilai Jika Terjual</span>
+              <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 block">
+                Total Nilai Jika Terjual
+              </span>
               <span className="text-sm sm:text-base font-extrabold text-emerald-900 dark:text-emerald-200 block mt-0.5 leading-tight px-1">
-                {formatIDR(result.rincian.totalModal + result.skenarioUntung.labaBersihReal)}
+                {formatIDR(
+                  result.rincian.totalModal +
+                    result.skenarioUntung.labaBersihReal,
+                )}
               </span>
             </div>
           </div>
@@ -516,10 +615,15 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
           <div className="bg-rose-500/10 rounded-xl p-3.5 sm:p-4 mt-3">
             <div className="flex flex-wrap items-center justify-between mb-3 gap-2 pb-2 border-b border-rose-500/20">
               <div className="flex items-center gap-1.5 font-bold text-[10px] sm:text-xs text-rose-800 dark:text-rose-300 min-w-0">
-                <TrendingDown size={14} className="shrink-0 text-rose-700 dark:text-rose-400" />
+                <TrendingDown
+                  size={14}
+                  className="shrink-0 text-rose-700 dark:text-rose-400"
+                />
                 <div className="flex flex-wrap items-center gap-x-1 leading-tight">
                   <span className="whitespace-nowrap">BATAS RUGI</span>
-                  <span className="whitespace-nowrap opacity-90">(STOP LOSS)</span>
+                  <span className="whitespace-nowrap opacity-90">
+                    (STOP LOSS)
+                  </span>
                 </div>
               </div>
               <div className="shrink-0 font-bold text-rose-700 dark:text-rose-400 text-[10px] sm:text-xs bg-rose-500/15 px-2 py-0.5 rounded-md whitespace-nowrap">
@@ -529,13 +633,17 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
 
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="min-w-0 text-left">
-                <span className="text-[10px] font-bold uppercase tracking-wider block text-rose-700 dark:text-rose-400">Harga Jual</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider block text-rose-700 dark:text-rose-400">
+                  Harga Jual
+                </span>
                 <div className="text-base sm:text-lg font-black text-rose-900 dark:text-rose-200 tracking-tight leading-tight">
                   {formatIDR(result.skenarioRugi.hargaBEI)}
                 </div>
               </div>
               <div className="min-w-0 text-right">
-                <span className="text-[10px] font-semibold uppercase tracking-wider block text-rose-700/80 dark:text-rose-400/80">Rugi Bersih</span>
+                <span className="text-[10px] font-semibold uppercase tracking-wider block text-rose-700/80 dark:text-rose-400/80">
+                  Rugi Bersih
+                </span>
                 <div className="text-xs sm:text-sm font-bold text-rose-700 dark:text-rose-400 mt-0.5 leading-tight">
                   -{formatIDR(Math.abs(result.skenarioRugi.rugiBersihReal))}
                 </div>
@@ -549,9 +657,14 @@ export default function LandingPredictionCalculator({ fractionRules, tax = 0.0 }
               <Banknote size={18} />
             </div>
             <div className="w-full min-w-0 text-center">
-              <span className="text-[10px] font-bold text-rose-800 dark:text-rose-300 block">Total Nilai Jika Terjual</span>
+              <span className="text-[10px] font-bold text-rose-800 dark:text-rose-300 block">
+                Total Nilai Jika Terjual
+              </span>
               <span className="text-sm sm:text-base font-extrabold text-rose-900 dark:text-rose-200 block mt-0.5 leading-tight px-1">
-                {formatIDR(result.rincian.totalModal - result.skenarioRugi.rugiBersihReal)}
+                {formatIDR(
+                  result.rincian.totalModal -
+                    result.skenarioRugi.rugiBersihReal,
+                )}
               </span>
             </div>
           </div>

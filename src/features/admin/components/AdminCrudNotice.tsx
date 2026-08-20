@@ -1,15 +1,19 @@
-'use client';
+"use client";
 
-import React, { useEffect } from 'react';
-import { useToast } from '@/components/ui/Toast';
+import React, { useEffect } from "react";
+import { useToast } from "@/components/ui/Toast";
 
 export interface AdminCrudNoticeProps {
-  type: 'success' | 'error';
+  type: "success" | "error";
   children: React.ReactNode;
   onClose?: () => void;
 }
 
-export function AdminCrudNotice({ type, children, onClose }: AdminCrudNoticeProps) {
+export function AdminCrudNotice({
+  type,
+  children,
+  onClose,
+}: AdminCrudNoticeProps) {
   const { showToast } = useToast();
 
   useEffect(() => {

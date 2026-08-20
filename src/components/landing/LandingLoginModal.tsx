@@ -1,31 +1,34 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { X, CheckCircle2 } from 'lucide-react';
-import AppLogo from '@/components/layout/AppLogo';
+import React, { useState } from "react";
+import { X, CheckCircle2 } from "lucide-react";
+import AppLogo from "@/components/layout/AppLogo";
 
 interface LandingLoginModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModalProps) {
+export default function LandingLoginModal({
+  isOpen,
+  onClose,
+}: LandingLoginModalProps) {
   const [dontShowAgain, setDontShowAgain] = useState(false);
 
   if (!isOpen) return null;
 
   const handleClose = () => {
     if (dontShowAgain) {
-      localStorage.setItem('hide_google_login_promo', 'true');
+      localStorage.setItem("hide_google_login_promo", "true");
     }
     onClose();
   };
 
   const handleGoogleLogin = () => {
     if (dontShowAgain) {
-      localStorage.setItem('hide_google_login_promo', 'true');
+      localStorage.setItem("hide_google_login_promo", "true");
     }
-    window.location.href = '/api/auth/google/login';
+    window.location.href = "/api/auth/google/login";
   };
 
   return (
@@ -50,7 +53,8 @@ export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModal
               Masuk dengan Google
             </h3>
             <p className="text-xs text-muted mt-1 leading-relaxed">
-              Nikmati akses mudah menyimpan histori perhitungan dan proyeksi saham Anda.
+              Nikmati akses mudah menyimpan histori perhitungan dan proyeksi
+              saham Anda.
             </p>
           </div>
         </div>
@@ -59,31 +63,49 @@ export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModal
         <div className="px-4 sm:px-7 space-y-3 mb-4 sm:mb-5">
           <div className="bg-sub-slate p-3.5 sm:p-4 rounded-xl space-y-2.5 sm:space-y-3 text-xs">
             <div className="flex items-start gap-2 sm:gap-2.5">
-              <CheckCircle2 size={16} className="text-emerald-700 shrink-0 mt-0.5" />
+              <CheckCircle2
+                size={16}
+                className="text-emerald-700 shrink-0 mt-0.5"
+              />
               <div>
-                <strong className="text-main block font-bold text-[11px] sm:text-xs">Simpan Riwayat Perhitungan Otomatis</strong>
+                <strong className="text-main block font-bold text-[11px] sm:text-xs">
+                  Simpan Riwayat Perhitungan Otomatis
+                </strong>
                 <span className="text-muted text-[10px] sm:text-[11px] leading-relaxed block mt-0.5">
-                  Hasil simulasi target profit, ARA/ARB, dan average down tersimpan aman di akun Anda.
+                  Hasil simulasi target profit, ARA/ARB, dan average down
+                  tersimpan aman di akun Anda.
                 </span>
               </div>
             </div>
 
             <div className="flex items-start gap-2 sm:gap-2.5">
-              <CheckCircle2 size={16} className="text-emerald-700 shrink-0 mt-0.5" />
+              <CheckCircle2
+                size={16}
+                className="text-emerald-700 shrink-0 mt-0.5"
+              />
               <div>
-                <strong className="text-main block font-bold text-[11px] sm:text-xs">Akses Kapan Saja &amp; Gratis 100%</strong>
+                <strong className="text-main block font-bold text-[11px] sm:text-xs">
+                  Akses Kapan Saja &amp; Gratis 100%
+                </strong>
                 <span className="text-muted text-[10px] sm:text-[11px] leading-relaxed block mt-0.5">
-                  Buka kembali analisis portofolio dari HP maupun Laptop secara instan tanpa biaya.
+                  Buka kembali analisis portofolio dari HP maupun Laptop secara
+                  instan tanpa biaya.
                 </span>
               </div>
             </div>
 
             <div className="flex items-start gap-2 sm:gap-2.5">
-              <CheckCircle2 size={16} className="text-emerald-700 shrink-0 mt-0.5" />
+              <CheckCircle2
+                size={16}
+                className="text-emerald-700 shrink-0 mt-0.5"
+              />
               <div>
-                <strong className="text-main block font-bold text-[11px] sm:text-xs">Autentikasi Aman via Google OAuth</strong>
+                <strong className="text-main block font-bold text-[11px] sm:text-xs">
+                  Autentikasi Aman via Google OAuth
+                </strong>
                 <span className="text-muted text-[10px] sm:text-[11px] leading-relaxed block mt-0.5">
-                  Tanpa perlu membuat kata sandi baru, login praktis dan aman dengan akun Google.
+                  Tanpa perlu membuat kata sandi baru, login praktis dan aman
+                  dengan akun Google.
                 </span>
               </div>
             </div>
@@ -96,7 +118,10 @@ export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModal
             onClick={handleGoogleLogin}
             className="w-full flex items-center justify-center gap-2.5 bg-[#111210] hover:bg-black text-white font-bold py-2.5 sm:py-3 px-4 rounded-xl text-xs sm:text-sm transition-all cursor-pointer shadow-md"
           >
-            <svg className="w-4 h-4 bg-card rounded-full p-0.5" viewBox="0 0 24 24">
+            <svg
+              className="w-4 h-4 bg-card rounded-full p-0.5"
+              viewBox="0 0 24 24"
+            >
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -126,7 +151,10 @@ export default function LandingLoginModal({ isOpen, onClose }: LandingLoginModal
               onChange={(e) => setDontShowAgain(e.target.checked)}
               className="h-4 w-4 cursor-pointer rounded border-border-custom text-main focus:ring-acc-blue mt-0.5 sm:mt-0 shrink-0"
             />
-            <label htmlFor="dont-show-promo" className="text-[10px] sm:text-[11px] text-muted font-medium cursor-pointer select-none leading-tight">
+            <label
+              htmlFor="dont-show-promo"
+              className="text-[10px] sm:text-[11px] text-muted font-medium cursor-pointer select-none leading-tight"
+            >
               Jangan tampilkan lagi pesan promosi ini
             </label>
           </div>

@@ -1,19 +1,35 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
-import { createSession } from '@/lib/auth';
-import { hashPassword, passwordNeedsUpgrade, verifyPassword } from '@/lib/password';
-import { checkRateLimit, getClientAddress } from '@/lib/rate-limit';
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { createSession } from "@/lib/auth";
+import {
+  hashPassword,
+  passwordNeedsUpgrade,
+  verifyPassword,
+} from "@/lib/password";
+import { checkRateLimit, getClientAddress } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
-  if (!checkRateLimit(`admin-login:${getClientAddress(request)}`, 10, 15 * 60 * 1000)) {
-    return NextResponse.json({ error: 'Terlalu banyak percobaan login. Coba lagi nanti.' }, { status: 429 });
+  if (
+    !checkRateLimit(
+      `admin-login:${getClientAddress(request)}`,
+      10,
+      15 * 60 * 1000,
+    )
+  ) {
+    return NextResponse.json(
+      { error: "Terlalu banyak percobaan login. Coba lagi nanti." },
+      { status: 429 },
+    );
   }
 
   try {
     const { email, password } = await request.json();
 
     if (!email || !password) {
-      return NextResponse.json({ error: 'Email dan password harus diisi.' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Email dan password harus diisi." },
+        { status: 400 },
+      );
     }
 
     try {
@@ -37,11 +53,14 @@ export async function POST(request: Request) {
       // Fallback if DB not ready
     }
 
-    return NextResponse.json({ error: 'Email atau password salah.' }, { status: 401 });
+    return NextResponse.json(
+      { error: "Email atau password salah." },
+      { status: 401 },
+    );
   } catch {
     return NextResponse.json(
-      { error: 'Terjadi kesalahan server.' },
-      { status: 500 }
+      { error: "Terjadi kesalahan server." },
+      { status: 500 },
     );
   }
 }

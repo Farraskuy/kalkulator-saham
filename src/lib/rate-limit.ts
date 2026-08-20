@@ -7,19 +7,24 @@ const globalForRateLimit = globalThis as typeof globalThis & {
   rateLimitEntries?: Map<string, RateLimitEntry>;
 };
 
-const entries = globalForRateLimit.rateLimitEntries ?? new Map<string, RateLimitEntry>();
+const entries =
+  globalForRateLimit.rateLimitEntries ?? new Map<string, RateLimitEntry>();
 globalForRateLimit.rateLimitEntries = entries;
 
 export function getClientAddress(request: Request): string {
   return (
-    request.headers.get('cf-connecting-ip') ||
-    request.headers.get('x-real-ip') ||
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-    'unknown'
+    request.headers.get("cf-connecting-ip") ||
+    request.headers.get("x-real-ip") ||
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    "unknown"
   );
 }
 
-export function checkRateLimit(key: string, limit: number, windowMs: number): boolean {
+export function checkRateLimit(
+  key: string,
+  limit: number,
+  windowMs: number,
+): boolean {
   const now = Date.now();
   const current = entries.get(key);
 
@@ -35,7 +40,8 @@ export function checkRateLimit(key: string, limit: number, windowMs: number): bo
     for (const [entryKey, entry] of entries) {
       if (entry.resetAt <= now) entries.delete(entryKey);
     }
-    if (entries.size > 10_000) entries.delete(entries.keys().next().value as string);
+    if (entries.size > 10_000)
+      entries.delete(entries.keys().next().value as string);
   }
 
   return true;

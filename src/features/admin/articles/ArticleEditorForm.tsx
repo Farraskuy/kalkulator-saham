@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import ReactMarkdown from 'react-markdown';
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import ReactMarkdown from "react-markdown";
 import {
   Bold,
   Code2,
@@ -18,18 +18,22 @@ import {
   Minus,
   Quote,
   RotateCcw,
-} from 'lucide-react';
-import { AdminCrudNotice, AdminEditorHeader, fieldClass } from '@/features/admin/components/AdminCrudUi';
-import ArticleCoverUploader from './ArticleCoverUploader';
-import ToggleSwitch from '@/components/ui/ToggleSwitch';
+} from "lucide-react";
+import {
+  AdminCrudNotice,
+  AdminEditorHeader,
+  fieldClass,
+} from "@/features/admin/components/AdminCrudUi";
+import ArticleCoverUploader from "./ArticleCoverUploader";
+import ToggleSwitch from "@/components/ui/ToggleSwitch";
 
 export type ArticleEditorData = {
   id?: string;
   title: string;
   slug: string;
   category: string;
-  type: 'ARTICLE' | 'BLOG';
-  status: 'DRAFT' | 'PUBLISHED';
+  type: "ARTICLE" | "BLOG";
+  status: "DRAFT" | "PUBLISHED";
   excerpt: string;
   content: string;
   coverImage: string;
@@ -38,48 +42,90 @@ export type ArticleEditorData = {
 };
 
 type Props = {
-  mode: 'create' | 'edit';
+  mode: "create" | "edit";
   initialData?: ArticleEditorData;
 };
 
 const EMPTY_ARTICLE: ArticleEditorData = {
-  title: '',
-  slug: '',
-  category: '',
-  type: 'BLOG',
-  status: 'DRAFT',
-  excerpt: '',
-  content: '',
-  coverImage: '',
-  author: 'Tim Redaksi',
+  title: "",
+  slug: "",
+  category: "",
+  type: "BLOG",
+  status: "DRAFT",
+  excerpt: "",
+  content: "",
+  coverImage: "",
+  author: "Tim Redaksi",
   isTraderPick: false,
 };
 
 const MARKDOWN_TOOLS = [
-  { label: 'Heading 2', icon: Heading2, before: '## ', after: '', fallback: 'Subjudul' },
-  { label: 'Heading 3', icon: Heading3, before: '### ', after: '', fallback: 'Subbagian' },
-  { label: 'Bold', icon: Bold, before: '**', after: '**', fallback: 'teks' },
-  { label: 'Italic', icon: Italic, before: '*', after: '*', fallback: 'teks' },
-  { label: 'Daftar', icon: List, before: '- ', after: '', fallback: 'Item daftar' },
-  { label: 'Bernomor', icon: ListOrdered, before: '1. ', after: '', fallback: 'Langkah pertama' },
-  { label: 'Kutipan', icon: Quote, before: '> ', after: '', fallback: 'Kutipan penting' },
-  { label: 'Kode', icon: Code2, before: '`', after: '`', fallback: 'kode' },
-  { label: 'Tautan', icon: Link2, before: '[', after: '](https://)', fallback: 'judul tautan' },
-  { label: 'Gambar', icon: ImageIcon, before: '![Deskripsi gambar](', after: ')', fallback: 'https://...' },
-  { label: 'Pemisah', icon: Minus, before: '\n---\n', after: '', fallback: '' },
+  {
+    label: "Heading 2",
+    icon: Heading2,
+    before: "## ",
+    after: "",
+    fallback: "Subjudul",
+  },
+  {
+    label: "Heading 3",
+    icon: Heading3,
+    before: "### ",
+    after: "",
+    fallback: "Subbagian",
+  },
+  { label: "Bold", icon: Bold, before: "**", after: "**", fallback: "teks" },
+  { label: "Italic", icon: Italic, before: "*", after: "*", fallback: "teks" },
+  {
+    label: "Daftar",
+    icon: List,
+    before: "- ",
+    after: "",
+    fallback: "Item daftar",
+  },
+  {
+    label: "Bernomor",
+    icon: ListOrdered,
+    before: "1. ",
+    after: "",
+    fallback: "Langkah pertama",
+  },
+  {
+    label: "Kutipan",
+    icon: Quote,
+    before: "> ",
+    after: "",
+    fallback: "Kutipan penting",
+  },
+  { label: "Kode", icon: Code2, before: "`", after: "`", fallback: "kode" },
+  {
+    label: "Tautan",
+    icon: Link2,
+    before: "[",
+    after: "](https://)",
+    fallback: "judul tautan",
+  },
+  {
+    label: "Gambar",
+    icon: ImageIcon,
+    before: "![Deskripsi gambar](",
+    after: ")",
+    fallback: "https://...",
+  },
+  { label: "Pemisah", icon: Minus, before: "\n---\n", after: "", fallback: "" },
 ];
 
 const ARTICLE_TEMPLATES = [
   {
-    label: 'Panduan',
+    label: "Panduan",
     content: `## Ringkasan\n\nJelaskan inti pembahasan dan manfaat artikel bagi pembaca.\n\n## Langkah-langkah\n\n1. Langkah pertama\n2. Langkah kedua\n3. Langkah ketiga\n\n## Hal yang perlu diperhatikan\n\n- Risiko atau batasan yang perlu dipahami.\n- Sumber data yang digunakan.\n\n## Kesimpulan\n\nRangkum poin utama dan ajakan tindakan yang relevan.`,
   },
   {
-    label: 'Analisis',
+    label: "Analisis",
     content: `## Ringkasan Analisis\n\nTulis konteks singkat kondisi pasar atau emiten.\n\n## Data dan Fakta\n\n- Data utama pertama\n- Data utama kedua\n\n## Analisis\n\nJelaskan interpretasi data secara objektif.\n\n> Catatan: Analisis bukan rekomendasi beli atau jual.\n\n## Risiko\n\nSebutkan risiko yang perlu dipertimbangkan pembaca.`,
   },
   {
-    label: 'Berita',
+    label: "Berita",
     content: `## Ringkasan Kejadian\n\nJelaskan apa yang terjadi, kapan, dan pihak yang terkait.\n\n## Detail Penting\n\nUraikan fakta utama secara berurutan.\n\n## Dampak bagi Investor\n\nJelaskan dampak potensial secara netral dan terukur.\n\n## Sumber\n\n[Tautan sumber](https://)`,
   },
 ];
@@ -88,24 +134,31 @@ function slugify(value: string) {
   return value
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)+/g, '');
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
 }
 
 export default function ArticleEditorForm({ mode, initialData }: Props) {
   const router = useRouter();
   const contentRef = useRef<HTMLTextAreaElement>(null);
-  const [form, setForm] = useState<ArticleEditorData>(initialData ?? EMPTY_ARTICLE);
-  const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
-  const [activeTab, setActiveTab] = useState<'write' | 'preview'>('write');
+  const [form, setForm] = useState<ArticleEditorData>(
+    initialData ?? EMPTY_ARTICLE,
+  );
+  const [categories, setCategories] = useState<
+    Array<{ id: string; name: string }>
+  >([]);
+  const [activeTab, setActiveTab] = useState<"write" | "preview">("write");
   const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "error" | "success";
+    text: string;
+  } | null>(null);
 
   useEffect(() => {
     let active = true;
-    fetch('/api/categories')
+    fetch("/api/categories")
       .then(async (response) => {
-        if (!response.ok) throw new Error('Kategori gagal dimuat');
+        if (!response.ok) throw new Error("Kategori gagal dimuat");
         return response.json();
       })
       .then((data) => {
@@ -113,18 +166,29 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
         const nextCategories = data.categories || [];
         setCategories(nextCategories);
         if (nextCategories[0]) {
-          setForm((current) => current.category ? current : { ...current, category: nextCategories[0].name });
+          setForm((current) =>
+            current.category
+              ? current
+              : { ...current, category: nextCategories[0].name },
+          );
         }
       })
       .catch(() => {
-        if (active) setMessage({ type: 'error', text: 'Kategori gagal dimuat. Periksa menu Kategori Artikel.' });
+        if (active)
+          setMessage({
+            type: "error",
+            text: "Kategori gagal dimuat. Periksa menu Kategori Artikel.",
+          });
       });
     return () => {
       active = false;
     };
   }, []);
 
-  const updateField = <K extends keyof ArticleEditorData>(key: K, value: ArticleEditorData[K]) => {
+  const updateField = <K extends keyof ArticleEditorData>(
+    key: K,
+    value: ArticleEditorData[K],
+  ) => {
     setForm((current) => ({ ...current, [key]: value }));
     setMessage(null);
   };
@@ -137,35 +201,48 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
     }));
   };
 
-  const insertMarkdown = (before: string, after = '', fallback = 'teks') => {
+  const insertMarkdown = (before: string, after = "", fallback = "teks") => {
     const textarea = contentRef.current;
     if (!textarea) return;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const selected = form.content.slice(start, end) || fallback;
     const nextContent = `${form.content.slice(0, start)}${before}${selected}${after}${form.content.slice(end)}`;
-    updateField('content', nextContent);
+    updateField("content", nextContent);
     requestAnimationFrame(() => {
       textarea.focus();
-      textarea.setSelectionRange(start + before.length, start + before.length + selected.length);
+      textarea.setSelectionRange(
+        start + before.length,
+        start + before.length + selected.length,
+      );
     });
   };
 
   const applyTemplate = (content: string) => {
-    if (form.content.trim() && !window.confirm('Ganti isi editor dengan template ini?')) return;
-    updateField('content', content);
-    setActiveTab('write');
+    if (
+      form.content.trim() &&
+      !window.confirm("Ganti isi editor dengan template ini?")
+    )
+      return;
+    updateField("content", content);
+    setActiveTab("write");
     requestAnimationFrame(() => contentRef.current?.focus());
   };
 
   const validate = () => {
-    if (!form.title.trim() || !form.category || !form.excerpt.trim() || !form.content.trim()) {
-      return 'Lengkapi semua bidang yang ditandai wajib.';
+    if (
+      !form.title.trim() ||
+      !form.category ||
+      !form.excerpt.trim() ||
+      !form.content.trim()
+    ) {
+      return "Lengkapi semua bidang yang ditandai wajib.";
     }
     if (form.excerpt.trim().length < 30 || form.excerpt.trim().length > 320) {
-      return 'Ringkasan harus berisi 30–320 karakter.';
+      return "Ringkasan harus berisi 30–320 karakter.";
     }
-    if (form.content.trim().length < 50) return 'Isi artikel minimal 50 karakter.';
+    if (form.content.trim().length < 50)
+      return "Isi artikel minimal 50 karakter.";
     return null;
   };
 
@@ -173,7 +250,7 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
     event.preventDefault();
     const validationError = validate();
     if (validationError) {
-      setMessage({ type: 'error', text: validationError });
+      setMessage({ type: "error", text: validationError });
       return;
     }
 
@@ -184,42 +261,75 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
         ...form,
         slug: form.slug.trim() || slugify(form.title),
       };
-      const response = await fetch('/api/articles', {
-        method: mode === 'create' ? 'POST' : 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/articles", {
+        method: mode === "create" ? "POST" : "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Artikel gagal disimpan.');
-      setMessage({ type: 'success', text: form.status === 'PUBLISHED' ? 'Artikel berhasil dipublikasikan.' : 'Draft berhasil disimpan.' });
-      router.push('/admin/articles?saved=1');
+      if (!response.ok)
+        throw new Error(data.error || "Artikel gagal disimpan.");
+      setMessage({
+        type: "success",
+        text:
+          form.status === "PUBLISHED"
+            ? "Artikel berhasil dipublikasikan."
+            : "Draft berhasil disimpan.",
+      });
+      router.push("/admin/articles?saved=1");
       router.refresh();
     } catch (error) {
-      setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Artikel gagal disimpan.' });
+      setMessage({
+        type: "error",
+        text:
+          error instanceof Error ? error.message : "Artikel gagal disimpan.",
+      });
     } finally {
       setSubmitting(false);
     }
   };
 
-  const wordCount = form.content.trim() ? form.content.trim().split(/\s+/).length : 0;
-  const imageSource = form.coverImage.trim() || '/assets/images/img.png';
+  const wordCount = form.content.trim()
+    ? form.content.trim().split(/\s+/).length
+    : 0;
+  const imageSource = form.coverImage.trim() || "/assets/images/img.png";
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-[1280px] space-y-5 pb-10">
-      <AdminEditorHeader backHref="/admin/articles" eyebrow="Konten / Artikel" title={mode === 'create' ? 'Tulis artikel baru' : 'Edit artikel'} description="Tulis konten yang ringkas, terstruktur, dan mudah dibaca." actionLabel={form.status === 'PUBLISHED' ? 'Simpan & publikasikan' : 'Simpan draft'} submitting={submitting} disabled={categories.length === 0} />
+    <form
+      onSubmit={handleSubmit}
+      className="mx-auto max-w-[1280px] space-y-5 pb-10"
+    >
+      <AdminEditorHeader
+        backHref="/admin/articles"
+        eyebrow="Konten / Artikel"
+        title={mode === "create" ? "Tulis artikel baru" : "Edit artikel"}
+        description="Tulis konten yang ringkas, terstruktur, dan mudah dibaca."
+        actionLabel={
+          form.status === "PUBLISHED" ? "Simpan & publikasikan" : "Simpan draft"
+        }
+        submitting={submitting}
+        disabled={categories.length === 0}
+      />
 
-      {message && <AdminCrudNotice type={message.type}>{message.text}</AdminCrudNotice>}
+      {message && (
+        <AdminCrudNotice type={message.type}>{message.text}</AdminCrudNotice>
+      )}
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-5">
           <section className="rounded-2xl border border-border-custom bg-card">
             <div className="border-b border-border-custom px-5 py-4 sm:px-6">
               <h2 className="text-sm font-bold text-main">Informasi utama</h2>
-              <p className="mt-0.5 text-xs text-muted">Judul dan ringkasan yang terlihat pada daftar artikel.</p>
+              <p className="mt-0.5 text-xs text-muted">
+                Judul dan ringkasan yang terlihat pada daftar artikel.
+              </p>
             </div>
             <div className="space-y-5 p-5 sm:p-6">
               <div className="space-y-1.5">
-                <label htmlFor="article-title" className="text-sm font-semibold text-main">
+                <label
+                  htmlFor="article-title"
+                  className="text-sm font-semibold text-main"
+                >
                   Judul <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -229,19 +339,26 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
                   className={fieldClass}
                   maxLength={160}
                   placeholder="Contoh: Cara Menghitung Average Down dengan Aman"
-                  autoFocus={mode === 'create'}
+                  autoFocus={mode === "create"}
                 />
-                <div className="flex justify-end text-[11px] text-muted">{form.title.length}/160</div>
+                <div className="flex justify-end text-[11px] text-muted">
+                  {form.title.length}/160
+                </div>
               </div>
 
               <div className="space-y-1.5">
-                <label htmlFor="article-excerpt" className="text-sm font-semibold text-main">
+                <label
+                  htmlFor="article-excerpt"
+                  className="text-sm font-semibold text-main"
+                >
                   Ringkasan <span className="text-rose-500">*</span>
                 </label>
                 <textarea
                   id="article-excerpt"
                   value={form.excerpt}
-                  onChange={(event) => updateField('excerpt', event.target.value)}
+                  onChange={(event) =>
+                    updateField("excerpt", event.target.value)
+                  }
                   className={`${fieldClass} min-h-24 resize-y`}
                   maxLength={320}
                   placeholder="Jelaskan manfaat utama artikel dalam 1–2 kalimat."
@@ -257,31 +374,38 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
           <section className="overflow-hidden rounded-2xl border border-border-custom bg-card">
             <div className="flex flex-col gap-3 border-b border-border-custom px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
               <div>
-                <h2 className="text-sm font-bold text-main">Isi artikel <span className="text-rose-500">*</span></h2>
-                <p className="mt-0.5 text-xs text-muted">Gunakan template dan Markdown untuk menyusun artikel yang rapi dan mudah dibaca.</p>
+                <h2 className="text-sm font-bold text-main">
+                  Isi artikel <span className="text-rose-500">*</span>
+                </h2>
+                <p className="mt-0.5 text-xs text-muted">
+                  Gunakan template dan Markdown untuk menyusun artikel yang rapi
+                  dan mudah dibaca.
+                </p>
               </div>
               <div className="inline-flex w-fit rounded-lg bg-sub-slate p-1">
                 <button
                   type="button"
-                  onClick={() => setActiveTab('write')}
-                  className={`rounded-md px-3 py-1.5 text-xs font-semibold ${activeTab === 'write' ? 'bg-card text-main' : 'text-muted'}`}
+                  onClick={() => setActiveTab("write")}
+                  className={`rounded-md px-3 py-1.5 text-xs font-semibold ${activeTab === "write" ? "bg-card text-main" : "text-muted"}`}
                 >
                   Tulis
                 </button>
                 <button
                   type="button"
-                  onClick={() => setActiveTab('preview')}
-                  className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold ${activeTab === 'preview' ? 'bg-card text-main' : 'text-muted'}`}
+                  onClick={() => setActiveTab("preview")}
+                  className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold ${activeTab === "preview" ? "bg-card text-main" : "text-muted"}`}
                 >
                   <Eye size={13} /> Preview
                 </button>
               </div>
             </div>
 
-            {activeTab === 'write' ? (
+            {activeTab === "write" ? (
               <>
                 <div className="flex flex-wrap items-center gap-1 border-b border-border-custom bg-card px-3 py-2">
-                  <span className="mr-1 px-1.5 text-[11px] font-semibold text-muted">Mulai dari:</span>
+                  <span className="mr-1 px-1.5 text-[11px] font-semibold text-muted">
+                    Mulai dari:
+                  </span>
                   {ARTICLE_TEMPLATES.map((template) => (
                     <button
                       key={template.label}
@@ -294,38 +418,53 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
                   ))}
                 </div>
                 <div className="flex flex-wrap gap-1 border-b border-border-custom bg-sub-slate/60 px-3 py-2">
-                  {MARKDOWN_TOOLS.map(({ label, icon: Icon, before, after, fallback }) => (
-                    <button
-                      key={label}
-                      type="button"
-                      onClick={() => insertMarkdown(before, after, fallback)}
-                      className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-muted hover:bg-card hover:text-main"
-                      title={label}
-                    >
-                      <Icon size={14} /> <span className="hidden sm:inline">{label}</span>
-                    </button>
-                  ))}
+                  {MARKDOWN_TOOLS.map(
+                    ({ label, icon: Icon, before, after, fallback }) => (
+                      <button
+                        key={label}
+                        type="button"
+                        onClick={() => insertMarkdown(before, after, fallback)}
+                        className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-muted hover:bg-card hover:text-main"
+                        title={label}
+                      >
+                        <Icon size={14} />{" "}
+                        <span className="hidden sm:inline">{label}</span>
+                      </button>
+                    ),
+                  )}
                 </div>
                 <textarea
                   ref={contentRef}
                   value={form.content}
-                  onChange={(event) => updateField('content', event.target.value)}
+                  onChange={(event) =>
+                    updateField("content", event.target.value)
+                  }
                   className="min-h-[440px] w-full resize-y bg-card p-5 font-mono text-[13px] leading-6 text-main outline-none sm:p-6"
-                  placeholder={'Mulai menulis artikel...\n\n## Subjudul\n\nIsi paragraf artikel.'}
+                  placeholder={
+                    "Mulai menulis artikel...\n\n## Subjudul\n\nIsi paragraf artikel."
+                  }
                   spellCheck
                 />
                 <div className="border-t border-border-custom bg-sub-slate/35 px-5 py-2.5 text-[11px] leading-5 text-muted">
-                  Tip: pilih teks sebelum menekan toolbar untuk membungkusnya. Gunakan gambar sampul untuk kartu artikel, atau masukkan URL gambar pada tombol Gambar untuk isi artikel.
+                  Tip: pilih teks sebelum menekan toolbar untuk membungkusnya.
+                  Gunakan gambar sampul untuk kartu artikel, atau masukkan URL
+                  gambar pada tombol Gambar untuk isi artikel.
                 </div>
               </>
             ) : (
               <article className="min-h-[440px] p-5 text-sm leading-7 text-main sm:p-7 [&_a]:text-acc-blue [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-acc-blue/30 [&_blockquote]:pl-4 [&_h1]:mb-4 [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:mb-3 [&_h2]:mt-7 [&_h2]:text-xl [&_h2]:font-bold [&_h3]:mb-2 [&_h3]:mt-5 [&_h3]:text-lg [&_h3]:font-bold [&_li]:ml-5 [&_ol]:list-decimal [&_p]:mb-4 [&_ul]:list-disc">
-                {form.content.trim() ? <ReactMarkdown>{form.content}</ReactMarkdown> : <p className="text-muted">Belum ada isi untuk dipreview.</p>}
+                {form.content.trim() ? (
+                  <ReactMarkdown>{form.content}</ReactMarkdown>
+                ) : (
+                  <p className="text-muted">Belum ada isi untuk dipreview.</p>
+                )}
               </article>
             )}
             <div className="flex items-center justify-between border-t border-border-custom px-5 py-3 text-xs text-muted">
               <span>{wordCount} kata</span>
-              <span>{form.content.length.toLocaleString('id-ID')} karakter</span>
+              <span>
+                {form.content.length.toLocaleString("id-ID")} karakter
+              </span>
             </div>
           </section>
         </div>
@@ -337,11 +476,21 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
             </div>
             <div className="space-y-4 p-5">
               <div className="space-y-1.5">
-                <label htmlFor="article-status" className="text-xs font-semibold text-main">Status</label>
+                <label
+                  htmlFor="article-status"
+                  className="text-xs font-semibold text-main"
+                >
+                  Status
+                </label>
                 <select
                   id="article-status"
                   value={form.status}
-                  onChange={(event) => updateField('status', event.target.value as ArticleEditorData['status'])}
+                  onChange={(event) =>
+                    updateField(
+                      "status",
+                      event.target.value as ArticleEditorData["status"],
+                    )
+                  }
                   className={fieldClass}
                 >
                   <option value="DRAFT">Draft — belum tampil publik</option>
@@ -350,44 +499,66 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
               </div>
 
               <div className="space-y-2">
-                <span className="text-xs font-semibold text-main">Jenis konten</span>
+                <span className="text-xs font-semibold text-main">
+                  Jenis konten
+                </span>
                 <div className="grid grid-cols-2 gap-2">
-                  {(['BLOG', 'ARTICLE'] as const).map((type) => (
+                  {(["BLOG", "ARTICLE"] as const).map((type) => (
                     <button
                       key={type}
                       type="button"
-                      onClick={() => updateField('type', type)}
+                      onClick={() => updateField("type", type)}
                       className={`rounded-xl border px-3 py-2.5 text-xs font-semibold ${
                         form.type === type
-                          ? 'border-acc-blue bg-sub-blue text-acc-blue'
-                          : 'border-border-custom bg-card text-muted hover:text-main'
+                          ? "border-acc-blue bg-sub-blue text-acc-blue"
+                          : "border-border-custom bg-card text-muted hover:text-main"
                       }`}
                     >
-                      {type === 'BLOG' ? 'Blog' : 'Artikel'}
+                      {type === "BLOG" ? "Blog" : "Artikel"}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label htmlFor="article-category" className="text-xs font-semibold text-main">Kategori <span className="text-rose-500">*</span></label>
+                <label
+                  htmlFor="article-category"
+                  className="text-xs font-semibold text-main"
+                >
+                  Kategori <span className="text-rose-500">*</span>
+                </label>
                 <select
                   id="article-category"
                   value={form.category}
-                  onChange={(event) => updateField('category', event.target.value)}
+                  onChange={(event) =>
+                    updateField("category", event.target.value)
+                  }
                   className={fieldClass}
                 >
-                  <option value="" disabled>Pilih kategori</option>
-                  {categories.map((category) => <option key={category.id} value={category.name}>{category.name}</option>)}
+                  <option value="" disabled>
+                    Pilih kategori
+                  </option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.name}>
+                      {category.name}
+                    </option>
+                  ))}
                 </select>
               </div>
 
               <div className="space-y-1.5">
-                <label htmlFor="article-author" className="text-xs font-semibold text-main">Penulis</label>
+                <label
+                  htmlFor="article-author"
+                  className="text-xs font-semibold text-main"
+                >
+                  Penulis
+                </label>
                 <input
                   id="article-author"
                   value={form.author}
-                  onChange={(event) => updateField('author', event.target.value)}
+                  onChange={(event) =>
+                    updateField("author", event.target.value)
+                  }
                   className={fieldClass}
                   maxLength={100}
                   placeholder="Tim Redaksi"
@@ -397,14 +568,17 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
               <div className="pt-2 border-t border-border-custom">
                 <div className="flex items-center justify-between gap-3">
                   <div className="space-y-0.5">
-                    <span className="block text-xs font-semibold text-main">Pilihan teratas</span>
+                    <span className="block text-xs font-semibold text-main">
+                      Pilihan teratas
+                    </span>
                     <span className="block text-[11px] leading-4 text-muted">
-                      Maksimal 3 artikel. Hanya artikel published yang akan tampil pada sidebar blog.
+                      Maksimal 3 artikel. Hanya artikel published yang akan
+                      tampil pada sidebar blog.
                     </span>
                   </div>
                   <ToggleSwitch
                     checked={form.isTraderPick}
-                    onChange={(checked) => updateField('isTraderPick', checked)}
+                    onChange={(checked) => updateField("isTraderPick", checked)}
                   />
                 </div>
               </div>
@@ -414,12 +588,18 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
           <section className="overflow-hidden rounded-2xl border border-border-custom bg-card">
             <div className="border-b border-border-custom px-5 py-4">
               <h2 className="text-sm font-bold text-main">Gambar sampul</h2>
-              <p className="mt-0.5 text-xs text-muted">Gunakan rasio 16:9 agar kartu artikel konsisten.</p>
+              <p className="mt-0.5 text-xs text-muted">
+                Gunakan rasio 16:9 agar kartu artikel konsisten.
+              </p>
             </div>
             <div className="space-y-4 p-5">
               <div className="relative aspect-video overflow-hidden rounded-xl border border-border-custom bg-sub-slate">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={imageSource} alt="Preview gambar sampul" className="h-full w-full object-cover" />
+                <img
+                  src={imageSource}
+                  alt="Preview gambar sampul"
+                  className="h-full w-full object-cover"
+                />
                 {!form.coverImage && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/20 text-white">
                     <div className="flex items-center gap-2 rounded-lg bg-black/55 px-3 py-2 text-xs font-semibold">
@@ -428,13 +608,19 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
                   </div>
                 )}
               </div>
-              <ArticleCoverUploader value={form.coverImage} onChange={(coverImage) => updateField('coverImage', coverImage)} />
+              <ArticleCoverUploader
+                value={form.coverImage}
+                onChange={(coverImage) => updateField("coverImage", coverImage)}
+              />
             </div>
           </section>
 
           <div className="rounded-2xl border border-border-custom bg-sub-slate/50 p-4 text-xs leading-5 text-muted">
-            <div className="mb-1.5 flex items-center gap-2 font-semibold text-main"><FileText size={15} /> Checklist sebelum terbit</div>
-            Pastikan judul jelas, ringkasan tidak terpotong, gambar dapat dibuka, dan preview Markdown sudah rapi.
+            <div className="mb-1.5 flex items-center gap-2 font-semibold text-main">
+              <FileText size={15} /> Checklist sebelum terbit
+            </div>
+            Pastikan judul jelas, ringkasan tidak terpotong, gambar dapat
+            dibuka, dan preview Markdown sudah rapi.
           </div>
         </aside>
       </div>

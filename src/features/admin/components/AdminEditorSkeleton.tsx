@@ -1,12 +1,18 @@
-'use client';
+"use client";
 
 export interface AdminEditorSkeletonProps {
   label?: string;
 }
 
-export function AdminEditorSkeleton({ label = 'Memuat data...' }: AdminEditorSkeletonProps) {
+export function AdminEditorSkeleton({
+  label = "Memuat data...",
+}: AdminEditorSkeletonProps) {
   return (
-    <div className="mx-auto max-w-5xl space-y-5 pb-10" role="status" aria-label={label}>
+    <div
+      className="mx-auto max-w-5xl space-y-5 pb-10"
+      role="status"
+      aria-label={label}
+    >
       <div className="flex items-center justify-between border-b border-border-custom pb-5">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 animate-pulse rounded-xl bg-sub-slate" />

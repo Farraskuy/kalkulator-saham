@@ -1,13 +1,22 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { ArrowRight, BookOpen, Calculator, Download, FilePenLine, Plus, Users, BarChart3 } from 'lucide-react';
-import { formatNumber } from '@/lib/utils/formatters';
-import MetricCard from '@/features/admin/components/MetricCard';
-import ContentRow from '@/features/admin/components/ContentRow';
-import DashboardSkeleton from '@/features/admin/components/DashboardSkeleton';
-import { AdminCrudHeader } from '@/features/admin/components/AdminCrudHeader';
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import {
+  ArrowRight,
+  BookOpen,
+  Calculator,
+  Download,
+  FilePenLine,
+  Plus,
+  Users,
+  BarChart3,
+} from "lucide-react";
+import { formatNumber } from "@/lib/utils/formatters";
+import MetricCard from "@/features/admin/components/MetricCard";
+import ContentRow from "@/features/admin/components/ContentRow";
+import DashboardSkeleton from "@/features/admin/components/DashboardSkeleton";
+import { AdminCrudHeader } from "@/features/admin/components/AdminCrudHeader";
 
 interface AnalyticsData {
   summary: {
@@ -22,64 +31,214 @@ interface AnalyticsData {
   };
   calculatorStats: Record<string, { download: number; share: number }>;
   referrers: Array<{ name: string; value: number }>;
-  recentActions: Array<{ id: string; calculatorType: string; action: string; timestamp: string }>;
+  recentActions: Array<{
+    id: string;
+    calculatorType: string;
+    action: string;
+    timestamp: string;
+  }>;
 }
 
 export default function AdminDashboardPage() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch('/api/analytics/dashboard')
+    fetch("/api/analytics/dashboard")
       .then(async (response) => {
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Dashboard gagal dimuat.');
+        if (!response.ok)
+          throw new Error(data.error || "Dashboard gagal dimuat.");
         return data;
       })
       .then(setAnalytics)
-      .catch((loadError) => setError(loadError instanceof Error ? loadError.message : 'Dashboard gagal dimuat.'));
+      .catch((loadError) =>
+        setError(
+          loadError instanceof Error
+            ? loadError.message
+            : "Dashboard gagal dimuat.",
+        ),
+      );
   }, []);
 
   const isLoading = !analytics && !error;
 
   return (
     <div className="mx-auto max-w-[1280px] space-y-5 pb-10">
-      <AdminCrudHeader title="Dashboard" description="Ringkasan performa website, statistik kalkulator, serta metrik pengunjung." actionHref="/admin/articles/new" actionLabel="Tulis artikel" icon={BarChart3} />
+      <AdminCrudHeader
+        title="Dashboard"
+        description="Ringkasan performa website, statistik kalkulator, serta metrik pengunjung."
+        actionHref="/admin/articles/new"
+        actionLabel="Tulis artikel"
+        icon={BarChart3}
+      />
 
-      {error && <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900 dark:bg-rose-950/40">{error}</div>}
+      {error && (
+        <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900 dark:bg-rose-950/40">
+          {error}
+        </div>
+      )}
 
-      {isLoading ? <DashboardSkeleton /> : <>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard label="Total kunjungan" value={analytics?.summary.totalTraffic || 0} helper="Trafik tercatat" icon={Users} tone="blue" />
-        <MetricCard label="Pengguna terdaftar" value={analytics?.summary.totalUsers || 0} helper="Akun Google" icon={Users} tone="green" />
-        <MetricCard label="Riwayat kalkulasi" value={analytics?.summary.totalCalculations || 0} helper="Tersimpan pengguna" icon={Calculator} tone="amber" />
-        <MetricCard label="Ekspor & bagikan" value={(analytics?.summary.totalDownloads || 0) + (analytics?.summary.totalShares || 0)} helper="Interaksi konten" icon={Download} tone="violet" />
-      </div>
-
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <section className="overflow-hidden rounded-2xl border border-border-custom bg-card">
-          <div className="flex items-center justify-between border-b border-border-custom px-5 py-4"><div><h2 className="text-sm font-bold text-main">Sumber trafik</h2><p className="mt-0.5 text-xs text-muted">Maksimal 1.000 kunjungan terbaru.</p></div></div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm"><thead className="bg-sub-slate/60 text-xs font-semibold text-muted"><tr><th className="px-5 py-3">Sumber</th><th className="px-5 py-3 text-right">Kunjungan</th></tr></thead><tbody className="divide-y divide-border-custom">{analytics?.referrers.map((referrer) => <tr key={referrer.name}><td className="px-5 py-3.5 font-medium text-main">{referrer.name}</td><td className="px-5 py-3.5 text-right font-semibold text-main">{formatNumber(referrer.value)}</td></tr>)}{!analytics?.referrers.length && <tr><td colSpan={2} className="px-5 py-12 text-center text-sm text-muted">Belum ada data trafik.</td></tr>}</tbody></table>
+      {isLoading ? (
+        <DashboardSkeleton />
+      ) : (
+        <>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <MetricCard
+              label="Total kunjungan"
+              value={analytics?.summary.totalTraffic || 0}
+              helper="Trafik tercatat"
+              icon={Users}
+              tone="blue"
+            />
+            <MetricCard
+              label="Pengguna terdaftar"
+              value={analytics?.summary.totalUsers || 0}
+              helper="Akun Google"
+              icon={Users}
+              tone="green"
+            />
+            <MetricCard
+              label="Riwayat kalkulasi"
+              value={analytics?.summary.totalCalculations || 0}
+              helper="Tersimpan pengguna"
+              icon={Calculator}
+              tone="amber"
+            />
+            <MetricCard
+              label="Ekspor & bagikan"
+              value={
+                (analytics?.summary.totalDownloads || 0) +
+                (analytics?.summary.totalShares || 0)
+              }
+              helper="Interaksi konten"
+              icon={Download}
+              tone="violet"
+            />
           </div>
-        </section>
 
-        <section className="rounded-2xl border border-border-custom bg-card">
-          <div className="border-b border-border-custom px-5 py-4"><h2 className="text-sm font-bold text-main">Status konten</h2><p className="mt-0.5 text-xs text-muted">Ringkasan artikel dan blog.</p></div>
-          <div className="space-y-3 p-5">
-            <ContentRow label="Semua konten" value={analytics?.summary.totalArticles || 0} icon={BookOpen} tone="text-acc-blue bg-sub-blue" />
-            <ContentRow label="Published" value={analytics?.summary.publishedArticles || 0} icon={BookOpen} tone="text-emerald-600 bg-emerald-500/10" />
-            <ContentRow label="Draft" value={analytics?.summary.draftArticles || 0} icon={FilePenLine} tone="text-amber-600 bg-amber-500/10" />
-            <Link href="/admin/articles" className="mt-2 flex h-10 items-center justify-between rounded-xl border border-border-custom px-3.5 text-sm font-semibold text-main hover:bg-sub-slate">Kelola konten <ArrowRight size={16} className="text-muted" /></Link>
+          <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+            <section className="overflow-hidden rounded-2xl border border-border-custom bg-card">
+              <div className="flex items-center justify-between border-b border-border-custom px-5 py-4">
+                <div>
+                  <h2 className="text-sm font-bold text-main">Sumber trafik</h2>
+                  <p className="mt-0.5 text-xs text-muted">
+                    Maksimal 1.000 kunjungan terbaru.
+                  </p>
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-sub-slate/60 text-xs font-semibold text-muted">
+                    <tr>
+                      <th className="px-5 py-3">Sumber</th>
+                      <th className="px-5 py-3 text-right">Kunjungan</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border-custom">
+                    {analytics?.referrers.map((referrer) => (
+                      <tr key={referrer.name}>
+                        <td className="px-5 py-3.5 font-medium text-main">
+                          {referrer.name}
+                        </td>
+                        <td className="px-5 py-3.5 text-right font-semibold text-main">
+                          {formatNumber(referrer.value)}
+                        </td>
+                      </tr>
+                    ))}
+                    {!analytics?.referrers.length && (
+                      <tr>
+                        <td
+                          colSpan={2}
+                          className="px-5 py-12 text-center text-sm text-muted"
+                        >
+                          Belum ada data trafik.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section className="rounded-2xl border border-border-custom bg-card">
+              <div className="border-b border-border-custom px-5 py-4">
+                <h2 className="text-sm font-bold text-main">Status konten</h2>
+                <p className="mt-0.5 text-xs text-muted">
+                  Ringkasan artikel dan blog.
+                </p>
+              </div>
+              <div className="space-y-3 p-5">
+                <ContentRow
+                  label="Semua konten"
+                  value={analytics?.summary.totalArticles || 0}
+                  icon={BookOpen}
+                  tone="text-acc-blue bg-sub-blue"
+                />
+                <ContentRow
+                  label="Published"
+                  value={analytics?.summary.publishedArticles || 0}
+                  icon={BookOpen}
+                  tone="text-emerald-600 bg-emerald-500/10"
+                />
+                <ContentRow
+                  label="Draft"
+                  value={analytics?.summary.draftArticles || 0}
+                  icon={FilePenLine}
+                  tone="text-amber-600 bg-amber-500/10"
+                />
+                <Link
+                  href="/admin/articles"
+                  className="mt-2 flex h-10 items-center justify-between rounded-xl border border-border-custom px-3.5 text-sm font-semibold text-main hover:bg-sub-slate"
+                >
+                  Kelola konten <ArrowRight size={16} className="text-muted" />
+                </Link>
+              </div>
+            </section>
           </div>
-        </section>
-      </div>
 
-      <section className="overflow-hidden rounded-2xl border border-border-custom bg-card">
-        <div className="border-b border-border-custom px-5 py-4"><h2 className="text-sm font-bold text-main">Aktivitas kalkulator</h2><p className="mt-0.5 text-xs text-muted">Jumlah ekspor dan bagikan berdasarkan fitur.</p></div>
-        <div className="overflow-x-auto"><table className="w-full min-w-[560px] text-left text-sm"><thead className="bg-sub-slate/60 text-xs font-semibold text-muted"><tr><th className="px-5 py-3">Kalkulator</th><th className="px-5 py-3 text-center">Unduh</th><th className="px-5 py-3 text-center">Bagikan</th></tr></thead><tbody className="divide-y divide-border-custom">{[['ara-arb','ARA / ARB'],['average','Average Up / Down'],['prediction','Target Jual / Beli']].map(([key,label]) => <tr key={key}><td className="px-5 py-3.5 font-medium text-main">{label}</td><td className="px-5 py-3.5 text-center font-semibold text-main">{analytics?.calculatorStats[key]?.download || 0}</td><td className="px-5 py-3.5 text-center font-semibold text-main">{analytics?.calculatorStats[key]?.share || 0}</td></tr>)}</tbody></table></div>
-      </section>
-      </>}
+          <section className="overflow-hidden rounded-2xl border border-border-custom bg-card">
+            <div className="border-b border-border-custom px-5 py-4">
+              <h2 className="text-sm font-bold text-main">
+                Aktivitas kalkulator
+              </h2>
+              <p className="mt-0.5 text-xs text-muted">
+                Jumlah ekspor dan bagikan berdasarkan fitur.
+              </p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[560px] text-left text-sm">
+                <thead className="bg-sub-slate/60 text-xs font-semibold text-muted">
+                  <tr>
+                    <th className="px-5 py-3">Kalkulator</th>
+                    <th className="px-5 py-3 text-center">Unduh</th>
+                    <th className="px-5 py-3 text-center">Bagikan</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border-custom">
+                  {[
+                    ["ara-arb", "ARA / ARB"],
+                    ["average", "Average Up / Down"],
+                    ["prediction", "Target Jual / Beli"],
+                  ].map(([key, label]) => (
+                    <tr key={key}>
+                      <td className="px-5 py-3.5 font-medium text-main">
+                        {label}
+                      </td>
+                      <td className="px-5 py-3.5 text-center font-semibold text-main">
+                        {analytics?.calculatorStats[key]?.download || 0}
+                      </td>
+                      <td className="px-5 py-3.5 text-center font-semibold text-main">
+                        {analytics?.calculatorStats[key]?.share || 0}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </>
+      )}
     </div>
   );
 }

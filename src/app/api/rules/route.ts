@@ -1,8 +1,11 @@
-import { NextResponse } from 'next/server';
-import { revalidateTag } from 'next/cache';
-import { prisma } from '@/lib/db';
-import { verifySession } from '@/lib/auth';
-import { DEFAULT_FRACTION_RULES, DEFAULT_ARA_ARB_RULES } from '@/features/calculators';
+import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
+import { prisma } from "@/lib/db";
+import { verifySession } from "@/lib/auth";
+import {
+  DEFAULT_FRACTION_RULES,
+  DEFAULT_ARA_ARB_RULES,
+} from "@/features/calculators";
 
 export async function GET() {
   try {
@@ -35,8 +38,8 @@ export async function GET() {
     return NextResponse.json({ fractions, araArb });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Gagal mengambil data aturan: ' + (error as Error).message },
-      { status: 500 }
+      { error: "Gagal mengambil data aturan: " + (error as Error).message },
+      { status: 500 },
     );
   }
 }
@@ -44,7 +47,7 @@ export async function GET() {
 export async function POST(request: Request) {
   const session = await verifySession();
   if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
@@ -64,7 +67,7 @@ export async function POST(request: Request) {
         }
       }
 
-      if (araArb && typeof araArb === 'object') {
+      if (araArb && typeof araArb === "object") {
         await prisma.araArbRule.deleteMany();
         for (const board of Object.keys(araArb)) {
           const rules = araArb[board];
@@ -83,13 +86,13 @@ export async function POST(request: Request) {
       // If DB error, proceed safely
     }
 
-    revalidateTag('fraction-rules', 'max');
-    revalidateTag('ara-arb-rules', 'max');
+    revalidateTag("fraction-rules", "max");
+    revalidateTag("ara-arb-rules", "max");
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Gagal menyimpan aturan: ' + (error as Error).message },
-      { status: 500 }
+      { error: "Gagal menyimpan aturan: " + (error as Error).message },
+      { status: 500 },
     );
   }
 }

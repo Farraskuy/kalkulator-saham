@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import AppLogo from './AppLogo';
-import DynamicDisclaimer from './DynamicDisclaimer';
+import React from "react";
+import Link from "next/link";
+import AppLogo from "./AppLogo";
+import DynamicDisclaimer from "./DynamicDisclaimer";
 
 interface FooterProps {
-  variant?: 'default' | 'acme';
+  variant?: "default" | "acme";
 }
 
-export default function Footer({ variant = 'default' }: FooterProps) {
-  const isAcme = variant === 'acme';
+export default function Footer({ variant = "default" }: FooterProps) {
+  const isAcme = variant === "acme";
   const year = new Date().getFullYear();
   const [siteDescription, setSiteDescription] = React.useState(
-    'Platform personal berisi kalkulator simulasi matematis saham serta artikel & blog opini pribadi.'
+    "Platform personal berisi kalkulator simulasi matematis saham serta artikel & blog opini pribadi.",
   );
 
   React.useEffect(() => {
-    fetch('/api/settings')
+    fetch("/api/settings")
       .then((res) => res.json())
       .then((data) => {
         if (data.siteDescription) {
@@ -51,22 +51,34 @@ export default function Footer({ variant = 'default' }: FooterProps) {
               </div>
               <ul className="space-y-2.5 text-muted font-medium">
                 <li>
-                  <Link href="/#calculator" className="hover:text-main transition-colors">
+                  <Link
+                    href="/#calculator"
+                    className="hover:text-main transition-colors"
+                  >
                     Prediksi Target Jual/Beli
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#calculator" className="hover:text-main transition-colors">
+                  <Link
+                    href="/#calculator"
+                    className="hover:text-main transition-colors"
+                  >
                     Auto Rejection (ARA/ARB)
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#calculator" className="hover:text-main transition-colors">
+                  <Link
+                    href="/#calculator"
+                    className="hover:text-main transition-colors"
+                  >
                     Average Up / Down
                   </Link>
                 </li>
                 <li>
-                  <Link href="/faq" className="hover:text-main transition-colors">
+                  <Link
+                    href="/faq"
+                    className="hover:text-main transition-colors"
+                  >
                     Pertanyaan Umum (FAQ)
                   </Link>
                 </li>
@@ -79,12 +91,18 @@ export default function Footer({ variant = 'default' }: FooterProps) {
               </div>
               <ul className="space-y-2.5 text-muted font-medium">
                 <li>
-                  <Link href="/blog" className="hover:text-main transition-colors">
+                  <Link
+                    href="/blog"
+                    className="hover:text-main transition-colors"
+                  >
                     Blog &amp; Artikel
                   </Link>
                 </li>
                 <li>
-                  <Link href="/faq" className="hover:text-main transition-colors">
+                  <Link
+                    href="/faq"
+                    className="hover:text-main transition-colors"
+                  >
                     Pusat Bantuan &amp; FAQ
                   </Link>
                 </li>
@@ -95,9 +113,7 @@ export default function Footer({ variant = 'default' }: FooterProps) {
 
         {/* BOTTOM SECTION (LEFT-ALIGNED COPYRIGHT & DISCLAIMER) */}
         <div className="pt-6 border-t border-border-custom/40 flex flex-col items-start justify-start text-left space-y-2.5 text-[11px] text-muted font-medium">
-          <div>
-            &copy; {year} HitungSaham.com
-          </div>
+          <div>&copy; {year} HitungSaham.com</div>
           <div className="max-w-3xl text-[10px] leading-relaxed text-left">
             <DynamicDisclaimer />
           </div>

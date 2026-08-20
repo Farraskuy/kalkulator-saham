@@ -1,10 +1,25 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef, useTransition, useMemo } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Search, X, ArrowRight, History, ImageOff, Clock, Trash2, ArrowLeft } from 'lucide-react';
-import { ArticleData } from '@/types';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useTransition,
+  useMemo,
+} from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  Search,
+  X,
+  ArrowRight,
+  History,
+  ImageOff,
+  Clock,
+  Trash2,
+  ArrowLeft,
+} from "lucide-react";
+import { ArticleData } from "@/types";
 import {
   getSearchHistory,
   addSearchHistory,
@@ -12,13 +27,13 @@ import {
   clearSearchHistory,
   getRecentlyViewedBlogs,
   RecentlyViewedBlog,
-} from '../utils/blogStorage';
+} from "../utils/blogStorage";
 
 interface BlogSearchDropdownProps {
   articles: ArticleData[];
   basePath: string;
   placeholder?: string;
-  theme?: 'default' | 'acme';
+  theme?: "default" | "acme";
   defaultValue?: string;
 }
 
@@ -53,9 +68,9 @@ function BlogThumbnail({ src, alt }: { src?: string | null; alt: string }) {
 export default function BlogSearchDropdown({
   articles,
   basePath,
-  placeholder = 'Cari artikel / jurnal...',
-  theme = 'default',
-  defaultValue = '',
+  placeholder = "Cari artikel / jurnal...",
+  theme = "default",
+  defaultValue = "",
 }: BlogSearchDropdownProps) {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -68,7 +83,9 @@ export default function BlogSearchDropdown({
 
   // Local storage state for history & recently viewed blogs
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
-  const [recentlyViewed, setRecentlyViewed] = useState<RecentlyViewedBlog[]>([]);
+  const [recentlyViewed, setRecentlyViewed] = useState<RecentlyViewedBlog[]>(
+    [],
+  );
 
   useEffect(() => {
     setQuery(defaultValue);
@@ -105,12 +122,15 @@ export default function BlogSearchDropdown({
   // Close dropdown on click outside for desktop
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Filter top 5 articles matching debouncedQuery
@@ -122,7 +142,7 @@ export default function BlogSearchDropdown({
         (art) =>
           art.title.toLowerCase().includes(q) ||
           (art.excerpt && art.excerpt.toLowerCase().includes(q)) ||
-          (art.category && art.category.toLowerCase().includes(q))
+          (art.category && art.category.toLowerCase().includes(q)),
       )
       .slice(0, 5);
   }, [articles, debouncedQuery]);
@@ -134,7 +154,7 @@ export default function BlogSearchDropdown({
       (art) =>
         art.title.toLowerCase().includes(q) ||
         (art.excerpt && art.excerpt.toLowerCase().includes(q)) ||
-        (art.category && art.category.toLowerCase().includes(q))
+        (art.category && art.category.toLowerCase().includes(q)),
     ).length;
   }, [articles, debouncedQuery]);
 
@@ -165,15 +185,15 @@ export default function BlogSearchDropdown({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       handleSearchSubmit();
-    } else if (e.key === 'Escape') {
+    } else if (e.key === "Escape") {
       setIsOpen(false);
     }
   };
 
-  const isAcme = theme === 'acme';
+  const isAcme = theme === "acme";
 
   // Recently viewed max 3 items
   const recentThreeViewed = useMemo(() => {
@@ -189,7 +209,8 @@ export default function BlogSearchDropdown({
           <div className="space-y-2">
             <div className="flex items-center justify-between px-1">
               <span className="text-[11px] font-extrabold uppercase tracking-wider text-muted flex items-center gap-1.5">
-                <History size={13} className="text-acc-blue" /> Riwayat Pencarian
+                <History size={13} className="text-acc-blue" /> Riwayat
+                Pencarian
               </span>
               {searchHistory.length > 0 && (
                 <button
@@ -217,7 +238,10 @@ export default function BlogSearchDropdown({
                     }}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sub-slate hover:bg-sub-blue/60 text-main hover:text-acc-blue text-xs font-semibold cursor-pointer transition-colors group"
                   >
-                    <Clock size={12} className="text-muted group-hover:text-acc-blue shrink-0" />
+                    <Clock
+                      size={12}
+                      className="text-muted group-hover:text-acc-blue shrink-0"
+                    />
                     <span>{item}</span>
                     <button
                       type="button"
@@ -262,7 +286,10 @@ export default function BlogSearchDropdown({
                       </div>
                     </div>
 
-                    <ArrowRight size={14} className="text-muted group-hover:text-main shrink-0" />
+                    <ArrowRight
+                      size={14}
+                      className="text-muted group-hover:text-main shrink-0"
+                    />
                   </Link>
                 ))}
               </div>
@@ -290,7 +317,8 @@ export default function BlogSearchDropdown({
             <div className="py-6 px-3 text-center text-xs text-muted space-y-1 bg-sub-slate/30 rounded-xl border border-dashed border-border-custom/40">
               <p className="font-bold text-main">Tidak ada artikel ditemukan</p>
               <p className="text-[11px]">
-                Coba kata kunci lain seperti &quot;Average Down&quot; atau &quot;ARA/ARB&quot;
+                Coba kata kunci lain seperti &quot;Average Down&quot; atau
+                &quot;ARA/ARB&quot;
               </p>
             </div>
           ) : (
@@ -315,10 +343,10 @@ export default function BlogSearchDropdown({
                       </span>
                       <span>•</span>
                       <span>
-                        {new Date(art.publishedAt).toLocaleDateString('id-ID', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
+                        {new Date(art.publishedAt).toLocaleDateString("id-ID", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
                         })}
                       </span>
                     </div>
@@ -327,7 +355,10 @@ export default function BlogSearchDropdown({
                     </div>
                   </div>
 
-                  <ArrowRight size={14} className="text-muted group-hover:text-main shrink-0" />
+                  <ArrowRight
+                    size={14}
+                    className="text-muted group-hover:text-main shrink-0"
+                  />
                 </Link>
               ))}
             </div>
@@ -335,7 +366,9 @@ export default function BlogSearchDropdown({
 
           {/* FOOTER SEE ALL ACTION */}
           <div className="pt-2 border-t border-border-custom/40 flex items-center justify-between text-xs px-1">
-            <span className="text-[11px] text-muted">Maksimal 5 hasil teratas</span>
+            <span className="text-[11px] text-muted">
+              Maksimal 5 hasil teratas
+            </span>
             <button
               type="button"
               onClick={() => handleSearchSubmit()}
@@ -363,7 +396,7 @@ export default function BlogSearchDropdown({
         <Search
           size={15}
           className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${
-            isAcme ? 'text-muted' : 'text-muted'
+            isAcme ? "text-muted" : "text-muted"
           }`}
         />
         <input
@@ -378,19 +411,21 @@ export default function BlogSearchDropdown({
           placeholder={placeholder}
           className={
             isAcme
-              ? 'w-full bg-card border border-border-custom rounded-xl pl-9 pr-9 py-2 text-base sm:text-xs font-semibold text-main outline-none focus:border-main transition-colors shadow-2xs'
-              : 'w-full bg-sub-slate border border-border-custom/50 rounded-xl pl-9 pr-9 py-2 text-xs font-semibold text-main outline-none focus:border-acc-blue transition-colors shadow-2xs'
+              ? "w-full bg-card border border-border-custom rounded-xl pl-9 pr-9 py-2 text-base sm:text-xs font-semibold text-main outline-none focus:border-main transition-colors shadow-2xs"
+              : "w-full bg-sub-slate border border-border-custom/50 rounded-xl pl-9 pr-9 py-2 text-xs font-semibold text-main outline-none focus:border-acc-blue transition-colors shadow-2xs"
           }
         />
         {query && (
           <button
             type="button"
             onClick={() => {
-              setQuery('');
-              setDebouncedQuery('');
+              setQuery("");
+              setDebouncedQuery("");
             }}
             className={`absolute right-3 top-1/2 -translate-y-1/2 ${
-              isAcme ? 'text-muted hover:text-main' : 'text-muted hover:text-main'
+              isAcme
+                ? "text-muted hover:text-main"
+                : "text-muted hover:text-main"
             }`}
             title="Hapus kata kunci"
           >
@@ -404,8 +439,8 @@ export default function BlogSearchDropdown({
         <div
           className={`hidden sm:block absolute inset-x-0 top-full mt-2 z-50 max-h-[calc(100vh-8rem) w-full overflow-y-auto rounded-2xl shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200 ${
             isAcme
-              ? 'bg-card text-main border border-border-custom'
-              : 'bg-card text-main border border-border-custom/80'
+              ? "bg-card text-main border border-border-custom"
+              : "bg-card text-main border border-border-custom/80"
           }`}
         >
           {renderDropdownContent()}
@@ -417,7 +452,7 @@ export default function BlogSearchDropdown({
       {isOpen && (
         <div
           className={`sm:hidden fixed inset-0 z-50 flex flex-col overflow-y-auto animate-in fade-in duration-200 ${
-            isAcme ? 'bg-page text-main' : 'bg-page text-main'
+            isAcme ? "bg-page text-main" : "bg-page text-main"
           }`}
         >
           {/* MOBILE FULLSCREEN HEADER SEARCH BAR */}
@@ -455,8 +490,8 @@ export default function BlogSearchDropdown({
                 <button
                   type="button"
                   onClick={() => {
-                    setQuery('');
-                    setDebouncedQuery('');
+                    setQuery("");
+                    setDebouncedQuery("");
                   }}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-main"
                 >

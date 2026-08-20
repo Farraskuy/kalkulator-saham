@@ -1,26 +1,37 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { ShieldAlert, TrendingUp, TrendingDown, HelpCircle, Calculator, RotateCcw, Calendar } from 'lucide-react';
-import { Board, calculateAraArb } from '@/features/calculators';
-import { formatIDR, formatPercent, formatNumber } from '@/lib/utils/formatters';
-import type { AraArbRuleMap, FractionRule } from '@/types';
-import ExportCardWrapper from '@/components/ui/ExportCardWrapper';
+import React, { useState } from "react";
+import {
+  ShieldAlert,
+  TrendingUp,
+  TrendingDown,
+  HelpCircle,
+  Calculator,
+  RotateCcw,
+  Calendar,
+} from "lucide-react";
+import { Board, calculateAraArb } from "@/features/calculators";
+import { formatIDR, formatPercent, formatNumber } from "@/lib/utils/formatters";
+import type { AraArbRuleMap, FractionRule } from "@/types";
+import ExportCardWrapper from "@/components/ui/ExportCardWrapper";
 
 interface Props {
   fractionRules?: FractionRule[];
   araArbRules?: AraArbRuleMap;
 }
 
-export default function LandingAraArbCalculator({ fractionRules, araArbRules }: Props) {
-  const [ticker, setTicker] = useState<string>('');
+export default function LandingAraArbCalculator({
+  fractionRules,
+  araArbRules,
+}: Props) {
+  const [ticker, setTicker] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
-  const [board, setBoard] = useState<Board>('Utama');
+  const [board, setBoard] = useState<Board>("Utama");
   const [hasCalculated, setHasCalculated] = useState<boolean>(false);
-  const [domainName, setDomainName] = useState<string>('HitungSaham.com');
+  const [domainName, setDomainName] = useState<string>("HitungSaham.com");
 
   React.useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.hostname) {
+    if (typeof window !== "undefined" && window.location.hostname) {
       setDomainName(window.location.hostname);
     }
   }, []);
@@ -28,41 +39,44 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
   const result = calculateAraArb(price, board, fractionRules, araArbRules);
 
   const handleTickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const cleanTicker = e.target.value.replace(/[^a-zA-Z]/g, '').slice(0, 4).toUpperCase();
+    const cleanTicker = e.target.value
+      .replace(/[^a-zA-Z]/g, "")
+      .slice(0, 4)
+      .toUpperCase();
     setTicker(cleanTicker);
   };
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawVal = e.target.value.replace(/\D/g, '');
+    const rawVal = e.target.value.replace(/\D/g, "");
     setPrice(rawVal ? parseInt(rawVal, 10) : 0);
   };
 
   const handleCalculate = () => {
     setHasCalculated(true);
     setTimeout(() => {
-      const el = document.getElementById('ara-arb-result');
+      const el = document.getElementById("ara-arb-result");
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
     }, 50);
   };
 
   const handleReset = () => {
-    setTicker('');
+    setTicker("");
     setPrice(0);
-    setBoard('Utama');
+    setBoard("Utama");
     setHasCalculated(false);
   };
 
   const cleanFileName = (() => {
     const domain = domainName.toLowerCase();
-    const type = 'ARA-ARB';
-    const tickerVal = ticker ? ticker.toUpperCase() : 'NO-TICKER';
+    const type = "ARA-ARB";
+    const tickerVal = ticker ? ticker.toUpperCase() : "NO-TICKER";
     const priceVal = price || 0;
     const today = new Date();
     const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
     const dateStr = `${yyyy}${mm}${dd}`;
     return `${domain}-${type}-${tickerVal}-${priceVal}-${dateStr}`;
   })();
@@ -77,16 +91,26 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
               <div className="w-7 h-7 rounded-md flex items-center justify-center bg-slate-900 text-white">
                 <ShieldAlert size={16} />
               </div>
-              <span className="font-bold text-main text-sm">Parameter Penutupan</span>
+              <span className="font-bold text-main text-sm">
+                Parameter Penutupan
+              </span>
             </div>
-            <button type="button" onClick={handleReset} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold text-muted transition-colors hover:bg-sub-slate hover:text-main" title="Reset kalkulator">
+            <button
+              type="button"
+              onClick={handleReset}
+              className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold text-muted transition-colors hover:bg-sub-slate hover:text-main"
+              title="Reset kalkulator"
+            >
               <RotateCcw size={13} /> Reset
             </button>
           </div>
 
           <div className="grid grid-cols-2 gap-3 mb-4 items-end">
             <div className="space-y-1">
-              <label htmlFor="ara-ticker" className="text-[11px] font-bold text-muted block">
+              <label
+                htmlFor="ara-ticker"
+                className="text-[11px] font-bold text-muted block"
+              >
                 Kode Saham
               </label>
               <input
@@ -100,7 +124,10 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="ara-board" className="text-[11px] font-bold text-muted block">
+              <label
+                htmlFor="ara-board"
+                className="text-[11px] font-bold text-muted block"
+              >
                 Papan Saham
               </label>
               <select
@@ -109,7 +136,9 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
                 value={board}
                 onChange={(e) => setBoard(e.target.value as Board)}
               >
-                <option value="" disabled>Pilih papan saham</option>
+                <option value="" disabled>
+                  Pilih papan saham
+                </option>
                 <option value="Utama">Utama / Pengembangan</option>
                 <option value="Akselerasi">Akselerasi</option>
                 <option value="FCA">FCA</option>
@@ -118,7 +147,10 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
           </div>
 
           <div className="space-y-1 mb-5">
-            <label htmlFor="ara-price" className="text-[11px] font-bold text-muted block">
+            <label
+              htmlFor="ara-price"
+              className="text-[11px] font-bold text-muted block"
+            >
               Harga Penutupan Kemarin
             </label>
             <input
@@ -126,7 +158,7 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
               type="text"
               inputMode="numeric"
               className="w-full h-10 bg-card rounded-lg px-3 py-2 text-sm text-main font-semibold outline-none focus:ring-1 focus:ring-acc-blue border border-border-custom transition-all"
-              value={price ? formatNumber(price) : ''}
+              value={price ? formatNumber(price) : ""}
               onChange={handlePriceChange}
               placeholder="e.g. 2.110"
             />
@@ -148,7 +180,9 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
             <HelpCircle size={14} /> Aturan Pembulatan Fraksi:
           </div>
           <span className="text-sub text-[11px] leading-relaxed block">
-            Menghitung batas untuk satu sesi perdagangan dari harga previous. ARA dibulatkan ke bawah dan ARB ke atas sesuai fraksi harga agar tidak melewati batas maksimum; harga minimum papan ini adalah Rp50.
+            Menghitung batas untuk satu sesi perdagangan dari harga previous.
+            ARA dibulatkan ke bawah dan ARB ke atas sesuai fraksi harga agar
+            tidak melewati batas maksimum; harga minimum papan ini adalah Rp50.
           </span>
         </div>
       </div>
@@ -156,9 +190,13 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
       {/* Right Output Card (Hidden on mobile until Hitung is clicked) */}
       <div
         id="ara-arb-result"
-        className={`w-full transition-all duration-300 ${hasCalculated ? 'block' : 'hidden lg:block'}`}
+        className={`w-full transition-all duration-300 ${hasCalculated ? "block" : "hidden lg:block"}`}
       >
-        <ExportCardWrapper fileName={cleanFileName} calculatorType="ara-arb" embedded>
+        <ExportCardWrapper
+          fileName={cleanFileName}
+          calculatorType="ara-arb"
+          embedded
+        >
           <div className="flex items-start justify-between border-b border-border-custom/30 pb-3 mb-4 text-main gap-3">
             {/* Left Side: Ticker */}
             <div className="min-w-0">
@@ -170,7 +208,13 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
             <div className="text-[10px] font-medium text-muted space-y-1 text-right min-w-0">
               <div className="flex items-center justify-end gap-1.5 leading-tight">
                 <Calendar size={12} className="text-muted/80 shrink-0" />
-                <span className="whitespace-nowrap">{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                <span className="whitespace-nowrap">
+                  {new Date().toLocaleDateString("id-ID", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </span>
               </div>
             </div>
           </div>
@@ -191,8 +235,12 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
 
           <div className="mt-3.5 mb-3.5">
             <div className="bg-emerald-500/10 rounded-xl p-3.5 space-y-1">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">Persentase ARA</span>
-              <span className="text-sm sm:text-base font-extrabold block text-emerald-800 dark:text-emerald-300 leading-tight">+{formatPercent(result.araPercent)}</span>
+              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-emerald-700 dark:text-emerald-400">
+                Persentase ARA
+              </span>
+              <span className="text-sm sm:text-base font-extrabold block text-emerald-800 dark:text-emerald-300 leading-tight">
+                +{formatPercent(result.araPercent)}
+              </span>
             </div>
           </div>
 
@@ -217,8 +265,12 @@ export default function LandingAraArbCalculator({ fractionRules, araArbRules }: 
 
           <div className="mt-3.5">
             <div className="bg-rose-500/10 rounded-xl p-3.5 space-y-1">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-rose-700 dark:text-rose-400">Persentase ARB</span>
-              <span className="text-sm sm:text-base font-extrabold block text-rose-800 dark:text-rose-300 leading-tight">-{formatPercent(Math.abs(result.arbPercent))}</span>
+              <span className="text-[10px] font-extrabold uppercase tracking-wider block text-rose-700 dark:text-rose-400">
+                Persentase ARB
+              </span>
+              <span className="text-sm sm:text-base font-extrabold block text-rose-800 dark:text-rose-300 leading-tight">
+                -{formatPercent(Math.abs(result.arbPercent))}
+              </span>
             </div>
           </div>
         </ExportCardWrapper>

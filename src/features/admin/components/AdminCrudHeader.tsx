@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import type { LucideIcon } from 'lucide-react';
-import { Plus } from 'lucide-react';
-import { primaryButtonClass } from './AdminCrudClasses';
+import Link from "next/link";
+import type { LucideIcon } from "lucide-react";
+import { Plus } from "lucide-react";
+import { primaryButtonClass } from "./AdminCrudClasses";
 
 export interface AdminCrudHeaderProps {
   title: string;
@@ -37,7 +37,11 @@ export function AdminCrudHeader({
           <span>{actionLabel}</span>
         </Link>
       ) : onActionClick && actionLabel ? (
-        <button type="button" onClick={onActionClick} className={primaryButtonClass}>
+        <button
+          type="button"
+          onClick={onActionClick}
+          className={primaryButtonClass}
+        >
           <Plus size={16} />
           <span>{actionLabel}</span>
         </button>

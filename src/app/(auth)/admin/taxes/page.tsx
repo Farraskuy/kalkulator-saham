@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { Save, Coins } from 'lucide-react';
-import { useToast } from '@/components/ui/Toast';
-import { AdminCrudHeader } from '@/features/admin/components/AdminCrudHeader';
+import React, { useEffect, useState } from "react";
+import { Save, Coins } from "lucide-react";
+import { useToast } from "@/components/ui/Toast";
+import { AdminCrudHeader } from "@/features/admin/components/AdminCrudHeader";
 
 export default function AdminTaxesPage() {
   const { showToast } = useToast();
@@ -11,12 +11,12 @@ export default function AdminTaxesPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetch('/api/settings')
+    fetch("/api/settings")
       .then((res) => res.json())
       .then((data) => {
         if (data.tax !== undefined) setTaxSetting(parseFloat(data.tax) || 0.0);
       })
-      .catch((err) => console.error('Failed to load tax setting:', err));
+      .catch((err) => console.error("Failed to load tax setting:", err));
   }, []);
 
   const handleSaveTax = async (e: React.FormEvent) => {
@@ -24,19 +24,19 @@ export default function AdminTaxesPage() {
     setSaving(true);
 
     try {
-      const res = await fetch('/api/settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tax: taxSetting }),
       });
 
       if (res.ok) {
-        showToast('Tarif pajak transaksi berhasil diperbarui!', 'success');
+        showToast("Tarif pajak transaksi berhasil diperbarui!", "success");
       } else {
-        showToast('Gagal menyimpan tarif pajak.', 'error');
+        showToast("Gagal menyimpan tarif pajak.", "error");
       }
     } catch {
-      showToast('Terjadi kesalahan jaringan.', 'error');
+      showToast("Terjadi kesalahan jaringan.", "error");
     } finally {
       setSaving(false);
     }
@@ -57,11 +57,15 @@ export default function AdminTaxesPage() {
               Pengaturan Pajak Transaksi Global
             </h4>
             <p className="text-[11px] text-muted leading-relaxed">
-              Tarif pajak ini secara otomatis akan ditambahkan pada simulasi biaya pembelian (buy) dan dikurangkan pada simulasi hasil penjualan (sell) di seluruh kalkulator saham publik.
+              Tarif pajak ini secara otomatis akan ditambahkan pada simulasi
+              biaya pembelian (buy) dan dikurangkan pada simulasi hasil
+              penjualan (sell) di seluruh kalkulator saham publik.
             </p>
 
             <div className="space-y-1.5 pt-2 max-w-[220px]">
-              <label className="text-[10px] font-bold text-muted block">Tarif Pajak (%)</label>
+              <label className="text-[10px] font-bold text-muted block">
+                Tarif Pajak (%)
+              </label>
               <div className="relative flex items-center">
                 <input
                   type="number"
@@ -70,9 +74,13 @@ export default function AdminTaxesPage() {
                   max="100"
                   className="w-full bg-card rounded-xl px-3 py-2 text-main font-semibold outline-none border border-border-custom focus:border-acc-blue text-xs pr-8"
                   value={taxSetting}
-                  onChange={(e) => setTaxSetting(parseFloat(e.target.value) || 0.0)}
+                  onChange={(e) =>
+                    setTaxSetting(parseFloat(e.target.value) || 0.0)
+                  }
                 />
-                <span className="absolute right-3 text-xs font-bold text-muted pointer-events-none">%</span>
+                <span className="absolute right-3 text-xs font-bold text-muted pointer-events-none">
+                  %
+                </span>
               </div>
             </div>
           </div>
@@ -83,7 +91,7 @@ export default function AdminTaxesPage() {
             className="flex items-center justify-center gap-1.5 bg-acc-blue hover:bg-acc-blue/90 text-white font-bold py-2.5 px-5 rounded-xl text-xs transition-colors cursor-pointer disabled:opacity-50"
           >
             <Save size={15} />
-            <span>{saving ? 'Menyimpan...' : 'Simpan Pengaturan Pajak'}</span>
+            <span>{saving ? "Menyimpan..." : "Simpan Pengaturan Pajak"}</span>
           </button>
         </form>
       </div>

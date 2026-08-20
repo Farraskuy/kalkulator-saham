@@ -1,37 +1,39 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Lock, Mail } from 'lucide-react';
-import AppLogo from '@/components/layout/AppLogo';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Lock, Mail } from "lucide-react";
+import AppLogo from "@/components/layout/AppLogo";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
       if (res.ok && data.success) {
-        router.push('/admin');
+        router.push("/admin");
       } else {
-        setError(data.error || 'Login gagal. Periksa kembali email dan password.');
+        setError(
+          data.error || "Login gagal. Periksa kembali email dan password.",
+        );
       }
     } catch {
-      setError('Terjadi kesalahan koneksi server.');
+      setError("Terjadi kesalahan koneksi server.");
     } finally {
       setLoading(false);
     }
@@ -60,7 +62,10 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
             <div className="space-y-1.5">
-              <label htmlFor="login-email" className="text-[10px] font-bold text-muted uppercase tracking-wider block">
+              <label
+                htmlFor="login-email"
+                className="text-[10px] font-bold text-muted uppercase tracking-wider block"
+              >
                 Email Admin
               </label>
               <div className="relative">
@@ -81,7 +86,10 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="login-pass" className="text-[10px] font-bold text-muted uppercase tracking-wider block">
+              <label
+                htmlFor="login-pass"
+                className="text-[10px] font-bold text-muted uppercase tracking-wider block"
+              >
                 Password
               </label>
               <div className="relative">
@@ -106,7 +114,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full flex items-center justify-center gap-1.5 bg-acc-blue hover:bg-acc-blue/90 text-white font-bold py-3 px-6 rounded-2xl text-sm transition-all duration-200  shadow-acc-blue/15 cursor-pointer disabled:opacity-50 mt-2"
             >
-              {loading ? 'Memproses...' : 'Masuk'}
+              {loading ? "Memproses..." : "Masuk"}
             </button>
           </form>
         </div>

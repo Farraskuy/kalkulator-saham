@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Users,
   UserPlus,
@@ -15,8 +15,10 @@ import {
   Mail,
   Calendar,
   Layers,
-} from 'lucide-react';
-import AdminDataTable, { type AdminTableColumn } from '@/features/admin/components/AdminDataTable';
+} from "lucide-react";
+import AdminDataTable, {
+  type AdminTableColumn,
+} from "@/features/admin/components/AdminDataTable";
 import {
   AdminCrudError,
   AdminCrudHeader,
@@ -26,15 +28,15 @@ import {
   AdminDeleteDialog,
   deleteActionClass,
   iconActionClass,
-} from '@/features/admin/components/AdminCrudUi';
-import { DynamicRole, CMSFeature, DEFAULT_DYNAMIC_ROLES } from '@/lib/rbac';
+} from "@/features/admin/components/AdminCrudUi";
+import { DynamicRole, CMSFeature, DEFAULT_DYNAMIC_ROLES } from "@/lib/rbac";
 
 interface UserItem {
   id: string;
   email: string;
   name: string;
   role: string;
-  accountType: 'ADMIN_CMS' | 'USER_REGISTERED';
+  accountType: "ADMIN_CMS" | "USER_REGISTERED";
   isProtected: boolean;
   image?: string | null;
   createdAt: string;
@@ -46,8 +48,11 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserItem[]>([]);
   const [roles, setRoles] = useState<DynamicRole[]>(DEFAULT_DYNAMIC_ROLES);
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState('');
-  const [notice, setNotice] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [loadError, setLoadError] = useState("");
+  const [notice, setNotice] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   // Modals
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -58,23 +63,23 @@ export default function AdminUsersPage() {
   const [busy, setBusy] = useState(false);
 
   // Form states
-  const [formName, setFormName] = useState('');
-  const [formEmail, setFormEmail] = useState('');
-  const [formPassword, setFormPassword] = useState('');
-  const [formRole, setFormRole] = useState<string>('EDITOR');
+  const [formName, setFormName] = useState("");
+  const [formEmail, setFormEmail] = useState("");
+  const [formPassword, setFormPassword] = useState("");
+  const [formRole, setFormRole] = useState<string>("EDITOR");
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    setLoadError('');
+    setLoadError("");
     try {
       const [usersRes, rolesRes] = await Promise.all([
-        fetch('/api/admin/users'),
-        fetch('/api/admin/roles'),
+        fetch("/api/admin/users"),
+        fetch("/api/admin/roles"),
       ]);
 
       if (!usersRes.ok) {
         const errData = await usersRes.json();
-        throw new Error(errData.error || 'Daftar pengguna gagal dimuat.');
+        throw new Error(errData.error || "Daftar pengguna gagal dimuat.");
       }
 
       const usersData = await usersRes.json();
@@ -85,7 +90,11 @@ export default function AdminUsersPage() {
         if (rolesData.roles) setRoles(rolesData.roles);
       }
     } catch (error) {
-      setLoadError(error instanceof Error ? error.message : 'Daftar pengguna gagal dimuat.');
+      setLoadError(
+        error instanceof Error
+          ? error.message
+          : "Daftar pengguna gagal dimuat.",
+      );
     } finally {
       setLoading(false);
     }
@@ -98,28 +107,36 @@ export default function AdminUsersPage() {
   const columns = useMemo<AdminTableColumn<UserItem>[]>(
     () => [
       {
-        id: 'user',
-        label: 'Pengguna',
+        id: "user",
+        label: "Pengguna",
         getValue: (item) => `${item.name} ${item.email}`,
         render: (item) => (
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-xs shrink-0">
-              {item.name ? item.name[0].toUpperCase() : item.email[0].toUpperCase()}
+              {item.name
+                ? item.name[0].toUpperCase()
+                : item.email[0].toUpperCase()}
             </div>
             <div className="min-w-0">
-              <span className="font-bold text-main block truncate">{item.name}</span>
-              <span className="text-muted text-[11px] block truncate">{item.email}</span>
+              <span className="font-bold text-main block truncate">
+                {item.name}
+              </span>
+              <span className="text-muted text-[11px] block truncate">
+                {item.email}
+              </span>
             </div>
           </div>
         ),
       },
       {
-        id: 'role',
-        label: 'Role',
+        id: "role",
+        label: "Role",
         getValue: (item) => item.role,
         render: (item) => {
-          const isAdmin = item.role === 'ADMIN' || item.isProtected;
-          const matchedRole = roles.find((r) => r.id.toLowerCase() === item.role.toLowerCase());
+          const isAdmin = item.role === "ADMIN" || item.isProtected;
+          const matchedRole = roles.find(
+            (r) => r.id.toLowerCase() === item.role.toLowerCase(),
+          );
           const roleName = matchedRole ? matchedRole.name : item.role;
 
           return isAdmin ? (
@@ -134,43 +151,46 @@ export default function AdminUsersPage() {
         },
       },
       {
-        id: 'accountType',
-        label: 'Tipe Akun',
-        getValue: (item) => (item.accountType === 'ADMIN_CMS' ? 'CMS Login' : 'Google OAuth'),
+        id: "accountType",
+        label: "Tipe Akun",
+        getValue: (item) =>
+          item.accountType === "ADMIN_CMS" ? "CMS Login" : "Google OAuth",
         render: (item) => (
           <span className="text-xs text-muted font-medium">
-            {item.accountType === 'ADMIN_CMS' ? 'Akses Login CMS' : 'Google OAuth / Terdaftar'}
+            {item.accountType === "ADMIN_CMS"
+              ? "Akses Login CMS"
+              : "Google OAuth / Terdaftar"}
           </span>
         ),
       },
       {
-        id: 'createdAt',
-        label: 'Terdaftar',
+        id: "createdAt",
+        label: "Terdaftar",
         getValue: (item) => new Date(item.createdAt),
         render: (item) => (
           <span className="whitespace-nowrap text-xs text-muted">
-            {new Date(item.createdAt).toLocaleDateString('id-ID', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric',
+            {new Date(item.createdAt).toLocaleDateString("id-ID", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
             })}
           </span>
         ),
       },
     ],
-    [roles]
+    [roles],
   );
 
   const assignableRoles = useMemo(() => {
-    return roles.filter((r) => r.id !== 'USER');
+    return roles.filter((r) => r.id !== "USER");
   }, [roles]);
 
   // Handlers
   const handleOpenAdd = () => {
-    setFormName('');
-    setFormEmail('');
-    setFormPassword('');
-    setFormRole(assignableRoles[0]?.id || 'CONTENT_MANAGER');
+    setFormName("");
+    setFormEmail("");
+    setFormPassword("");
+    setFormRole(assignableRoles[0]?.id || "CONTENT_MANAGER");
     setIsAddOpen(true);
   };
 
@@ -180,9 +200,9 @@ export default function AdminUsersPage() {
 
     setBusy(true);
     try {
-      const res = await fetch('/api/admin/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: formName,
           email: formEmail,
@@ -191,13 +211,20 @@ export default function AdminUsersPage() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Gagal menambahkan pengguna.');
+      if (!res.ok) throw new Error(data.error || "Gagal menambahkan pengguna.");
 
-      setNotice({ type: 'success', text: data.message || `Pengguna "${formEmail}" berhasil ditambahkan.` });
+      setNotice({
+        type: "success",
+        text: data.message || `Pengguna "${formEmail}" berhasil ditambahkan.`,
+      });
       setIsAddOpen(false);
       loadData();
     } catch (err) {
-      setNotice({ type: 'error', text: err instanceof Error ? err.message : 'Gagal menambahkan pengguna.' });
+      setNotice({
+        type: "error",
+        text:
+          err instanceof Error ? err.message : "Gagal menambahkan pengguna.",
+      });
     } finally {
       setBusy(false);
     }
@@ -213,7 +240,7 @@ export default function AdminUsersPage() {
     setFormName(user.name);
     setFormEmail(user.email);
     setFormRole(user.role);
-    setFormPassword('');
+    setFormPassword("");
     setIsEditOpen(true);
   };
 
@@ -224,8 +251,8 @@ export default function AdminUsersPage() {
     setBusy(true);
     try {
       const res = await fetch(`/api/admin/users/${selectedUser.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: formName,
           role: formRole,
@@ -233,13 +260,20 @@ export default function AdminUsersPage() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Gagal memperbarui pengguna.');
+      if (!res.ok) throw new Error(data.error || "Gagal memperbarui pengguna.");
 
-      setNotice({ type: 'success', text: 'Data pengguna berhasil diperbarui.' });
+      setNotice({
+        type: "success",
+        text: "Data pengguna berhasil diperbarui.",
+      });
       setIsEditOpen(false);
       loadData();
     } catch (err) {
-      setNotice({ type: 'error', text: err instanceof Error ? err.message : 'Gagal memperbarui pengguna.' });
+      setNotice({
+        type: "error",
+        text:
+          err instanceof Error ? err.message : "Gagal memperbarui pengguna.",
+      });
     } finally {
       setBusy(false);
     }
@@ -249,35 +283,46 @@ export default function AdminUsersPage() {
     if (!deleteTarget) return;
     setBusy(true);
     try {
-      const res = await fetch(`/api/admin/users/${deleteTarget.id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/admin/users/${deleteTarget.id}`, {
+        method: "DELETE",
+      });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Gagal menghapus pengguna.');
+      if (!res.ok) throw new Error(data.error || "Gagal menghapus pengguna.");
 
-      setNotice({ type: 'success', text: `Pengguna “${deleteTarget.email}” berhasil dihapus.` });
+      setNotice({
+        type: "success",
+        text: `Pengguna “${deleteTarget.email}” berhasil dihapus.`,
+      });
       setDeleteTarget(null);
       loadData();
     } catch (err) {
-      setNotice({ type: 'error', text: err instanceof Error ? err.message : 'Gagal menghapus pengguna.' });
+      setNotice({
+        type: "error",
+        text: err instanceof Error ? err.message : "Gagal menghapus pengguna.",
+      });
     } finally {
       setBusy(false);
     }
   };
 
-  const [userTab, setUserTab] = useState<'cms' | 'public'>('cms');
+  const [userTab, setUserTab] = useState<"cms" | "public">("cms");
 
   const cmsUsers = useMemo(() => {
     return users.filter(
-      (u) => u.accountType === 'ADMIN_CMS' || u.role === 'ADMIN' || u.role !== 'USER'
+      (u) =>
+        u.accountType === "ADMIN_CMS" ||
+        u.role === "ADMIN" ||
+        u.role !== "USER",
     );
   }, [users]);
 
   const publicUsers = useMemo(() => {
     return users.filter(
-      (u) => u.accountType !== 'ADMIN_CMS' && u.role === 'USER'
+      (u) => u.accountType !== "ADMIN_CMS" && u.role === "USER",
     );
   }, [users]);
 
-  const activeUserList = userTab === 'cms' ? cmsUsers : publicUsers;
+  const activeUserList = userTab === "cms" ? cmsUsers : publicUsers;
 
   return (
     <AdminCrudPage>
@@ -299,11 +344,11 @@ export default function AdminUsersPage() {
       <div className="flex items-center gap-2 border-b border-border-custom pb-3 mb-5">
         <button
           type="button"
-          onClick={() => setUserTab('cms')}
+          onClick={() => setUserTab("cms")}
           className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            userTab === 'cms'
-              ? 'bg-acc-blue text-white shadow-xs'
-              : 'bg-sub-slate/60 text-muted hover:bg-sub-slate hover:text-main'
+            userTab === "cms"
+              ? "bg-acc-blue text-white shadow-xs"
+              : "bg-sub-slate/60 text-muted hover:bg-sub-slate hover:text-main"
           }`}
         >
           <ShieldCheck size={14} />
@@ -312,11 +357,11 @@ export default function AdminUsersPage() {
 
         <button
           type="button"
-          onClick={() => setUserTab('public')}
+          onClick={() => setUserTab("public")}
           className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            userTab === 'public'
-              ? 'bg-acc-blue text-white shadow-xs'
-              : 'bg-sub-slate/60 text-muted hover:bg-sub-slate hover:text-main'
+            userTab === "public"
+              ? "bg-acc-blue text-white shadow-xs"
+              : "bg-sub-slate/60 text-muted hover:bg-sub-slate hover:text-main"
           }`}
         >
           <UserIcon size={14} />
@@ -330,9 +375,11 @@ export default function AdminUsersPage() {
         <AdminCrudError message={loadError} onRetry={loadData} />
       ) : (
         <AdminDataTable
-          title={userTab === 'cms' ? 'Daftar Pengguna CMS' : 'Daftar Pengguna Publik'}
+          title={
+            userTab === "cms" ? "Daftar Pengguna CMS" : "Daftar Pengguna Publik"
+          }
           description={
-            userTab === 'cms'
+            userTab === "cms"
               ? `${cmsUsers.length} staf & pengelola CMS tersimpan.`
               : `${publicUsers.length} pengguna publik terdaftar via Google OAuth.`
           }
@@ -342,12 +389,12 @@ export default function AdminUsersPage() {
           searchFields={(item) => [item.name, item.email, item.role]}
           searchPlaceholder="Cari nama atau email pengguna..."
           emptyText={
-            userTab === 'cms'
-              ? 'Tidak ada pengguna CMS yang cocok.'
-              : 'Tidak ada pengguna publik yang cocok.'
+            userTab === "cms"
+              ? "Tidak ada pengguna CMS yang cocok."
+              : "Tidak ada pengguna publik yang cocok."
           }
           renderActions={(item) => {
-            const isAdmin = item.role === 'ADMIN' || item.isProtected;
+            const isAdmin = item.role === "ADMIN" || item.isProtected;
             return (
               <>
                 <button
@@ -401,8 +448,12 @@ export default function AdminUsersPage() {
                   <UserIcon size={18} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-main">Detail Pengguna</h3>
-                  <span className="text-xs text-muted">{selectedUser.email}</span>
+                  <h3 className="text-sm font-bold text-main">
+                    Detail Pengguna
+                  </h3>
+                  <span className="text-xs text-muted">
+                    {selectedUser.email}
+                  </span>
                 </div>
               </div>
               <button
@@ -417,29 +468,38 @@ export default function AdminUsersPage() {
               <div className="space-y-3">
                 <div className="flex justify-between items-center p-3 rounded-xl bg-sub-slate/40 border border-border-custom text-xs">
                   <span className="text-muted font-medium">Nama Lengkap</span>
-                  <strong className="text-main font-bold">{selectedUser.name}</strong>
+                  <strong className="text-main font-bold">
+                    {selectedUser.name}
+                  </strong>
                 </div>
 
                 <div className="flex justify-between items-center p-3 rounded-xl bg-sub-slate/40 border border-border-custom text-xs">
                   <span className="text-muted font-medium">Role</span>
-                  <span className="font-bold text-indigo-700 dark:text-indigo-400">{selectedUser.role}</span>
+                  <span className="font-bold text-indigo-700 dark:text-indigo-400">
+                    {selectedUser.role}
+                  </span>
                 </div>
 
                 <div className="flex justify-between items-center p-3 rounded-xl bg-sub-slate/40 border border-border-custom text-xs">
                   <span className="text-muted font-medium">Tipe Akun</span>
                   <span className="font-medium text-main">
-                    {selectedUser.accountType === 'ADMIN_CMS' ? 'Akses Login CMS (Password)' : 'Google OAuth Terdaftar'}
+                    {selectedUser.accountType === "ADMIN_CMS"
+                      ? "Akses Login CMS (Password)"
+                      : "Google OAuth Terdaftar"}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center p-3 rounded-xl bg-sub-slate/40 border border-border-custom text-xs">
                   <span className="text-muted font-medium">Tanggal Dibuat</span>
                   <span className="font-medium text-main">
-                    {new Date(selectedUser.createdAt).toLocaleDateString('id-ID', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                    })}
+                    {new Date(selectedUser.createdAt).toLocaleDateString(
+                      "id-ID",
+                      {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      },
+                    )}
                   </span>
                 </div>
               </div>
@@ -465,7 +525,9 @@ export default function AdminUsersPage() {
             <div className="flex items-center justify-between p-5 border-b border-border-custom bg-sub-slate/30 shrink-0">
               <div className="flex items-center gap-2">
                 <UserPlus size={18} className="text-acc-blue" />
-                <h3 className="text-sm font-bold text-main">Tambah Pengguna Baru</h3>
+                <h3 className="text-sm font-bold text-main">
+                  Tambah Pengguna Baru
+                </h3>
               </div>
               <button
                 onClick={() => setIsAddOpen(false)}
@@ -477,7 +539,9 @@ export default function AdminUsersPage() {
 
             <form onSubmit={handleCreate} className="p-5 space-y-4">
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-muted block">Nama Lengkap</label>
+                <label className="text-[11px] font-bold text-muted block">
+                  Nama Lengkap
+                </label>
                 <input
                   type="text"
                   value={formName}
@@ -488,7 +552,9 @@ export default function AdminUsersPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-muted block">Email Pengguna *</label>
+                <label className="text-[11px] font-bold text-muted block">
+                  Email Pengguna *
+                </label>
                 <input
                   type="email"
                   required
@@ -500,7 +566,9 @@ export default function AdminUsersPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-muted block">Pilihan Role *</label>
+                <label className="text-[11px] font-bold text-muted block">
+                  Pilihan Role *
+                </label>
                 <select
                   value={formRole}
                   onChange={(e) => setFormRole(e.target.value)}
@@ -508,15 +576,17 @@ export default function AdminUsersPage() {
                 >
                   {assignableRoles.map((r) => (
                     <option key={r.id} value={r.id}>
-                      {r.name} {r.isProtected ? '(Protected Admin)' : ''}
+                      {r.name} {r.isProtected ? "(Protected Admin)" : ""}
                     </option>
                   ))}
                 </select>
               </div>
 
-              {formRole !== 'USER' && (
+              {formRole !== "USER" && (
                 <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-muted block">Password Login CMS *</label>
+                  <label className="text-[11px] font-bold text-muted block">
+                    Password Login CMS *
+                  </label>
                   <input
                     type="password"
                     required
@@ -541,7 +611,7 @@ export default function AdminUsersPage() {
                   disabled={busy}
                   className="px-5 py-2 rounded-xl bg-acc-blue hover:bg-acc-blue/90 text-white text-xs font-bold transition-colors cursor-pointer disabled:opacity-50"
                 >
-                  {busy ? 'Menyimpan...' : 'Tambah Pengguna'}
+                  {busy ? "Menyimpan..." : "Tambah Pengguna"}
                 </button>
               </div>
             </form>
@@ -568,7 +638,9 @@ export default function AdminUsersPage() {
 
             <form onSubmit={handleUpdate} className="p-5 space-y-4">
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-muted block">Email (Tetap)</label>
+                <label className="text-[11px] font-bold text-muted block">
+                  Email (Tetap)
+                </label>
                 <input
                   type="email"
                   disabled
@@ -578,7 +650,9 @@ export default function AdminUsersPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-muted block">Nama Lengkap</label>
+                <label className="text-[11px] font-bold text-muted block">
+                  Nama Lengkap
+                </label>
                 <input
                   type="text"
                   value={formName}
@@ -587,9 +661,11 @@ export default function AdminUsersPage() {
                 />
               </div>
 
-              {selectedUser.role !== 'ADMIN' && !selectedUser.isProtected && (
+              {selectedUser.role !== "ADMIN" && !selectedUser.isProtected && (
                 <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-muted block">Pilihan Role</label>
+                  <label className="text-[11px] font-bold text-muted block">
+                    Pilihan Role
+                  </label>
                   <select
                     value={formRole}
                     onChange={(e) => setFormRole(e.target.value)}
@@ -597,7 +673,7 @@ export default function AdminUsersPage() {
                   >
                     {assignableRoles.map((r) => (
                       <option key={r.id} value={r.id}>
-                        {r.name} {r.isProtected ? '(Protected Admin)' : ''}
+                        {r.name} {r.isProtected ? "(Protected Admin)" : ""}
                       </option>
                     ))}
                   </select>
@@ -630,7 +706,7 @@ export default function AdminUsersPage() {
                   disabled={busy}
                   className="px-5 py-2 rounded-xl bg-acc-blue hover:bg-acc-blue/90 text-white text-xs font-bold transition-colors cursor-pointer disabled:opacity-50"
                 >
-                  {busy ? 'Menyimpan...' : 'Perbarui Pengguna'}
+                  {busy ? "Menyimpan..." : "Perbarui Pengguna"}
                 </button>
               </div>
             </form>

@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 export default function DynamicDisclaimer() {
   const [terms, setTerms] = useState<string>(
-    'HitungSaham.com menyediakan informasi, edukasi, dan simulasi terkait saham dan pasar modal. Seluruh hasil perhitungan bersifat ilustrasi berdasarkan asumsi dan data tertentu, dan tidak menjamin hasil investasi di masa mendatang. Konten di situs ini bukan merupakan rekomendasi, ajakan, penawaran, atau permintaan untuk membeli atau menjual saham maupun instrumen investasi lainnya. Setiap keputusan investasi sepenuhnya menjadi tanggung jawab pengguna, dan investasi di pasar modal mengandung risiko, termasuk kemungkinan kehilangan modal.'
+    "HitungSaham.com menyediakan informasi, edukasi, dan simulasi terkait saham dan pasar modal. Seluruh hasil perhitungan bersifat ilustrasi berdasarkan asumsi dan data tertentu, dan tidak menjamin hasil investasi di masa mendatang. Konten di situs ini bukan merupakan rekomendasi, ajakan, penawaran, atau permintaan untuk membeli atau menjual saham maupun instrumen investasi lainnya. Setiap keputusan investasi sepenuhnya menjadi tanggung jawab pengguna, dan investasi di pasar modal mengandung risiko, termasuk kemungkinan kehilangan modal.",
   );
 
   useEffect(() => {
-    fetch('/api/settings')
+    fetch("/api/settings")
       .then((res) => res.json())
       .then((data) => {
         if (data.terms) {
@@ -24,7 +24,8 @@ export default function DynamicDisclaimer() {
 
   return (
     <p className="text-[10px] leading-relaxed text-muted max-w-xl">
-      <strong className="text-main font-bold">Sanggahan / Disclaimer:</strong> {terms}
+      <strong className="text-main font-bold">Sanggahan / Disclaimer:</strong>{" "}
+      {terms}
     </p>
   );
 }

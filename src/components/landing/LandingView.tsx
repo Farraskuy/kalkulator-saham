@@ -1,20 +1,16 @@
-'use client';
+"use client";
 
-import React, { Suspense, useState } from 'react';
-import Image from 'next/image';
-import {
-  BarChart3,
-  ShieldCheck,
-  Target,
-} from 'lucide-react';
-import LandingHeader from './LandingHeader';
-import LandingPredictionCalculator from './LandingPredictionCalculator';
-import LandingAraArbCalculator from './LandingAraArbCalculator';
-import LandingAvgCalculator from './LandingAvgCalculator';
-import FaqSection from '@/features/faq/components/FaqSection';
-import AnalyticsTracker from '@/components/analytics/AnalyticsTracker';
-import Footer from '@/components/layout/Footer';
-import type { AraArbRuleMap, FractionRule } from '@/types';
+import React, { Suspense, useState } from "react";
+import Image from "next/image";
+import { BarChart3, ShieldCheck, Target } from "lucide-react";
+import LandingHeader from "./LandingHeader";
+import LandingPredictionCalculator from "./LandingPredictionCalculator";
+import LandingAraArbCalculator from "./LandingAraArbCalculator";
+import LandingAvgCalculator from "./LandingAvgCalculator";
+import FaqSection from "@/features/faq/components/FaqSection";
+import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
+import Footer from "@/components/layout/Footer";
+import type { AraArbRuleMap, FractionRule } from "@/types";
 
 interface LandingViewProps {
   fractionRules?: FractionRule[];
@@ -24,13 +20,18 @@ interface LandingViewProps {
 }
 
 const tabs = [
-  { id: 'target', label: 'Target Jual & Beli', icon: Target },
-  { id: 'ara', label: 'ARA / ARB', icon: ShieldCheck },
-  { id: 'average', label: 'Average Up / Down', icon: BarChart3 },
+  { id: "target", label: "Target Jual & Beli", icon: Target },
+  { id: "ara", label: "ARA / ARB", icon: ShieldCheck },
+  { id: "average", label: "Average Up / Down", icon: BarChart3 },
 ];
 
-export default function LandingView({ fractionRules, araArbRules, tax, faqs: faqsProp }: LandingViewProps) {
-  const [activeTab, setActiveTab] = useState<string>('target');
+export default function LandingView({
+  fractionRules,
+  araArbRules,
+  tax,
+  faqs: faqsProp,
+}: LandingViewProps) {
+  const [activeTab, setActiveTab] = useState<string>("target");
   const faqs = faqsProp || [];
 
   return (
@@ -44,7 +45,10 @@ export default function LandingView({ fractionRules, araArbRules, tax, faqs: faq
 
       <main>
         {/* HERO SECTION */}
-        <section className="py-[48px] px-5 sm:px-8 md:px-16 max-w-[1200px] mx-auto pb-6" id="home">
+        <section
+          className="py-[48px] px-5 sm:px-8 md:px-16 max-w-[1200px] mx-auto pb-6"
+          id="home"
+        >
           <p className="m-0 mb-4 text-xs sm:text-[13px] font-medium text-(--landing-muted) underline underline-offset-[3px]">
             HitungSaham / Kalkulator &amp; Blog Saham
           </p>
@@ -52,11 +56,15 @@ export default function LandingView({ fractionRules, araArbRules, tax, faqs: faq
           <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-[36px] items-end">
             <div>
               <h1 className="m-0 text-(--landing-text) text-[34px] sm:text-[clamp(34px,3.8vw,56px)] leading-[1.1] tracking-[-2px] font-bold">
-                Hitung Profit &amp;<br />Risiko Saham
+                Hitung Profit &amp;
+                <br />
+                Risiko Saham
               </h1>
             </div>
             <div className="mt-1.5 text-(--landing-muted) text-sm leading-[1.65] font-normal">
-              Simulasi perhitungan batas Auto Rejection (ARA/ARB), simulasi pembelian rata-rata (average down), serta estimasi target profit &amp; stop loss akurat sesuai fraksi harga resmi.
+              Simulasi perhitungan batas Auto Rejection (ARA/ARB), simulasi
+              pembelian rata-rata (average down), serta estimasi target profit
+              &amp; stop loss akurat sesuai fraksi harga resmi.
             </div>
           </div>
         </section>
@@ -73,14 +81,21 @@ export default function LandingView({ fractionRules, araArbRules, tax, faqs: faq
               className="object-cover object-[center_40%]"
             />
             <div className="absolute z-20 left-[clamp(24px,4vw,48px)] bottom-9 flex flex-col text-(--landing-inverse-text) drop-shadow-md">
-              <span className="text-[11px] font-semibold uppercase tracking-[2px]">Analisis Presisi</span>
-              <strong className="mt-1 text-[clamp(20px,2.4vw,32px)] font-medium tracking-[-0.5px]">Keputusan Investasi Lebih Percaya Diri.</strong>
+              <span className="text-[11px] font-semibold uppercase tracking-[2px]">
+                Analisis Presisi
+              </span>
+              <strong className="mt-1 text-[clamp(20px,2.4vw,32px)] font-medium tracking-[-0.5px]">
+                Keputusan Investasi Lebih Percaya Diri.
+              </strong>
             </div>
           </div>
         </div>
 
         {/* CALCULATOR SECTION */}
-        <section className="max-w-[1200px] mx-auto py-14 px-4 sm:px-8 md:px-16 pb-18" id="calculator">
+        <section
+          className="max-w-[1200px] mx-auto py-14 px-4 sm:px-8 md:px-16 pb-18"
+          id="calculator"
+        >
           <div className="bg-(--landing-card) rounded-2xl p-4 sm:p-[36px_32px] border border-(--landing-border) min-w-0">
             {/* Segmented Tab Controller */}
             <div
@@ -91,7 +106,9 @@ export default function LandingView({ fractionRules, araArbRules, tax, faqs: faq
               {tabs.map(({ id, label, icon: Icon }) => (
                 <button
                   className={`min-h-[42px] sm:min-h-[44px] px-4 py-2.5 border-0 rounded-xl flex items-center justify-center gap-2 text-(--landing-muted) hover:text-(--landing-text) hover:bg-(--landing-soft) bg-transparent font-inherit text-xs font-semibold w-full cursor-pointer transition-all duration-200 ${
-                    activeTab === id ? '!bg-(--landing-control) !text-(--landing-text) shadow-[0_0_0_1px_var(--landing-border)]' : ''
+                    activeTab === id
+                      ? "!bg-(--landing-control) !text-(--landing-text) shadow-[0_0_0_1px_var(--landing-border)]"
+                      : ""
                   }`}
                   key={id}
                   type="button"
@@ -109,13 +126,19 @@ export default function LandingView({ fractionRules, araArbRules, tax, faqs: faq
 
             {/* Active Calculator Component */}
             <div className="w-full min-w-0 landing-active-calc">
-              <div hidden={activeTab !== 'target'}>
-                <LandingPredictionCalculator fractionRules={fractionRules} tax={tax} />
+              <div hidden={activeTab !== "target"}>
+                <LandingPredictionCalculator
+                  fractionRules={fractionRules}
+                  tax={tax}
+                />
               </div>
-              <div hidden={activeTab !== 'ara'}>
-                <LandingAraArbCalculator fractionRules={fractionRules} araArbRules={araArbRules} />
+              <div hidden={activeTab !== "ara"}>
+                <LandingAraArbCalculator
+                  fractionRules={fractionRules}
+                  araArbRules={araArbRules}
+                />
               </div>
-              <div hidden={activeTab !== 'average'}>
+              <div hidden={activeTab !== "average"}>
                 <LandingAvgCalculator />
               </div>
             </div>
@@ -123,7 +146,10 @@ export default function LandingView({ fractionRules, araArbRules, tax, faqs: faq
         </section>
 
         {/* FAQ ACCORDION SECTION */}
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-8 md:px-16 pb-20" id="faq">
+        <div
+          className="max-w-[1200px] mx-auto px-4 sm:px-8 md:px-16 pb-20"
+          id="faq"
+        >
           <FaqSection faqs={faqs} showHeader={true} theme="acme" />
         </div>
       </main>

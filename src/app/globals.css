@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css");
 
 @import "tailwindcss";
 
@@ -14,7 +14,7 @@
   --bg-sub-green: #f0fdf4;
   --bg-sub-pink: #fdf2f8;
   --bg-sub-slate: #f8fafc;
-  
+
   --text-main: #0f172a;
   --text-muted: #64748b;
   --text-sub: #334155;
@@ -26,7 +26,9 @@
   --accent-pink: #db2777;
   --accent-red: #dc2626;
 
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans:
+    "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
   --radius-lg: 12px;
   --radius-md: 8px;
   --radius-sm: 6px;
@@ -49,10 +51,15 @@
   --landing-inverse-text: #ffffff;
   --landing-cta-bg: #ffffff;
   --landing-cta-text: #111827;
-  --landing-image-scrim: linear-gradient(90deg, rgba(0, 0, 0, 0.68) 0%, rgba(0, 0, 0, 0.28) 58%, rgba(0, 0, 0, 0.08) 100%);
+  --landing-image-scrim: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.68) 0%,
+    rgba(0, 0, 0, 0.28) 58%,
+    rgba(0, 0, 0, 0.08) 100%
+  );
 }
 
-[data-theme='dark'] {
+[data-theme="dark"] {
   --bg-page: #0b0f19;
   --bg-card: #131926;
   --bg-sub-blue: #1e293b;
@@ -90,7 +97,12 @@
   --landing-inverse-text: #ffffff;
   --landing-cta-bg: #f8fafc;
   --landing-cta-text: #0f172a;
-  --landing-image-scrim: linear-gradient(90deg, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.38) 60%, rgba(0, 0, 0, 0.12) 100%);
+  --landing-image-scrim: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.78) 0%,
+    rgba(0, 0, 0, 0.38) 60%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
 }
 
 @theme {
@@ -123,7 +135,9 @@ body {
   background-color: var(--bg-page);
   color: var(--text-main);
   line-height: 1.5;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
   min-height: 100vh;
 }
 
@@ -148,19 +162,23 @@ body {
   box-shadow: none !important;
   color: var(--landing-text) !important;
 }
-[data-theme='dark'] .landing-active-calc input,
-[data-theme='dark'] .landing-active-calc select {
+[data-theme="dark"] .landing-active-calc input,
+[data-theme="dark"] .landing-active-calc select {
   background-color: #0c1320 !important;
   color: #f8fafc !important;
   color-scheme: dark;
 }
-[data-theme='dark'] .landing-active-calc input::placeholder {
+[data-theme="dark"] .landing-active-calc input::placeholder {
   color: #94a3b8 !important;
   opacity: 1;
 }
 .landing-active-calc input:hover,
 .landing-active-calc select:hover {
-  border-color: color-mix(in srgb, var(--landing-muted) 48%, transparent) !important;
+  border-color: color-mix(
+    in srgb,
+    var(--landing-muted) 48%,
+    transparent
+  ) !important;
 }
 .landing-active-calc input:focus,
 .landing-active-calc select:focus {
@@ -211,20 +229,36 @@ body {
 
 /* Mobile Drawer Slide Animations */
 @keyframes drawerSlideIn {
-  from { transform: translateX(-100%); }
-  to   { transform: translateX(0); }
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 @keyframes drawerSlideOut {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-100%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
 }
 @keyframes backdropFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 @keyframes backdropFadeOut {
-  from { opacity: 1; }
-  to   { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 .drawer-enter {

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Shield,
   ShieldCheck,
@@ -11,8 +11,10 @@ import {
   Plus,
   X,
   Layers,
-} from 'lucide-react';
-import AdminDataTable, { type AdminTableColumn } from '@/features/admin/components/AdminDataTable';
+} from "lucide-react";
+import AdminDataTable, {
+  type AdminTableColumn,
+} from "@/features/admin/components/AdminDataTable";
 import {
   AdminCrudError,
   AdminCrudHeader,
@@ -22,14 +24,17 @@ import {
   AdminDeleteDialog,
   deleteActionClass,
   iconActionClass,
-} from '@/features/admin/components/AdminCrudUi';
-import { CMS_FEATURES, CMSFeature, DynamicRole } from '@/lib/rbac';
+} from "@/features/admin/components/AdminCrudUi";
+import { CMS_FEATURES, CMSFeature, DynamicRole } from "@/lib/rbac";
 
 export default function AdminRolesPage() {
   const [roles, setRoles] = useState<DynamicRole[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState('');
-  const [notice, setNotice] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [loadError, setLoadError] = useState("");
+  const [notice, setNotice] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   // Modals
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -40,20 +45,22 @@ export default function AdminRolesPage() {
   const [busy, setBusy] = useState(false);
 
   // Form states
-  const [formName, setFormName] = useState('');
-  const [formDesc, setFormDesc] = useState('');
+  const [formName, setFormName] = useState("");
+  const [formDesc, setFormDesc] = useState("");
   const [formPermissions, setFormPermissions] = useState<CMSFeature[]>([]);
 
   const loadRoles = useCallback(async () => {
     setLoading(true);
-    setLoadError('');
+    setLoadError("");
     try {
-      const res = await fetch('/api/admin/roles');
+      const res = await fetch("/api/admin/roles");
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Daftar role gagal dimuat.');
+      if (!res.ok) throw new Error(data.error || "Daftar role gagal dimuat.");
       setRoles(data.roles || []);
     } catch (error) {
-      setLoadError(error instanceof Error ? error.message : 'Daftar role gagal dimuat.');
+      setLoadError(
+        error instanceof Error ? error.message : "Daftar role gagal dimuat.",
+      );
     } finally {
       setLoading(false);
     }
@@ -66,11 +73,11 @@ export default function AdminRolesPage() {
   const columns = useMemo<AdminTableColumn<DynamicRole>[]>(
     () => [
       {
-        id: 'name',
-        label: 'Nama Role',
+        id: "name",
+        label: "Nama Role",
         getValue: (item) => item.name,
         render: (item) => {
-          const isAdmin = item.id === 'ADMIN' || item.isProtected;
+          const isAdmin = item.id === "ADMIN" || item.isProtected;
           return (
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
@@ -81,45 +88,53 @@ export default function AdminRolesPage() {
                   </span>
                 )}
               </div>
-              <span className="font-mono text-[10px] text-muted block uppercase tracking-wider">{item.id}</span>
+              <span className="font-mono text-[10px] text-muted block uppercase tracking-wider">
+                {item.id}
+              </span>
             </div>
           );
         },
       },
       {
-        id: 'permissions',
-        label: 'Izin',
+        id: "permissions",
+        label: "Izin",
         getValue: (item) =>
-          item.id === 'ADMIN' || item.isProtected ? CMS_FEATURES.length : item.permissions?.length || 0,
+          item.id === "ADMIN" || item.isProtected
+            ? CMS_FEATURES.length
+            : item.permissions?.length || 0,
         render: (item) => {
-          const isAdmin = item.id === 'ADMIN' || item.isProtected;
-          const count = isAdmin ? CMS_FEATURES.length : item.permissions?.length || 0;
+          const isAdmin = item.id === "ADMIN" || item.isProtected;
+          const count = isAdmin
+            ? CMS_FEATURES.length
+            : item.permissions?.length || 0;
           return (
-            <span className={`font-bold text-xs ${isAdmin ? 'text-emerald-700 dark:text-emerald-400' : 'text-main'}`}>
+            <span
+              className={`font-bold text-xs ${isAdmin ? "text-emerald-700 dark:text-emerald-400" : "text-main"}`}
+            >
               {count}
             </span>
           );
         },
       },
       {
-        id: 'description',
-        label: 'Deskripsi',
-        getValue: (item) => item.description || '-',
+        id: "description",
+        label: "Deskripsi",
+        getValue: (item) => item.description || "-",
         render: (item) => (
           <span className="text-xs text-muted max-w-xs line-clamp-1 block">
-            {item.description || '-'}
+            {item.description || "-"}
           </span>
         ),
       },
     ],
-    []
+    [],
   );
 
   // Handlers
   const handleOpenAdd = () => {
-    setFormName('');
-    setFormDesc('');
-    setFormPermissions(['overview', 'articles']);
+    setFormName("");
+    setFormDesc("");
+    setFormPermissions(["overview", "articles"]);
     setIsAddOpen(true);
   };
 
@@ -129,9 +144,9 @@ export default function AdminRolesPage() {
 
     setBusy(true);
     try {
-      const res = await fetch('/api/admin/roles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/admin/roles", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: formName,
           description: formDesc,
@@ -139,13 +154,19 @@ export default function AdminRolesPage() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Gagal membuat role.');
+      if (!res.ok) throw new Error(data.error || "Gagal membuat role.");
 
-      setNotice({ type: 'success', text: `Role "${formName}" berhasil dibuat.` });
+      setNotice({
+        type: "success",
+        text: `Role "${formName}" berhasil dibuat.`,
+      });
       setIsAddOpen(false);
       loadRoles();
     } catch (err) {
-      setNotice({ type: 'error', text: err instanceof Error ? err.message : 'Gagal membuat role.' });
+      setNotice({
+        type: "error",
+        text: err instanceof Error ? err.message : "Gagal membuat role.",
+      });
     } finally {
       setBusy(false);
     }
@@ -159,7 +180,7 @@ export default function AdminRolesPage() {
   const handleOpenEdit = (role: DynamicRole) => {
     setSelectedRole(role);
     setFormName(role.name);
-    setFormDesc(role.description || '');
+    setFormDesc(role.description || "");
     setFormPermissions(role.permissions || []);
     setIsEditOpen(true);
   };
@@ -170,24 +191,32 @@ export default function AdminRolesPage() {
 
     setBusy(true);
     try {
-      const isAdmin = selectedRole.id === 'ADMIN' || selectedRole.isProtected;
+      const isAdmin = selectedRole.id === "ADMIN" || selectedRole.isProtected;
       const res = await fetch(`/api/admin/roles/${selectedRole.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: isAdmin ? 'Administrator' : formName,
+          name: isAdmin ? "Administrator" : formName,
           description: formDesc,
-          permissions: isAdmin ? CMS_FEATURES.map((f) => f.id) : formPermissions,
+          permissions: isAdmin
+            ? CMS_FEATURES.map((f) => f.id)
+            : formPermissions,
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Gagal memperbarui role.');
+      if (!res.ok) throw new Error(data.error || "Gagal memperbarui role.");
 
-      setNotice({ type: 'success', text: `Role "${selectedRole.name}" berhasil diperbarui.` });
+      setNotice({
+        type: "success",
+        text: `Role "${selectedRole.name}" berhasil diperbarui.`,
+      });
       setIsEditOpen(false);
       loadRoles();
     } catch (err) {
-      setNotice({ type: 'error', text: err instanceof Error ? err.message : 'Gagal memperbarui role.' });
+      setNotice({
+        type: "error",
+        text: err instanceof Error ? err.message : "Gagal memperbarui role.",
+      });
     } finally {
       setBusy(false);
     }
@@ -197,22 +226,30 @@ export default function AdminRolesPage() {
     if (!deleteTarget) return;
     setBusy(true);
     try {
-      const res = await fetch(`/api/admin/roles/${deleteTarget.id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/admin/roles/${deleteTarget.id}`, {
+        method: "DELETE",
+      });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Gagal menghapus role.');
+      if (!res.ok) throw new Error(data.error || "Gagal menghapus role.");
 
-      setNotice({ type: 'success', text: `Role "${deleteTarget.name}" berhasil dihapus.` });
+      setNotice({
+        type: "success",
+        text: `Role "${deleteTarget.name}" berhasil dihapus.`,
+      });
       setDeleteTarget(null);
       loadRoles();
     } catch (err) {
-      setNotice({ type: 'error', text: err instanceof Error ? err.message : 'Gagal menghapus role.' });
+      setNotice({
+        type: "error",
+        text: err instanceof Error ? err.message : "Gagal menghapus role.",
+      });
     } finally {
       setBusy(false);
     }
   };
 
   const displayRoles = useMemo(() => {
-    return roles.filter((r) => r.id !== 'USER');
+    return roles.filter((r) => r.id !== "USER");
   }, [roles]);
 
   return (
@@ -242,11 +279,11 @@ export default function AdminRolesPage() {
           items={displayRoles}
           columns={columns}
           getKey={(item) => item.id}
-          searchFields={(item) => [item.name, item.id, item.description || '']}
+          searchFields={(item) => [item.name, item.id, item.description || ""]}
           searchPlaceholder="Cari nama role..."
           emptyText="Tidak ada role yang cocok."
           renderActions={(item) => {
-            const isAdmin = item.id === 'ADMIN' || item.isProtected;
+            const isAdmin = item.id === "ADMIN" || item.isProtected;
             return (
               <>
                 <button
@@ -297,7 +334,9 @@ export default function AdminRolesPage() {
             <div className="flex items-center justify-between p-5 border-b border-border-custom bg-sub-slate/30 shrink-0">
               <div className="flex items-center gap-2">
                 <Eye size={18} className="text-acc-blue" />
-                <h3 className="text-sm font-bold text-main">Detail Role: {selectedRole.name}</h3>
+                <h3 className="text-sm font-bold text-main">
+                  Detail Role: {selectedRole.name}
+                </h3>
               </div>
               <button
                 onClick={() => setIsDetailOpen(false)}
@@ -309,7 +348,9 @@ export default function AdminRolesPage() {
 
             <div className="p-5 space-y-4 overflow-y-auto landing-scroller">
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-muted block">Nama Role</label>
+                <label className="text-[11px] font-bold text-muted block">
+                  Nama Role
+                </label>
                 <input
                   type="text"
                   disabled
@@ -319,11 +360,13 @@ export default function AdminRolesPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-muted block">Deskripsi Role</label>
+                <label className="text-[11px] font-bold text-muted block">
+                  Deskripsi Role
+                </label>
                 <input
                   type="text"
                   disabled
-                  value={selectedRole.description || '-'}
+                  value={selectedRole.description || "-"}
                   className="w-full bg-sub-slate rounded-xl px-3.5 py-2.5 text-xs text-main border border-border-custom cursor-not-allowed"
                 />
               </div>
@@ -336,7 +379,7 @@ export default function AdminRolesPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-2 border border-border-custom rounded-2xl bg-sub-slate/20">
                   {CMS_FEATURES.map((feature) => {
                     const isGranted =
-                      selectedRole.id === 'ADMIN' ||
+                      selectedRole.id === "ADMIN" ||
                       selectedRole.isProtected ||
                       (selectedRole.permissions || []).includes(feature.id);
 
@@ -345,8 +388,8 @@ export default function AdminRolesPage() {
                         key={feature.id}
                         className={`flex items-center gap-2.5 p-2.5 rounded-xl border text-xs transition-all ${
                           isGranted
-                            ? 'bg-acc-blue/10 border-acc-blue/40 text-main font-semibold'
-                            : 'bg-card border-border-custom text-muted/50 opacity-50'
+                            ? "bg-acc-blue/10 border-acc-blue/40 text-main font-semibold"
+                            : "bg-card border-border-custom text-muted/50 opacity-50"
                         }`}
                       >
                         <input
@@ -383,7 +426,9 @@ export default function AdminRolesPage() {
             <div className="flex items-center justify-between p-5 border-b border-border-custom bg-sub-slate/30 shrink-0">
               <div className="flex items-center gap-2">
                 <Plus size={18} className="text-acc-blue" />
-                <h3 className="text-sm font-bold text-main">Tambah Role Baru</h3>
+                <h3 className="text-sm font-bold text-main">
+                  Tambah Role Baru
+                </h3>
               </div>
               <button
                 onClick={() => setIsAddOpen(false)}
@@ -393,9 +438,14 @@ export default function AdminRolesPage() {
               </button>
             </div>
 
-            <form onSubmit={handleCreate} className="p-5 space-y-4 overflow-y-auto landing-scroller">
+            <form
+              onSubmit={handleCreate}
+              className="p-5 space-y-4 overflow-y-auto landing-scroller"
+            >
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-muted block">Nama Role *</label>
+                <label className="text-[11px] font-bold text-muted block">
+                  Nama Role *
+                </label>
                 <input
                   type="text"
                   required
@@ -407,7 +457,9 @@ export default function AdminRolesPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-muted block">Deskripsi Role</label>
+                <label className="text-[11px] font-bold text-muted block">
+                  Deskripsi Role
+                </label>
                 <input
                   type="text"
                   value={formDesc}
@@ -430,8 +482,8 @@ export default function AdminRolesPage() {
                         key={feature.id}
                         className={`flex items-center gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition-all ${
                           isSelected
-                            ? 'bg-acc-blue/10 border-acc-blue/40 text-main font-semibold'
-                            : 'bg-card border-border-custom text-muted hover:bg-sub-slate'
+                            ? "bg-acc-blue/10 border-acc-blue/40 text-main font-semibold"
+                            : "bg-card border-border-custom text-muted hover:bg-sub-slate"
                         }`}
                       >
                         <input
@@ -441,7 +493,7 @@ export default function AdminRolesPage() {
                             setFormPermissions((prev) =>
                               prev.includes(feature.id)
                                 ? prev.filter((f) => f !== feature.id)
-                                : [...prev, feature.id]
+                                : [...prev, feature.id],
                             );
                           }}
                           className="h-3.5 w-3.5 rounded text-acc-blue focus:ring-acc-blue cursor-pointer shrink-0"
@@ -466,7 +518,7 @@ export default function AdminRolesPage() {
                   disabled={busy}
                   className="px-5 py-2 rounded-xl bg-acc-blue hover:bg-acc-blue/90 text-white text-xs font-bold transition-colors cursor-pointer disabled:opacity-50"
                 >
-                  {busy ? 'Menyimpan...' : 'Simpan Role'}
+                  {busy ? "Menyimpan..." : "Simpan Role"}
                 </button>
               </div>
             </form>
@@ -481,7 +533,9 @@ export default function AdminRolesPage() {
             <div className="flex items-center justify-between p-5 border-b border-border-custom bg-sub-slate/30 shrink-0">
               <div className="flex items-center gap-2">
                 <Edit3 size={18} className="text-acc-blue" />
-                <h3 className="text-sm font-bold text-main">Edit Role: {selectedRole.name}</h3>
+                <h3 className="text-sm font-bold text-main">
+                  Edit Role: {selectedRole.name}
+                </h3>
               </div>
               <button
                 onClick={() => setIsEditOpen(false)}
@@ -491,27 +545,37 @@ export default function AdminRolesPage() {
               </button>
             </div>
 
-            <form onSubmit={handleUpdate} className="p-5 space-y-4 overflow-y-auto landing-scroller">
+            <form
+              onSubmit={handleUpdate}
+              className="p-5 space-y-4 overflow-y-auto landing-scroller"
+            >
               <div className="space-y-1">
                 <label className="text-[11px] font-bold text-muted block">
-                  Nama Role {selectedRole.id === 'ADMIN' || selectedRole.isProtected ? '(Tetap / Protected)' : '*'}
+                  Nama Role{" "}
+                  {selectedRole.id === "ADMIN" || selectedRole.isProtected
+                    ? "(Tetap / Protected)"
+                    : "*"}
                 </label>
                 <input
                   type="text"
                   required
-                  disabled={selectedRole.id === 'ADMIN' || selectedRole.isProtected}
+                  disabled={
+                    selectedRole.id === "ADMIN" || selectedRole.isProtected
+                  }
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
                   className={`w-full rounded-xl px-3.5 py-2.5 text-xs border border-border-custom outline-none ${
-                    selectedRole.id === 'ADMIN' || selectedRole.isProtected
-                      ? 'bg-sub-slate text-muted cursor-not-allowed'
-                      : 'bg-page text-main focus:ring-1 focus:ring-acc-blue'
+                    selectedRole.id === "ADMIN" || selectedRole.isProtected
+                      ? "bg-sub-slate text-muted cursor-not-allowed"
+                      : "bg-page text-main focus:ring-1 focus:ring-acc-blue"
                   }`}
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-muted block">Deskripsi Role</label>
+                <label className="text-[11px] font-bold text-muted block">
+                  Deskripsi Role
+                </label>
                 <input
                   type="text"
                   value={formDesc}
@@ -520,9 +584,10 @@ export default function AdminRolesPage() {
                 />
               </div>
 
-              {selectedRole.id === 'ADMIN' || selectedRole.isProtected ? (
+              {selectedRole.id === "ADMIN" || selectedRole.isProtected ? (
                 <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-700 dark:text-emerald-400 font-medium">
-                  🛡️ Role Admin selalu memiliki akses penuh ke seluruh modul CMS secara otomatis.
+                  🛡️ Role Admin selalu memiliki akses penuh ke seluruh modul CMS
+                  secara otomatis.
                 </div>
               ) : (
                 <div className="space-y-2 pt-2 border-t border-border-custom">
@@ -538,8 +603,8 @@ export default function AdminRolesPage() {
                           key={feature.id}
                           className={`flex items-center gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition-all ${
                             isSelected
-                              ? 'bg-acc-blue/10 border-acc-blue/40 text-main font-semibold'
-                              : 'bg-card border-border-custom text-muted hover:bg-sub-slate'
+                              ? "bg-acc-blue/10 border-acc-blue/40 text-main font-semibold"
+                              : "bg-card border-border-custom text-muted hover:bg-sub-slate"
                           }`}
                         >
                           <input
@@ -549,7 +614,7 @@ export default function AdminRolesPage() {
                               setFormPermissions((prev) =>
                                 prev.includes(feature.id)
                                   ? prev.filter((f) => f !== feature.id)
-                                  : [...prev, feature.id]
+                                  : [...prev, feature.id],
                               );
                             }}
                             className="h-3.5 w-3.5 rounded text-acc-blue focus:ring-acc-blue cursor-pointer shrink-0"
@@ -575,7 +640,7 @@ export default function AdminRolesPage() {
                   disabled={busy}
                   className="px-5 py-2 rounded-xl bg-acc-blue hover:bg-acc-blue/90 text-white text-xs font-bold transition-colors cursor-pointer disabled:opacity-50"
                 >
-                  {busy ? 'Menyimpan...' : 'Perbarui Role'}
+                  {busy ? "Menyimpan..." : "Perbarui Role"}
                 </button>
               </div>
             </form>

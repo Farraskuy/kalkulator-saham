@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { addRecentlyViewedBlog } from '../utils/blogStorage';
+import { useEffect } from "react";
+import { addRecentlyViewedBlog } from "../utils/blogStorage";
 
 interface TrackBlogViewProps {
   article: {
@@ -22,7 +22,7 @@ export default function TrackBlogView({ article }: TrackBlogViewProps) {
         category: article.category,
         coverImage: article.coverImage,
         publishedAt:
-          typeof article.publishedAt === 'string'
+          typeof article.publishedAt === "string"
             ? article.publishedAt
             : article.publishedAt.toISOString(),
       });

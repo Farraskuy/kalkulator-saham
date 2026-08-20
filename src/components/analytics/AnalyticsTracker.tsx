@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useEffect } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function AnalyticsTracker() {
   const pathname = usePathname();
@@ -9,11 +9,16 @@ export default function AnalyticsTracker() {
 
   useEffect(() => {
     // Record page view analytics
-    const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '');
-    fetch('/api/analytics/traffic', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ path: url, referrer: document.referrer || 'Direct' }),
+    const url =
+      pathname +
+      (searchParams?.toString() ? `?${searchParams.toString()}` : "");
+    fetch("/api/analytics/traffic", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        path: url,
+        referrer: document.referrer || "Direct",
+      }),
       keepalive: true,
     }).catch(() => {
       // ignore

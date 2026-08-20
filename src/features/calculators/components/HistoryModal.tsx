@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { History, Trash2, Clock, Calculator, X } from 'lucide-react';
-import { CalculationHistoryItem } from '@/types';
+import React, { useEffect, useState } from "react";
+import { History, Trash2, Clock, Calculator, X } from "lucide-react";
+import { CalculationHistoryItem } from "@/types";
 
 interface Props {
   isOpen: boolean;
@@ -16,13 +16,13 @@ export default function HistoryModal({ isOpen, onClose }: Props) {
   const fetchHistory = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/history');
+      const res = await fetch("/api/history");
       if (res.ok) {
         const data = await res.json();
         setHistories(data.histories || []);
       }
     } catch (err) {
-      console.error('Failed to load calculation history:', err);
+      console.error("Failed to load calculation history:", err);
     } finally {
       setLoading(false);
     }
@@ -36,12 +36,12 @@ export default function HistoryModal({ isOpen, onClose }: Props) {
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch(`/api/history?id=${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/history?id=${id}`, { method: "DELETE" });
       if (res.ok) {
         setHistories(histories.filter((item) => item.id !== id));
       }
     } catch (err) {
-      console.error('Failed to delete history item:', err);
+      console.error("Failed to delete history item:", err);
     }
   };
 
@@ -75,24 +75,29 @@ export default function HistoryModal({ isOpen, onClose }: Props) {
           ) : histories.length === 0 ? (
             <div className="py-12 text-center text-xs text-muted space-y-2">
               <Calculator size={36} className="mx-auto text-muted/50" />
-              <p className="font-semibold">Belum ada riwayat kalkulasi tersimpan.</p>
-              <p className="text-[11px]">Hitung parameter di kalkulator untuk mencatat histori secara otomatis.</p>
+              <p className="font-semibold">
+                Belum ada riwayat kalkulasi tersimpan.
+              </p>
+              <p className="text-[11px]">
+                Hitung parameter di kalkulator untuk mencatat histori secara
+                otomatis.
+              </p>
             </div>
           ) : (
             histories.map((item) => {
-              const dateStr = new Date(item.createdAt).toLocaleString('id-ID', {
-                dateStyle: 'medium',
-                timeStyle: 'short',
+              const dateStr = new Date(item.createdAt).toLocaleString("id-ID", {
+                dateStyle: "medium",
+                timeStyle: "short",
               });
 
-              let badgeColor = 'bg-sub-blue text-acc-blue';
-              let typeLabel = 'ARA / ARB';
-              if (item.calculatorType === 'average') {
-                badgeColor = 'bg-sub-purple text-acc-purple';
-                typeLabel = 'Average Up/Down';
-              } else if (item.calculatorType === 'prediction') {
-                badgeColor = 'bg-sub-green text-acc-green';
-                typeLabel = 'Target Jual/Beli';
+              let badgeColor = "bg-sub-blue text-acc-blue";
+              let typeLabel = "ARA / ARB";
+              if (item.calculatorType === "average") {
+                badgeColor = "bg-sub-purple text-acc-purple";
+                typeLabel = "Average Up/Down";
+              } else if (item.calculatorType === "prediction") {
+                badgeColor = "bg-sub-green text-acc-green";
+                typeLabel = "Target Jual/Beli";
               }
 
               return (
@@ -101,7 +106,9 @@ export default function HistoryModal({ isOpen, onClose }: Props) {
                   className="bg-sub-slate/50 rounded-xl p-3.5 border border-border-custom/40 hover:border-acc-blue/30 transition-all space-y-2 group"
                 >
                   <div className="flex items-center justify-between">
-                    <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md uppercase ${badgeColor}`}>
+                    <span
+                      className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md uppercase ${badgeColor}`}
+                    >
                       {typeLabel}
                     </span>
                     <div className="flex items-center gap-2">
@@ -124,22 +131,75 @@ export default function HistoryModal({ isOpen, onClose }: Props) {
 
                   {/* Summary Snippet */}
                   <div className="text-xs text-sub bg-card p-2.5 rounded-lg border border-border-custom/30 space-y-1">
-                    {item.calculatorType === 'ara-arb' && (
+                    {item.calculatorType === "ara-arb" && (
                       <div className="flex justify-between">
-                        <span>ARA: <strong className="text-acc-green">Rp {(item.results as { ara?: number })?.ara?.toLocaleString('id-ID')}</strong></span>
-                        <span>ARB: <strong className="text-acc-pink">Rp {(item.results as { arb?: number })?.arb?.toLocaleString('id-ID')}</strong></span>
+                        <span>
+                          ARA:{" "}
+                          <strong className="text-acc-green">
+                            Rp{" "}
+                            {(
+                              item.results as { ara?: number }
+                            )?.ara?.toLocaleString("id-ID")}
+                          </strong>
+                        </span>
+                        <span>
+                          ARB:{" "}
+                          <strong className="text-acc-pink">
+                            Rp{" "}
+                            {(
+                              item.results as { arb?: number }
+                            )?.arb?.toLocaleString("id-ID")}
+                          </strong>
+                        </span>
                       </div>
                     )}
-                    {item.calculatorType === 'average' && (
+                    {item.calculatorType === "average" && (
                       <div className="flex justify-between">
-                        <span>Avg Price: <strong className="text-acc-purple">Rp {(item.results as { avgPrice?: number })?.avgPrice?.toLocaleString('id-ID')}</strong></span>
-                        <span>Total Lembar: <strong className="text-main">{(item.results as { totalLembar?: number })?.totalLembar?.toLocaleString('id-ID')}</strong></span>
+                        <span>
+                          Avg Price:{" "}
+                          <strong className="text-acc-purple">
+                            Rp{" "}
+                            {(
+                              item.results as { avgPrice?: number }
+                            )?.avgPrice?.toLocaleString("id-ID")}
+                          </strong>
+                        </span>
+                        <span>
+                          Total Lembar:{" "}
+                          <strong className="text-main">
+                            {(
+                              item.results as { totalLembar?: number }
+                            )?.totalLembar?.toLocaleString("id-ID")}
+                          </strong>
+                        </span>
                       </div>
                     )}
-                    {item.calculatorType === 'prediction' && (
+                    {item.calculatorType === "prediction" && (
                       <div className="flex justify-between">
-                        <span>TP BEI: <strong className="text-acc-green">Rp {(item.results as { skenarioUntung?: { hargaBEI?: number } })?.skenarioUntung?.hargaBEI?.toLocaleString('id-ID')}</strong></span>
-                        <span>SL BEI: <strong className="text-acc-pink">Rp {(item.results as { skenarioRugi?: { hargaBEI?: number } })?.skenarioRugi?.hargaBEI?.toLocaleString('id-ID')}</strong></span>
+                        <span>
+                          TP BEI:{" "}
+                          <strong className="text-acc-green">
+                            Rp{" "}
+                            {(
+                              item.results as {
+                                skenarioUntung?: { hargaBEI?: number };
+                              }
+                            )?.skenarioUntung?.hargaBEI?.toLocaleString(
+                              "id-ID",
+                            )}
+                          </strong>
+                        </span>
+                        <span>
+                          SL BEI:{" "}
+                          <strong className="text-acc-pink">
+                            Rp{" "}
+                            {(
+                              item.results as {
+                                skenarioRugi?: { hargaBEI?: number };
+                              }
+                            )?.skenarioRugi?.hargaBEI?.toLocaleString("id-ID")}
+                          </strong>
+                        </span>
                       </div>
                     )}
                   </div>

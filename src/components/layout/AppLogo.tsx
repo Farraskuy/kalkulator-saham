@@ -1,29 +1,29 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface AppLogoProps {
   size?: number;
   className?: string;
-  variant?: 'auto' | 'dark-icon' | 'white-icon';
+  variant?: "auto" | "dark-icon" | "white-icon";
 }
 
 export default function AppLogo({
   size = 32,
-  className = '',
-  variant = 'auto',
+  className = "",
+  variant = "auto",
 }: AppLogoProps) {
   const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   useEffect(() => {
-    if (variant !== 'auto') return;
+    if (variant !== "auto") return;
 
     const checkTheme = () => {
       const htmlEl = document.documentElement;
-      const themeAttr = htmlEl.getAttribute('data-theme');
-      const hasDarkClass = htmlEl.classList.contains('dark');
-      setIsDarkTheme(themeAttr === 'dark' || hasDarkClass);
+      const themeAttr = htmlEl.getAttribute("data-theme");
+      const hasDarkClass = htmlEl.classList.contains("dark");
+      setIsDarkTheme(themeAttr === "dark" || hasDarkClass);
     };
 
     checkTheme();
@@ -34,22 +34,22 @@ export default function AppLogo({
 
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['data-theme', 'class'],
+      attributeFilter: ["data-theme", "class"],
     });
 
     return () => observer.disconnect();
   }, [variant]);
 
-  let iconSrc = '/assets/images/icon_dark_bg_transparent.png';
+  let iconSrc = "/assets/images/icon_dark_bg_transparent.png";
 
-  if (variant === 'white-icon') {
-    iconSrc = '/assets/images/icon_white_bg_transparent.png';
-  } else if (variant === 'dark-icon') {
-    iconSrc = '/assets/images/icon_dark_bg_transparent.png';
+  if (variant === "white-icon") {
+    iconSrc = "/assets/images/icon_white_bg_transparent.png";
+  } else if (variant === "dark-icon") {
+    iconSrc = "/assets/images/icon_dark_bg_transparent.png";
   } else {
     iconSrc = isDarkTheme
-      ? '/assets/images/icon_white_bg_transparent.png'
-      : '/assets/images/icon_dark_bg_transparent.png';
+      ? "/assets/images/icon_white_bg_transparent.png"
+      : "/assets/images/icon_dark_bg_transparent.png";
   }
 
   return (

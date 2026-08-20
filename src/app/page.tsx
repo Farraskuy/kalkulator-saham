@@ -1,31 +1,31 @@
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 import {
   getCachedFaqs,
   getCachedAraArbRules,
   getCachedFractionRules,
   getCachedTaxSetting,
   getCachedSiteDescription,
-} from '@/lib/cached-data';
-import LandingView from '@/components/landing/LandingView';
+} from "@/lib/cached-data";
+import LandingView from "@/components/landing/LandingView";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const description = await getCachedSiteDescription();
   return {
-    title: 'Hitungsaham.com | Kalkulator Penghitung Saham',
+    title: "Hitungsaham.com | Kalkulator Penghitung Saham",
     description,
     openGraph: {
-      title: 'Hitungsaham.com | Kalkulator Penghitung Saham',
+      title: "Hitungsaham.com | Kalkulator Penghitung Saham",
       description,
-      url: 'https://hitungsaham.com',
-      siteName: 'HitungSaham',
-      locale: 'id_ID',
-      type: 'website',
+      url: "https://hitungsaham.com",
+      siteName: "HitungSaham",
+      locale: "id_ID",
+      type: "website",
     },
     twitter: {
-      card: 'summary_large_image',
-      title: 'Hitungsaham.com | Kalkulator Penghitung Saham',
+      card: "summary_large_image",
+      title: "Hitungsaham.com | Kalkulator Penghitung Saham",
       description,
     },
   };
@@ -39,5 +39,12 @@ export default async function HomePage() {
     getCachedFaqs(),
   ]);
 
-  return <LandingView fractionRules={fractionRules} araArbRules={araArbRules} tax={tax} faqs={faqs} />;
+  return (
+    <LandingView
+      fractionRules={fractionRules}
+      araArbRules={araArbRules}
+      tax={tax}
+      faqs={faqs}
+    />
+  );
 }

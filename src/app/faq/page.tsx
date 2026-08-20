@@ -1,18 +1,18 @@
-import React from 'react';
-import { Metadata } from 'next';
-import Link from 'next/link';
-import { HelpCircle, ChevronRight, Calculator } from 'lucide-react';
-import LandingHeader from '@/components/landing/LandingHeader';
-import FaqSection from '@/features/faq/components/FaqSection';
-import Footer from '@/components/layout/Footer';
-import { getCachedFaqs } from '@/lib/cached-data';
+import React from "react";
+import { Metadata } from "next";
+import Link from "next/link";
+import { HelpCircle, ChevronRight, Calculator } from "lucide-react";
+import LandingHeader from "@/components/landing/LandingHeader";
+import FaqSection from "@/features/faq/components/FaqSection";
+import Footer from "@/components/layout/Footer";
+import { getCachedFaqs } from "@/lib/cached-data";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: 'FAQ Bantuan & Panduan | HitungSaham.com',
+  title: "FAQ Bantuan & Panduan | HitungSaham.com",
   description:
-    'Pertanyaan umum seputar penggunaan kalkulator ARA ARB, simulasi average down, dan regulasi fraksi BEI.',
+    "Pertanyaan umum seputar penggunaan kalkulator ARA ARB, simulasi average down, dan regulasi fraksi BEI.",
 };
 
 export default async function FaqPage() {
@@ -32,7 +32,8 @@ export default async function FaqPage() {
             Pertanyaan yang Sering Diajukan
           </h1>
           <p className="text-xs sm:text-sm text-muted max-w-xl mx-auto font-medium leading-relaxed">
-            Jawaban lengkap seputar penggunaan kalkulator ARA/ARB, simulasi average down, dan aturan fraksi bursa efek Indonesia.
+            Jawaban lengkap seputar penggunaan kalkulator ARA/ARB, simulasi
+            average down, dan aturan fraksi bursa efek Indonesia.
           </p>
         </section>
 
@@ -45,9 +46,12 @@ export default async function FaqPage() {
             <div className="text-xs font-bold uppercase tracking-widest text-muted flex items-center gap-1.5 mb-1">
               <Calculator size={14} /> HitungSaham Tools
             </div>
-            <h3 className="text-xl font-bold text-white">Butuh Menghitung Average Down Saham Kamu?</h3>
+            <h3 className="text-xl font-bold text-white">
+              Butuh Menghitung Average Down Saham Kamu?
+            </h3>
             <p className="text-xs text-gray-300 mt-1 max-w-md">
-              Gunakan kalkulator simulasi gratis kami untuk menghitung target harga rata-rata dan batas ARA/ARB BEI secara presisi.
+              Gunakan kalkulator simulasi gratis kami untuk menghitung target
+              harga rata-rata dan batas ARA/ARB BEI secara presisi.
             </p>
           </div>
           <Link

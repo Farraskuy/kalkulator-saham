@@ -1,33 +1,33 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { ChevronDown, Search, Folder, Check, X } from 'lucide-react';
+import React, { useState, useRef, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { ChevronDown, Search, Folder, Check, X } from "lucide-react";
 
 interface CategoryDropdownFilterProps {
   categories: string[];
   activeCategory?: string;
   totalArticles?: number;
   searchQuery?: string;
-  theme?: 'default' | 'acme';
+  theme?: "default" | "acme";
 }
 
 export default function CategoryDropdownFilter({
   categories,
-  activeCategory = '',
+  activeCategory = "",
   totalArticles,
-  searchQuery = '',
-  theme = 'acme',
+  searchQuery = "",
+  theme = "acme",
 }: CategoryDropdownFilterProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [searchFilter, setSearchFilter] = useState('');
+  const [searchFilter, setSearchFilter] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const selectedCategoryName = useMemo(() => {
-    if (!activeCategory || activeCategory.toLowerCase() === 'all') {
-      return 'Semua Kategori';
+    if (!activeCategory || activeCategory.toLowerCase() === "all") {
+      return "Semua Kategori";
     }
     return activeCategory;
   }, [activeCategory]);
@@ -45,38 +45,49 @@ export default function CategoryDropdownFilter({
         searchInputRef.current?.focus();
       }, 50);
     } else {
-      setSearchFilter('');
+      setSearchFilter("");
     }
   }, [isOpen]);
 
   // Close when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
 
   const handleSelect = (categoryName: string) => {
     setIsOpen(false);
-    if (!categoryName || categoryName.toLowerCase() === 'all' || categoryName === 'Semua Kategori') {
+    if (
+      !categoryName ||
+      categoryName.toLowerCase() === "all" ||
+      categoryName === "Semua Kategori"
+    ) {
       if (searchQuery) {
         router.push(`/blog/search?q=${encodeURIComponent(searchQuery)}`);
       } else {
-        router.push('/blog/search');
+        router.push("/blog/search");
       }
     } else {
       if (searchQuery) {
-        router.push(`/blog/search?q=${encodeURIComponent(searchQuery)}&category=${encodeURIComponent(categoryName)}`);
+        router.push(
+          `/blog/search?q=${encodeURIComponent(searchQuery)}&category=${encodeURIComponent(categoryName)}`,
+        );
       } else {
-        router.push(`/blog/search?category=${encodeURIComponent(categoryName)}`);
+        router.push(
+          `/blog/search?category=${encodeURIComponent(categoryName)}`,
+        );
       }
     }
   };
@@ -94,12 +105,14 @@ export default function CategoryDropdownFilter({
           <Folder size={14} className="text-acc-blue shrink-0" />
           <span className="truncate">
             <span className="text-muted font-normal mr-1">Kategori:</span>
-            <strong className="text-main font-bold">{selectedCategoryName}</strong>
+            <strong className="text-main font-bold">
+              {selectedCategoryName}
+            </strong>
           </span>
         </div>
         <ChevronDown
           size={16}
-          className={`text-muted shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180 text-main' : ''}`}
+          className={`text-muted shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180 text-main" : ""}`}
         />
       </button>
 
@@ -109,7 +122,10 @@ export default function CategoryDropdownFilter({
           {/* SEARCH INPUT */}
           <div className="p-2.5 border-b border-border-custom/50 bg-sub-slate/50">
             <div className="relative flex items-center">
-              <Search size={13} className="absolute left-2.5 text-muted pointer-events-none" />
+              <Search
+                size={13}
+                className="absolute left-2.5 text-muted pointer-events-none"
+              />
               <input
                 ref={searchInputRef}
                 type="text"
@@ -121,7 +137,7 @@ export default function CategoryDropdownFilter({
               {searchFilter && (
                 <button
                   type="button"
-                  onClick={() => setSearchFilter('')}
+                  onClick={() => setSearchFilter("")}
                   className="absolute right-2 text-muted hover:text-main p-0.5 cursor-pointer"
                 >
                   <X size={12} />
@@ -133,24 +149,30 @@ export default function CategoryDropdownFilter({
           {/* CATEGORIES LIST */}
           <div className="max-h-56 overflow-y-auto p-1.5 space-y-0.5 landing-scroller">
             {/* OPTION: SEMUA KATEGORI */}
-            {(!searchFilter || 'semua kategori'.includes(searchFilter.toLowerCase())) && (
+            {(!searchFilter ||
+              "semua kategori".includes(searchFilter.toLowerCase())) && (
               <button
                 type="button"
-                onClick={() => handleSelect('Semua Kategori')}
+                onClick={() => handleSelect("Semua Kategori")}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors cursor-pointer ${
-                  selectedCategoryName === 'Semua Kategori'
-                    ? 'bg-acc-blue/10 text-acc-blue font-bold'
-                    : 'text-main hover:bg-sub-slate font-medium'
+                  selectedCategoryName === "Semua Kategori"
+                    ? "bg-acc-blue/10 text-acc-blue font-bold"
+                    : "text-main hover:bg-sub-slate font-medium"
                 }`}
               >
-                <span>Semua Kategori {totalArticles ? `(${totalArticles})` : ''}</span>
-                {selectedCategoryName === 'Semua Kategori' && <Check size={14} className="text-acc-blue shrink-0" />}
+                <span>
+                  Semua Kategori {totalArticles ? `(${totalArticles})` : ""}
+                </span>
+                {selectedCategoryName === "Semua Kategori" && (
+                  <Check size={14} className="text-acc-blue shrink-0" />
+                )}
               </button>
             )}
 
             {/* DYNAMIC CATEGORY OPTIONS */}
             {filteredCategories.map((cat) => {
-              const isSelected = selectedCategoryName.toLowerCase() === cat.toLowerCase();
+              const isSelected =
+                selectedCategoryName.toLowerCase() === cat.toLowerCase();
               return (
                 <button
                   key={cat}
@@ -158,12 +180,14 @@ export default function CategoryDropdownFilter({
                   onClick={() => handleSelect(cat)}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors cursor-pointer ${
                     isSelected
-                      ? 'bg-acc-blue/10 text-acc-blue font-bold'
-                      : 'text-main hover:bg-sub-slate font-medium'
+                      ? "bg-acc-blue/10 text-acc-blue font-bold"
+                      : "text-main hover:bg-sub-slate font-medium"
                   }`}
                 >
                   <span className="truncate">{cat}</span>
-                  {isSelected && <Check size={14} className="text-acc-blue shrink-0" />}
+                  {isSelected && (
+                    <Check size={14} className="text-acc-blue shrink-0" />
+                  )}
                 </button>
               );
             })}
