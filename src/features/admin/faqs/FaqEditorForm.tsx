@@ -139,61 +139,65 @@ export default function FaqEditorForm({
         </div>
       </section>
       <section className="overflow-hidden rounded-2xl border border-border-custom bg-card">
-        <div className="flex items-center justify-between border-b border-border-custom px-5 py-4">
-          <div>
-            <h2 className="text-sm font-bold text-main">Jawaban *</h2>
-            <p className="text-xs text-muted">
-              Markdown mendukung heading, teks tebal, daftar, dan tautan.
-            </p>
+        <div className="sticky top-0 z-20 border-b border-border-custom bg-card shadow-xs">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border-custom bg-card">
+            <div>
+              <h2 className="text-sm font-bold text-main">Jawaban *</h2>
+              <p className="text-xs text-muted">
+                Markdown mendukung heading, teks tebal, daftar, dan tautan.
+              </p>
+            </div>
+            <div className="flex rounded-lg bg-sub-slate p-1">
+              <button
+                type="button"
+                onClick={() => setTab("write")}
+                className={`rounded-md px-3 py-1.5 text-xs font-semibold ${tab === "write" ? "bg-card text-main shadow-2xs" : "text-muted"}`}
+              >
+                Tulis
+              </button>
+              <button
+                type="button"
+                onClick={() => setTab("preview")}
+                className={`inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-semibold ${tab === "preview" ? "bg-card text-main shadow-2xs" : "text-muted"}`}
+              >
+                <Eye size={13} /> Preview
+              </button>
+            </div>
           </div>
-          <div className="flex rounded-lg bg-sub-slate p-1">
-            <button
-              type="button"
-              onClick={() => setTab("write")}
-              className={`rounded-md px-3 py-1.5 text-xs font-semibold ${tab === "write" ? "bg-card text-main" : "text-muted"}`}
-            >
-              Tulis
-            </button>
-            <button
-              type="button"
-              onClick={() => setTab("preview")}
-              className={`inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-semibold ${tab === "preview" ? "bg-card text-main" : "text-muted"}`}
-            >
-              <Eye size={13} /> Preview
-            </button>
-          </div>
-        </div>
-        <div className="border-b border-border-custom px-5 py-2">
-          <div className="flex gap-1">
-            <button
-              type="button"
-              onClick={() => insert("## ")}
-              className="rounded-lg px-2 py-1.5 text-xs text-muted hover:bg-sub-slate"
-            >
-              <Heading2 size={15} />
-            </button>
-            <button
-              type="button"
-              onClick={() => insert("**", "**")}
-              className="rounded-lg px-2 py-1.5 text-xs text-muted hover:bg-sub-slate"
-            >
-              <Bold size={15} />
-            </button>
-            <button
-              type="button"
-              onClick={() => insert("- ")}
-              className="rounded-lg px-2 py-1.5 text-xs text-muted hover:bg-sub-slate"
-            >
-              <List size={15} />
-            </button>
-            <button
-              type="button"
-              onClick={() => insert("[", "](https://)")}
-              className="rounded-lg px-2 py-1.5 text-xs text-muted hover:bg-sub-slate"
-            >
-              <Link2 size={15} />
-            </button>
-          </div>
+          {tab === "write" && (
+            <div className="px-5 py-2 bg-sub-slate/60">
+              <div className="flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => insert("## ")}
+                  className="rounded-lg px-2 py-1.5 text-xs text-muted hover:bg-card hover:text-main transition-colors"
+                >
+                  <Heading2 size={15} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => insert("**", "**")}
+                  className="rounded-lg px-2 py-1.5 text-xs text-muted hover:bg-card hover:text-main transition-colors"
+                >
+                  <Bold size={15} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => insert("- ")}
+                  className="rounded-lg px-2 py-1.5 text-xs text-muted hover:bg-card hover:text-main transition-colors"
+                >
+                  <List size={15} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => insert("[", "](https://)")}
+                  className="rounded-lg px-2 py-1.5 text-xs text-muted hover:bg-card hover:text-main transition-colors"
+                >
+                  <Link2 size={15} />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
         {tab === "write" ? (
           <textarea

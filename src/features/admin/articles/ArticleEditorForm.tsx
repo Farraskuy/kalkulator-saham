@@ -471,88 +471,134 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
           </section>
 
           <section className="overflow-hidden rounded-2xl border border-border-custom bg-card">
-            <div className="flex flex-col gap-3 border-b border-border-custom px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-              <div>
-                <h2 className="text-sm font-bold text-main">
-                  Isi artikel <span className="text-rose-500">*</span>
-                </h2>
-                <p className="mt-0.5 text-xs text-muted">
-                  Gunakan template dan Markdown untuk menyusun artikel yang rapi
-                  dan mudah dibaca.
-                </p>
+            {/* STICKY HEADER & TOOLBAR CONTAINER */}
+            <div className="sticky top-0 z-20 border-b border-border-custom bg-card shadow-xs">
+              <div className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+                <div>
+                  <h2 className="text-sm font-bold text-main">
+                    Isi artikel <span className="text-rose-500">*</span>
+                  </h2>
+                  <p className="mt-0.5 text-xs text-muted">
+                    Gunakan template dan Markdown untuk menyusun artikel yang rapi
+                    dan mudah dibaca.
+                  </p>
+                </div>
+                <div className="inline-flex w-fit rounded-lg bg-sub-slate p-1">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("write")}
+                    className={`rounded-md px-3 py-1.5 text-xs font-semibold ${activeTab === "write" ? "bg-card text-main shadow-2xs" : "text-muted"}`}
+                  >
+                    Tulis
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("preview")}
+                    className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold ${activeTab === "preview" ? "bg-card text-main shadow-2xs" : "text-muted"}`}
+                  >
+                    <Eye size={13} /> Preview
+                  </button>
+                </div>
               </div>
-              <div className="inline-flex w-fit rounded-lg bg-sub-slate p-1">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("write")}
-                  className={`rounded-md px-3 py-1.5 text-xs font-semibold ${activeTab === "write" ? "bg-card text-main" : "text-muted"}`}
-                >
-                  Tulis
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("preview")}
-                  className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold ${activeTab === "preview" ? "bg-card text-main" : "text-muted"}`}
-                >
-                  <Eye size={13} /> Preview
-                </button>
-              </div>
+
+              {activeTab === "write" && (
+                <>
+                  <div className="flex flex-wrap items-center gap-1 border-t border-b border-border-custom bg-sub-slate/30 px-3 py-1.5">
+                    <span className="mr-1 px-1.5 text-[11px] font-semibold text-muted">
+                      Mulai dari:
+                    </span>
+                    {ARTICLE_TEMPLATES.map((template) => (
+                      <button
+                        key={template.label}
+                        type="button"
+                        onClick={() => applyTemplate(template.content)}
+                        className="h-6.5 rounded-md border border-border-custom px-2.5 text-xs font-semibold text-muted transition-colors hover:border-acc-blue/40 hover:bg-sub-blue hover:text-acc-blue"
+                      >
+                        Template {template.label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-1 bg-sub-slate/60 px-3 py-2">
+                    <input
+                      ref={inlineImageInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className="hidden"
+                      onChange={handleInlineImageUpload}
+                    />
+                    {MARKDOWN_TOOLS.slice(0, 9).map(
+                      ({ label, icon: Icon, before, after, fallback }) => (
+                        <button
+                          key={label}
+                          type="button"
+                          onClick={() => insertMarkdown(before, after, fallback)}
+                          className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-muted transition-colors hover:bg-card hover:text-main"
+                          title={label}
+                        >
+                          <Icon size={14} />{" "}
+                          <span className="hidden sm:inline">{label}</span>
+                        </button>
+                      ),
+                    )}
+
+                    {/* GAMBAR | UPLOAD GAMBAR */}
+                    <div className="inline-flex items-center rounded-lg border border-border-custom bg-card p-0.5 shadow-2xs">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          insertMarkdown(
+                            "![Deskripsi gambar (Sumber: ...)](",
+                            ")",
+                            "https://...",
+                          )
+                        }
+                        className="inline-flex h-7 items-center gap-1 rounded-md px-2.5 text-xs font-semibold text-muted transition-colors hover:bg-sub-slate hover:text-main"
+                        title="Sisipkan tautan gambar URL"
+                      >
+                        <ImageIcon size={14} />
+                        <span>Gambar</span>
+                      </button>
+                      <span className="px-0.5 text-border-custom">|</span>
+                      <button
+                        type="button"
+                        disabled={uploadingInlineImage}
+                        onClick={() => inlineImageInputRef.current?.click()}
+                        className="inline-flex h-7 items-center gap-1 rounded-md px-2.5 text-xs font-semibold text-acc-blue transition-colors hover:bg-sub-blue disabled:cursor-wait disabled:opacity-60"
+                        title="Pilih dan unggah file gambar langsung"
+                      >
+                        {uploadingInlineImage ? (
+                          <LoaderCircle size={13} className="animate-spin" />
+                        ) : (
+                          <UploadCloud size={13} />
+                        )}
+                        <span>
+                          {uploadingInlineImage ? "Mengunggah..." : "Upload Gambar"}
+                        </span>
+                      </button>
+                    </div>
+
+                    {/* PEMISAH */}
+                    {MARKDOWN_TOOLS.slice(10).map(
+                      ({ label, icon: Icon, before, after, fallback }) => (
+                        <button
+                          key={label}
+                          type="button"
+                          onClick={() => insertMarkdown(before, after, fallback)}
+                          className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-muted transition-colors hover:bg-card hover:text-main"
+                          title={label}
+                        >
+                          <Icon size={14} />{" "}
+                          <span className="hidden sm:inline">{label}</span>
+                        </button>
+                      ),
+                    )}
+                  </div>
+                </>
+              )}
             </div>
 
             {activeTab === "write" ? (
               <>
-                <div className="flex flex-wrap items-center gap-1 border-b border-border-custom bg-card px-3 py-2">
-                  <span className="mr-1 px-1.5 text-[11px] font-semibold text-muted">
-                    Mulai dari:
-                  </span>
-                  {ARTICLE_TEMPLATES.map((template) => (
-                    <button
-                      key={template.label}
-                      type="button"
-                      onClick={() => applyTemplate(template.content)}
-                      className="h-7 rounded-md border border-border-custom px-2.5 text-xs font-semibold text-muted transition-colors hover:border-acc-blue/40 hover:bg-sub-blue hover:text-acc-blue"
-                    >
-                      Template {template.label}
-                    </button>
-                  ))}
-                </div>
-                <div className="flex flex-wrap items-center gap-1 border-b border-border-custom bg-sub-slate/60 px-3 py-2">
-                  <input
-                    ref={inlineImageInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    className="hidden"
-                    onChange={handleInlineImageUpload}
-                  />
-                  <button
-                    type="button"
-                    disabled={uploadingInlineImage}
-                    onClick={() => inlineImageInputRef.current?.click()}
-                    className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-acc-blue/30 bg-sub-blue px-2.5 text-xs font-semibold text-acc-blue transition-colors hover:bg-acc-blue hover:text-white disabled:cursor-wait disabled:opacity-60 mr-1"
-                    title="Upload gambar langsung ke Cloudinary dan sisipkan ke artikel"
-                  >
-                    {uploadingInlineImage ? (
-                      <LoaderCircle size={14} className="animate-spin" />
-                    ) : (
-                      <UploadCloud size={14} />
-                    )}
-                    <span>{uploadingInlineImage ? "Mengunggah..." : "Upload Gambar (Cloudinary)"}</span>
-                  </button>
-                  {MARKDOWN_TOOLS.map(
-                    ({ label, icon: Icon, before, after, fallback }) => (
-                      <button
-                        key={label}
-                        type="button"
-                        onClick={() => insertMarkdown(before, after, fallback)}
-                        className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-muted hover:bg-card hover:text-main"
-                        title={label}
-                      >
-                        <Icon size={14} />{" "}
-                        <span className="hidden sm:inline">{label}</span>
-                      </button>
-                    ),
-                  )}
-                </div>
                 <textarea
                   ref={contentRef}
                   value={form.content}
@@ -566,7 +612,7 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
                   spellCheck
                 />
                 <div className="border-t border-border-custom bg-sub-slate/35 px-5 py-2.5 text-[11px] leading-5 text-muted">
-                  Tip: Anda bisa mengklik tombol <strong>Upload Gambar (Cloudinary)</strong> untuk langsung mengunggah foto ke Cloudinary dan menempelkannya ke isi artikel.
+                  Tip: Pilih teks sebelum menekan tombol toolbar untuk membungkus formatnya. Gunakan <strong>Gambar | Upload Gambar</strong> untuk menyisipkan ilustrasi/foto ke dalam artikel.
                 </div>
               </>
             ) : (
