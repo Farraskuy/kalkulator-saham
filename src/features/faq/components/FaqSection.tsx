@@ -150,12 +150,12 @@ export default function FaqSection({
                         </p>
                       ),
                       ul: ({ children }) => (
-                        <ul className="list-disc pl-5 space-y-1 mb-2">
+                        <ul className="list-disc pl-5 space-y-1 mb-2 marker:text-main">
                           {children}
                         </ul>
                       ),
                       ol: ({ children }) => (
-                        <ol className="list-decimal pl-5 space-y-1 mb-2">
+                        <ol className="list-decimal pl-5 space-y-1 mb-2 marker:text-main">
                           {children}
                         </ol>
                       ),

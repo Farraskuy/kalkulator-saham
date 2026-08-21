@@ -228,12 +228,12 @@ export default function FaqEditorForm({
                   </p>
                 ),
                 ul: ({ children }) => (
-                  <ul className="list-disc pl-5 space-y-1 mb-3 text-main marker:text-acc-blue">
+                  <ul className="list-disc pl-5 space-y-1 mb-3 text-main marker:text-main">
                     {children}
                   </ul>
                 ),
                 ol: ({ children }) => (
-                  <ol className="list-decimal pl-5 space-y-1 mb-3 text-main marker:text-acc-blue">
+                  <ol className="list-decimal pl-5 space-y-1 mb-3 text-main marker:text-main">
                     {children}
                   </ol>
                 ),

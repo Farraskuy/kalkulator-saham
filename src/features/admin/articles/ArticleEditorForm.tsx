@@ -595,12 +595,12 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
                         </p>
                       ),
                       ul: ({ children }) => (
-                        <ul className="list-disc pl-6 space-y-1.5 mb-3 text-sm text-main marker:text-acc-blue">
+                        <ul className="list-disc pl-6 space-y-1.5 mb-3 text-sm text-main marker:text-main">
                           {children}
                         </ul>
                       ),
                       ol: ({ children }) => (
-                        <ol className="list-decimal pl-6 space-y-1.5 mb-3 text-sm text-main marker:text-acc-blue">
+                        <ol className="list-decimal pl-6 space-y-1.5 mb-3 text-sm text-main marker:text-main">
                           {children}
                         </ol>
                       ),
@@ -628,22 +628,29 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
                         </a>
                       ),
                       hr: () => <hr className="my-6 border-border-custom" />,
-                      img: ({ src, alt }) => (
-                        <span className="block my-4 overflow-hidden rounded-xl border border-border-custom bg-sub-slate/20">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={src}
-                            alt={alt || "Gambar artikel"}
-                            className="w-full max-h-[400px] object-cover rounded-xl"
-                            loading="lazy"
-                          />
-                          {alt && (
-                            <span className="block text-center text-xs text-muted py-1.5">
-                              {alt}
-                            </span>
-                          )}
-                        </span>
-                      ),
+                      img: ({ src, alt, title }) => {
+                        const caption = title || alt;
+                        return (
+                          <figure className="my-4 space-y-1.5">
+                            <div className="overflow-hidden rounded-xl border border-border-custom bg-sub-slate/20">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={src}
+                                alt={alt || "Gambar artikel"}
+                                className="w-full max-h-[400px] object-cover rounded-xl"
+                                loading="lazy"
+                              />
+                            </div>
+                            {caption && (
+                              <figcaption className="text-center text-xs text-muted italic">
+                                {caption.toLowerCase().startsWith("sumber")
+                                  ? caption
+                                  : `Sumber: ${caption}`}
+                              </figcaption>
+                            )}
+                          </figure>
+                        );
+                      },
                       strong: ({ children }) => (
                         <strong className="font-bold text-main">
                           {children}

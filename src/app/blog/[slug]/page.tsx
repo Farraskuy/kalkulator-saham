@@ -144,15 +144,22 @@ export default async function BlogDetailPage({
         </header>
 
         {/* HERO IMAGE */}
-        <div className="relative w-full h-[320px] sm:h-[440px] rounded-2xl overflow-hidden bg-[#111210]">
-          <Image
-            src={article.coverImage || "/assets/images/img.png"}
-            alt={article.title}
-            fill
-            priority
-            className="object-cover"
-          />
-        </div>
+        <figure className="space-y-2">
+          <div className="relative w-full h-[320px] sm:h-[440px] rounded-2xl overflow-hidden bg-[#111210]">
+            <Image
+              src={article.coverImage || "/assets/images/img.png"}
+              alt={article.title}
+              fill
+              priority
+              className="object-cover"
+            />
+          </div>
+          {(article.source || article.title) && (
+            <figcaption className="text-center text-xs text-muted italic pt-1">
+              {article.source ? `Sumber: ${article.source}` : article.title}
+            </figcaption>
+          )}
+        </figure>
 
         {/* EXCERPT CALLOUT */}
         {article.excerpt && (
@@ -186,12 +193,12 @@ export default async function BlogDetailPage({
                 </p>
               ),
               ul: ({ children }) => (
-                <ul className="list-disc pl-6 space-y-2 mb-4 text-main marker:text-acc-blue">
+                <ul className="list-disc pl-6 space-y-2 mb-4 text-main marker:text-main">
                   {children}
                 </ul>
               ),
               ol: ({ children }) => (
-                <ol className="list-decimal pl-6 space-y-2 mb-4 text-main marker:text-acc-blue">
+                <ol className="list-decimal pl-6 space-y-2 mb-4 text-main marker:text-main">
                   {children}
                 </ol>
               ),
@@ -219,22 +226,29 @@ export default async function BlogDetailPage({
                 </a>
               ),
               hr: () => <hr className="my-8 border-border-custom" />,
-              img: ({ src, alt }) => (
-                <span className="block my-6 overflow-hidden rounded-xl border border-border-custom bg-sub-slate/20">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={src}
-                    alt={alt || "Gambar artikel"}
-                    className="w-full max-h-[500px] object-cover rounded-xl"
-                    loading="lazy"
-                  />
-                  {alt && (
-                    <span className="block text-center text-xs text-muted py-2">
-                      {alt}
-                    </span>
-                  )}
-                </span>
-              ),
+              img: ({ src, alt, title }) => {
+                const caption = title || alt;
+                return (
+                  <figure className="my-6 space-y-2">
+                    <div className="overflow-hidden rounded-xl border border-border-custom bg-sub-slate/20">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={src}
+                        alt={alt || "Gambar artikel"}
+                        className="w-full max-h-[500px] object-cover rounded-xl"
+                        loading="lazy"
+                      />
+                    </div>
+                    {caption && (
+                      <figcaption className="text-center text-xs text-muted italic">
+                        {caption.toLowerCase().startsWith("sumber")
+                          ? caption
+                          : `Sumber: ${caption}`}
+                      </figcaption>
+                    )}
+                  </figure>
+                );
+              },
               strong: ({ children }) => (
                 <strong className="font-bold text-main">{children}</strong>
               ),
