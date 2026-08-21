@@ -3,6 +3,7 @@ import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { verifySession } from "@/lib/auth";
+import { isCloudinaryConfigured, uploadToCloudinary } from "@/lib/cloudinary";
 
 export const runtime = "nodejs";
 
@@ -47,6 +48,22 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
 
+    // If Cloudinary credentials are set in environment, upload to Cloudinary
+    if (isCloudinaryConfigured()) {
+      const publicId = `${Date.now()}-${randomUUID()}`;
+      const uploadResult = await uploadToCloudinary(buffer, {
+        folder: "hitungsaham/articles",
+        publicId,
+      });
+
+      return NextResponse.json({
+        path: uploadResult.secure_url,
+        publicId: uploadResult.public_id,
+        size: uploadResult.bytes || buffer.length,
+      });
+    }
+
+    // Fallback to local storage if Cloudinary is not configured
     const uploadDirectory = path.join(
       process.cwd(),
       "public",

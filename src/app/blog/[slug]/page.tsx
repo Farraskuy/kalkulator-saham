@@ -162,8 +162,87 @@ export default async function BlogDetailPage({
         )}
 
         {/* ARTICLE BODY */}
-        <article className="prose max-w-none space-y-6 pt-2 text-base leading-relaxed text-main prose-headings:text-main prose-p:text-main prose-strong:text-main prose-li:text-main prose-blockquote:text-main prose-code:text-main prose-a:text-acc-blue">
-          <ReactMarkdown>{article.content}</ReactMarkdown>
+        <article className="max-w-none space-y-6 pt-2 text-base leading-relaxed text-main">
+          <ReactMarkdown
+            components={{
+              h1: ({ children }) => (
+                <h1 className="text-2xl sm:text-3xl font-bold text-main mt-8 mb-4 tracking-tight">
+                  {children}
+                </h1>
+              ),
+              h2: ({ children }) => (
+                <h2 className="text-xl sm:text-2xl font-bold text-main mt-8 mb-3 tracking-tight border-b border-border-custom pb-2">
+                  {children}
+                </h2>
+              ),
+              h3: ({ children }) => (
+                <h3 className="text-lg sm:text-xl font-bold text-main mt-6 mb-2 tracking-tight">
+                  {children}
+                </h3>
+              ),
+              p: ({ children }) => (
+                <p className="text-base leading-relaxed text-main mb-4 last:mb-0">
+                  {children}
+                </p>
+              ),
+              ul: ({ children }) => (
+                <ul className="list-disc pl-6 space-y-2 mb-4 text-main marker:text-acc-blue">
+                  {children}
+                </ul>
+              ),
+              ol: ({ children }) => (
+                <ol className="list-decimal pl-6 space-y-2 mb-4 text-main marker:text-acc-blue">
+                  {children}
+                </ol>
+              ),
+              li: ({ children }) => (
+                <li className="leading-relaxed pl-1">{children}</li>
+              ),
+              blockquote: ({ children }) => (
+                <blockquote className="border-l-4 border-acc-blue bg-sub-slate/50 rounded-r-xl p-4 my-4 italic text-muted">
+                  {children}
+                </blockquote>
+              ),
+              code: ({ children }) => (
+                <code className="bg-sub-slate px-1.5 py-0.5 rounded text-sm font-mono text-acc-blue">
+                  {children}
+                </code>
+              ),
+              a: ({ href, children }) => (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-acc-blue font-semibold hover:underline"
+                >
+                  {children}
+                </a>
+              ),
+              hr: () => <hr className="my-8 border-border-custom" />,
+              img: ({ src, alt }) => (
+                <span className="block my-6 overflow-hidden rounded-xl border border-border-custom bg-sub-slate/20">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={src}
+                    alt={alt || "Gambar artikel"}
+                    className="w-full max-h-[500px] object-cover rounded-xl"
+                    loading="lazy"
+                  />
+                  {alt && (
+                    <span className="block text-center text-xs text-muted py-2">
+                      {alt}
+                    </span>
+                  )}
+                </span>
+              ),
+              strong: ({ children }) => (
+                <strong className="font-bold text-main">{children}</strong>
+              ),
+              em: ({ children }) => <em className="italic">{children}</em>,
+            }}
+          >
+            {article.content}
+          </ReactMarkdown>
         </article>
 
         {/* CALCULATOR PROMO FOOTER BOX */}

@@ -57,6 +57,13 @@ export default function FaqEditorForm({
       "answer",
       `${form.answer.slice(0, start)}${before}${selected}${after}${form.answer.slice(end)}`,
     );
+    requestAnimationFrame(() => {
+      input.focus();
+      input.setSelectionRange(
+        start + before.length,
+        start + before.length + selected.length,
+      );
+    });
   };
   const save = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -197,8 +204,68 @@ export default function FaqEditorForm({
             placeholder="Tulis jawaban FAQ di sini..."
           />
         ) : (
-          <div className="prose max-w-none p-5 text-sm text-main dark:prose-invert">
-            <ReactMarkdown>
+          <div className="max-w-none p-5 text-sm text-main">
+            <ReactMarkdown
+              components={{
+                h1: ({ children }) => (
+                  <h1 className="text-xl font-bold text-main mt-4 mb-2">
+                    {children}
+                  </h1>
+                ),
+                h2: ({ children }) => (
+                  <h2 className="text-lg font-bold text-main mt-4 mb-2 border-b border-border-custom pb-1">
+                    {children}
+                  </h2>
+                ),
+                h3: ({ children }) => (
+                  <h3 className="text-base font-bold text-main mt-3 mb-1">
+                    {children}
+                  </h3>
+                ),
+                p: ({ children }) => (
+                  <p className="mb-3 last:mb-0 leading-relaxed text-main">
+                    {children}
+                  </p>
+                ),
+                ul: ({ children }) => (
+                  <ul className="list-disc pl-5 space-y-1 mb-3 text-main marker:text-acc-blue">
+                    {children}
+                  </ul>
+                ),
+                ol: ({ children }) => (
+                  <ol className="list-decimal pl-5 space-y-1 mb-3 text-main marker:text-acc-blue">
+                    {children}
+                  </ol>
+                ),
+                li: ({ children }) => (
+                  <li className="leading-relaxed">{children}</li>
+                ),
+                blockquote: ({ children }) => (
+                  <blockquote className="border-l-4 border-acc-blue bg-sub-slate/50 rounded-r-lg p-3 my-3 italic text-muted">
+                    {children}
+                  </blockquote>
+                ),
+                code: ({ children }) => (
+                  <code className="bg-sub-slate px-1.5 py-0.5 rounded text-xs font-mono text-acc-blue">
+                    {children}
+                  </code>
+                ),
+                a: ({ href, children }) => (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-acc-blue font-semibold hover:underline"
+                  >
+                    {children}
+                  </a>
+                ),
+                strong: ({ children }) => (
+                  <strong className="font-bold text-main">{children}</strong>
+                ),
+                em: ({ children }) => <em className="italic">{children}</em>,
+              }}
+            >
               {form.answer || "_Preview jawaban akan tampil di sini._"}
             </ReactMarkdown>
           </div>

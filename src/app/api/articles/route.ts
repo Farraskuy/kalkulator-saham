@@ -2,6 +2,12 @@ import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { verifySession } from "@/lib/auth";
+import {
+  deleteFromCloudinary,
+  deleteManyFromCloudinary,
+  extractAllCloudinaryPublicIds,
+  extractCloudinaryPublicId,
+} from "@/lib/cloudinary";
 
 const ARTICLE_TYPES = new Set(["ARTICLE", "BLOG"]);
 const ARTICLE_STATUSES = new Set(["DRAFT", "PUBLISHED"]);
@@ -249,6 +255,26 @@ export async function PUT(req: NextRequest) {
     if (traderPickError)
       return NextResponse.json({ error: traderPickError }, { status: 400 });
 
+    // Clean up old cover image if it was changed or removed
+    if (existing.coverImage && existing.coverImage !== parsed.data.coverImage) {
+      const oldCoverId = extractCloudinaryPublicId(existing.coverImage);
+      if (oldCoverId) {
+        deleteFromCloudinary(oldCoverId).catch((err) =>
+          console.error("Failed to delete replaced cover image from Cloudinary:", err),
+        );
+      }
+    }
+
+    // Clean up any inline content images that were removed in the new content
+    const oldInlineIds = extractAllCloudinaryPublicIds(existing.content);
+    const newInlineIds = new Set(extractAllCloudinaryPublicIds(parsed.data.content));
+    const removedInlineIds = oldInlineIds.filter((id) => !newInlineIds.has(id));
+    if (removedInlineIds.length > 0) {
+      deleteManyFromCloudinary(removedInlineIds).catch((err) =>
+        console.error("Failed to delete removed inline images from Cloudinary:", err),
+      );
+    }
+
     const article = await prisma.article.update({
       where: { id },
       data: {
@@ -284,6 +310,25 @@ export async function DELETE(req: NextRequest) {
     );
 
   try {
+    const existing = await prisma.article.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Artikel tidak ditemukan." },
+        { status: 404 },
+      );
+    }
+
+    // Extract all Cloudinary images associated with this article (cover + body images)
+    const cloudinaryIds = extractAllCloudinaryPublicIds(
+      existing.content,
+      existing.coverImage,
+    );
+    if (cloudinaryIds.length > 0) {
+      deleteManyFromCloudinary(cloudinaryIds).catch((err) =>
+        console.error("Failed to clean up Cloudinary images on article delete:", err),
+      );
+    }
+
     const article = await prisma.article.delete({ where: { id } });
     try {
       revalidateTag("articles", "max");

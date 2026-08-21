@@ -48,6 +48,7 @@ jobs:
           push: true
           build-args: |
             NEXT_PUBLIC_GA_ID=${{ vars.NEXT_PUBLIC_GA_ID }}
+            NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=${{ vars.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME }}
           tags: ghcr.io/${{ env.OWNER_LC }}/kalkulator-saham:${{ env.IMAGE_TAG }}
 
       - name: Copy Compose definition to VPS
@@ -75,18 +76,23 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${{ vars.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_CLOUD_NAME: ${{ vars.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+          CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          envs: APP_NAME,IMAGE_TAG,OWNER_LC,GHCR_PAT,GHCR_USERNAME,DB_USER,DB_NAME,APP_PORT,DB_PASSWORD,SESSION_SECRET,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,NEXT_PUBLIC_APP_URL
+          envs: APP_NAME,IMAGE_TAG,OWNER_LC,GHCR_PAT,GHCR_USERNAME,DB_USER,DB_NAME,APP_PORT,DB_PASSWORD,SESSION_SECRET,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,NEXT_PUBLIC_APP_URL,NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,CLOUDINARY_CLOUD_NAME,CLOUDINARY_API_KEY,CLOUDINARY_API_SECRET,CLOUDINARY_URL
           script: |
             set -eu
             umask 077
             mkdir -p "../apps/$APP_NAME"
             cd "../apps/$APP_NAME"
-            printf 'APP_NAME=%s\nIMAGE_TAG=%s\nOWNER_LC=%s\nDB_USER=%s\nDB_NAME=%s\nAPP_PORT=%s\nDB_PASSWORD=%s\nSESSION_SECRET=%s\nGOOGLE_CLIENT_ID=%s\nGOOGLE_CLIENT_SECRET=%s\nNEXT_PUBLIC_APP_URL=%s\n' \
-              "$APP_NAME" "$IMAGE_TAG" "$OWNER_LC" "$DB_USER" "$DB_NAME" "$APP_PORT" "$DB_PASSWORD" "$SESSION_SECRET" "$GOOGLE_CLIENT_ID" "$GOOGLE_CLIENT_SECRET" "$NEXT_PUBLIC_APP_URL" > .env
+            printf 'APP_NAME=%s\nIMAGE_TAG=%s\nOWNER_LC=%s\nDB_USER=%s\nDB_NAME=%s\nAPP_PORT=%s\nDB_PASSWORD=%s\nSESSION_SECRET=%s\nGOOGLE_CLIENT_ID=%s\nGOOGLE_CLIENT_SECRET=%s\nNEXT_PUBLIC_APP_URL=%s\nNEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=%s\nCLOUDINARY_CLOUD_NAME=%s\nCLOUDINARY_API_KEY=%s\nCLOUDINARY_API_SECRET=%s\nCLOUDINARY_URL=%s\n' \
+              "$APP_NAME" "$IMAGE_TAG" "$OWNER_LC" "$DB_USER" "$DB_NAME" "$APP_PORT" "$DB_PASSWORD" "$SESSION_SECRET" "$GOOGLE_CLIENT_ID" "$GOOGLE_CLIENT_SECRET" "$NEXT_PUBLIC_APP_URL" "${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:-}" "${CLOUDINARY_CLOUD_NAME:-}" "${CLOUDINARY_API_KEY:-}" "${CLOUDINARY_API_SECRET:-}" "${CLOUDINARY_URL:-}" > .env
             printf '%s' "$GHCR_PAT" | sudo docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
             sudo docker compose -p "$APP_NAME" pull app
             sudo docker compose -p "$APP_NAME" up -d --wait postgres

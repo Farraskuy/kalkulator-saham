@@ -15,9 +15,11 @@ import {
   Link2,
   List,
   ListOrdered,
+  LoaderCircle,
   Minus,
   Quote,
   RotateCcw,
+  UploadCloud,
 } from "lucide-react";
 import {
   AdminCrudNotice,
@@ -138,9 +140,54 @@ function slugify(value: string) {
     .replace(/(^-|-$)+/g, "");
 }
 
+async function compressInlineImage(file: File) {
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const element = new Image();
+      element.onload = () => resolve(element);
+      element.onerror = () =>
+        reject(new Error("File gambar tidak dapat dibuka."));
+      element.src = objectUrl;
+    });
+
+    const canvas = document.createElement("canvas");
+    let width = image.naturalWidth;
+    let height = image.naturalHeight;
+    const maxDimension = 1600;
+    if (width > maxDimension || height > maxDimension) {
+      if (width > height) {
+        height = Math.round((height * maxDimension) / width);
+        width = maxDimension;
+      } else {
+        width = Math.round((width * maxDimension) / height);
+        height = maxDimension;
+      }
+    }
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Browser tidak mendukung kompresi gambar.");
+    context.drawImage(image, 0, 0, width, height);
+
+    return new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob(
+        (blob) =>
+          blob ? resolve(blob) : reject(new Error("Gagal mengompres gambar.")),
+        "image/webp",
+        0.85,
+      );
+    });
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
 export default function ArticleEditorForm({ mode, initialData }: Props) {
   const router = useRouter();
   const contentRef = useRef<HTMLTextAreaElement>(null);
+  const inlineImageInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingInlineImage, setUploadingInlineImage] = useState(false);
   const [form, setForm] = useState<ArticleEditorData>(
     initialData ?? EMPTY_ARTICLE,
   );
@@ -216,6 +263,58 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
         start + before.length + selected.length,
       );
     });
+  };
+
+  const handleInlineImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setMessage({
+        type: "error",
+        text: "Pilih file gambar berformat JPG, PNG, atau WebP.",
+      });
+      return;
+    }
+
+    setUploadingInlineImage(true);
+    setMessage(null);
+    try {
+      const compressed = await compressInlineImage(file);
+      const payload = new FormData();
+      payload.append(
+        "file",
+        new File([compressed], "inline.webp", { type: "image/webp" }),
+      );
+
+      const response = await fetch("/api/uploads/articles", {
+        method: "POST",
+        body: payload,
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Gagal mengunggah gambar.");
+      }
+
+      const altText = file.name.replace(/\.[^/.]+$/, "") || "Gambar artikel";
+      insertMarkdown(`\n\n![${altText}](`, `${data.path})\n\n`, "");
+      setMessage({
+        type: "success",
+        text: "Gambar berhasil diunggah ke Cloudinary dan disisipkan ke artikel!",
+      });
+    } catch (error) {
+      setMessage({
+        type: "error",
+        text:
+          error instanceof Error
+            ? error.message
+            : "Gagal memproses unggahan gambar.",
+      });
+    } finally {
+      setUploadingInlineImage(false);
+    }
   };
 
   const applyTemplate = (content: string) => {
@@ -417,7 +516,28 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
                     </button>
                   ))}
                 </div>
-                <div className="flex flex-wrap gap-1 border-b border-border-custom bg-sub-slate/60 px-3 py-2">
+                <div className="flex flex-wrap items-center gap-1 border-b border-border-custom bg-sub-slate/60 px-3 py-2">
+                  <input
+                    ref={inlineImageInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handleInlineImageUpload}
+                  />
+                  <button
+                    type="button"
+                    disabled={uploadingInlineImage}
+                    onClick={() => inlineImageInputRef.current?.click()}
+                    className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-acc-blue/30 bg-sub-blue px-2.5 text-xs font-semibold text-acc-blue transition-colors hover:bg-acc-blue hover:text-white disabled:cursor-wait disabled:opacity-60 mr-1"
+                    title="Upload gambar langsung ke Cloudinary dan sisipkan ke artikel"
+                  >
+                    {uploadingInlineImage ? (
+                      <LoaderCircle size={14} className="animate-spin" />
+                    ) : (
+                      <UploadCloud size={14} />
+                    )}
+                    <span>{uploadingInlineImage ? "Mengunggah..." : "Upload Gambar (Cloudinary)"}</span>
+                  </button>
                   {MARKDOWN_TOOLS.map(
                     ({ label, icon: Icon, before, after, fallback }) => (
                       <button
@@ -446,17 +566,98 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
                   spellCheck
                 />
                 <div className="border-t border-border-custom bg-sub-slate/35 px-5 py-2.5 text-[11px] leading-5 text-muted">
-                  Tip: pilih teks sebelum menekan toolbar untuk membungkusnya.
-                  Gunakan gambar sampul untuk kartu artikel, atau masukkan URL
-                  gambar pada tombol Gambar untuk isi artikel.
+                  Tip: Anda bisa mengklik tombol <strong>Upload Gambar (Cloudinary)</strong> untuk langsung mengunggah foto ke Cloudinary dan menempelkannya ke isi artikel.
                 </div>
               </>
             ) : (
-              <article className="min-h-[440px] p-5 text-sm leading-7 text-main sm:p-7 [&_a]:text-acc-blue [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-acc-blue/30 [&_blockquote]:pl-4 [&_h1]:mb-4 [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:mb-3 [&_h2]:mt-7 [&_h2]:text-xl [&_h2]:font-bold [&_h3]:mb-2 [&_h3]:mt-5 [&_h3]:text-lg [&_h3]:font-bold [&_li]:ml-5 [&_ol]:list-decimal [&_p]:mb-4 [&_ul]:list-disc">
+              <article className="min-h-[440px] p-5 text-base leading-relaxed text-main sm:p-7 space-y-4">
                 {form.content.trim() ? (
-                  <ReactMarkdown>{form.content}</ReactMarkdown>
+                  <ReactMarkdown
+                    components={{
+                      h1: ({ children }) => (
+                        <h1 className="text-2xl font-bold text-main mt-6 mb-3 tracking-tight">
+                          {children}
+                        </h1>
+                      ),
+                      h2: ({ children }) => (
+                        <h2 className="text-xl font-bold text-main mt-6 mb-2 tracking-tight border-b border-border-custom pb-2">
+                          {children}
+                        </h2>
+                      ),
+                      h3: ({ children }) => (
+                        <h3 className="text-lg font-bold text-main mt-4 mb-2 tracking-tight">
+                          {children}
+                        </h3>
+                      ),
+                      p: ({ children }) => (
+                        <p className="text-sm leading-relaxed text-main mb-3 last:mb-0">
+                          {children}
+                        </p>
+                      ),
+                      ul: ({ children }) => (
+                        <ul className="list-disc pl-6 space-y-1.5 mb-3 text-sm text-main marker:text-acc-blue">
+                          {children}
+                        </ul>
+                      ),
+                      ol: ({ children }) => (
+                        <ol className="list-decimal pl-6 space-y-1.5 mb-3 text-sm text-main marker:text-acc-blue">
+                          {children}
+                        </ol>
+                      ),
+                      li: ({ children }) => (
+                        <li className="leading-relaxed pl-1">{children}</li>
+                      ),
+                      blockquote: ({ children }) => (
+                        <blockquote className="border-l-4 border-acc-blue bg-sub-slate/50 rounded-r-xl p-4 my-3 italic text-sm text-muted">
+                          {children}
+                        </blockquote>
+                      ),
+                      code: ({ children }) => (
+                        <code className="bg-sub-slate px-1.5 py-0.5 rounded text-xs font-mono text-acc-blue">
+                          {children}
+                        </code>
+                      ),
+                      a: ({ href, children }) => (
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-acc-blue font-semibold hover:underline"
+                        >
+                          {children}
+                        </a>
+                      ),
+                      hr: () => <hr className="my-6 border-border-custom" />,
+                      img: ({ src, alt }) => (
+                        <span className="block my-4 overflow-hidden rounded-xl border border-border-custom bg-sub-slate/20">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={src}
+                            alt={alt || "Gambar artikel"}
+                            className="w-full max-h-[400px] object-cover rounded-xl"
+                            loading="lazy"
+                          />
+                          {alt && (
+                            <span className="block text-center text-xs text-muted py-1.5">
+                              {alt}
+                            </span>
+                          )}
+                        </span>
+                      ),
+                      strong: ({ children }) => (
+                        <strong className="font-bold text-main">
+                          {children}
+                        </strong>
+                      ),
+                      em: ({ children }) => (
+                        <em className="italic">{children}</em>
+                      ),
+                    }}
+                  >
+                    {form.content}
+                  </ReactMarkdown>
                 ) : (
-                  <p className="text-muted">Belum ada isi untuk dipreview.</p>
+                  <p className="text-muted text-sm">Belum ada isi untuk dipreview.</p>
                 )}
               </article>
             )}
