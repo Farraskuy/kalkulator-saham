@@ -138,8 +138,8 @@ export default function FaqEditorForm({
           </label>
         </div>
       </section>
-      <section className="overflow-hidden rounded-2xl border border-border-custom bg-card">
-        <div className="sticky top-0 z-20 border-b border-border-custom bg-card shadow-xs">
+      <section className="rounded-2xl border border-border-custom bg-card">
+        <div className="sticky top-0 z-20 rounded-t-2xl border-b border-border-custom bg-card shadow-xs">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border-custom bg-card">
             <div>
               <h2 className="text-sm font-bold text-main">Jawaban *</h2>

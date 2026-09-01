@@ -10,10 +10,9 @@ interface FooterProps {
 }
 
 export default function Footer({ variant = "default" }: FooterProps) {
-  const isAcme = variant === "acme";
   const year = new Date().getFullYear();
   const [siteDescription, setSiteDescription] = React.useState(
-    "Platform personal berisi kalkulator simulasi matematis saham serta artikel & blog opini pribadi.",
+    "Platform personal berisi kalkulator simulasi matematis saham serta artikel & blog edukasi pasar modal.",
   );
 
   React.useEffect(() => {
@@ -28,95 +27,104 @@ export default function Footer({ variant = "default" }: FooterProps) {
   }, []);
 
   return (
-    <footer className="w-full bg-page text-main border-t border-border-custom/50 mt-16 pt-12 pb-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        {/* MAIN FOOTER GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-          {/* BRAND COLUMN */}
-          <div className="md:col-span-4 space-y-3">
-            <div className="flex items-center gap-2.5 font-bold text-lg text-main">
-              <AppLogo size={24} variant="auto" />
-              <span>HitungSaham</span>
-            </div>
-            <p className="text-xs text-muted max-w-sm leading-relaxed font-medium">
+    <footer className="w-full border-t border-border-custom bg-card/60 text-main mt-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12">
+        {/* MAIN GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10">
+          {/* BRAND COLUMN (5 cols) */}
+          <div className="sm:col-span-2 lg:col-span-5 space-y-4">
+            <Link href="/" className="inline-flex items-center gap-2.5 font-bold text-lg text-main">
+              <AppLogo size={26} variant="auto" />
+              <span className="tracking-tight">HitungSaham</span>
+            </Link>
+            <p className="text-xs sm:text-sm text-muted leading-relaxed max-w-sm">
               {siteDescription}
             </p>
           </div>
 
-          {/* NAV COLUMNS */}
-          <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-8 text-xs">
-            <div>
-              <div className="font-bold text-main mb-3 text-xs">
-                Kalkulator Saham
-              </div>
-              <ul className="space-y-2.5 text-muted font-medium">
-                <li>
-                  <Link
-                    href="/#calculator"
-                    className="hover:text-main transition-colors"
-                  >
-                    Prediksi Target Jual/Beli
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/#calculator"
-                    className="hover:text-main transition-colors"
-                  >
-                    Auto Rejection (ARA/ARB)
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/#calculator"
-                    className="hover:text-main transition-colors"
-                  >
-                    Average Up / Down
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/faq"
-                    className="hover:text-main transition-colors"
-                  >
-                    Pertanyaan Umum (FAQ)
-                  </Link>
-                </li>
-              </ul>
-            </div>
+          {/* COL 2: KALKULATOR SAHAM (4 cols) */}
+          <div className="lg:col-span-4 space-y-3.5">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-main">
+              Kalkulator Saham
+            </h4>
+            <ul className="space-y-2.5 text-xs text-muted">
+              <li>
+                <Link
+                  href="/#calculator"
+                  className="hover:text-main transition-colors block"
+                >
+                  Target Jual / Beli &amp; Fee Net
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/#calculator"
+                  className="hover:text-main transition-colors block"
+                >
+                  Batas Auto Rejection (ARA / ARB)
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/#calculator"
+                  className="hover:text-main transition-colors block"
+                >
+                  Simulasi Average Down &amp; Up
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/#panduan"
+                  className="hover:text-main transition-colors block"
+                >
+                  Fraksi Harga Resmi BEI
+                </Link>
+              </li>
+            </ul>
+          </div>
 
-            <div>
-              <div className="font-bold text-main mb-3 text-xs">
-                Jurnal &amp; Navigasi
-              </div>
-              <ul className="space-y-2.5 text-muted font-medium">
-                <li>
-                  <Link
-                    href="/blog"
-                    className="hover:text-main transition-colors"
-                  >
-                    Blog &amp; Artikel
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/faq"
-                    className="hover:text-main transition-colors"
-                  >
-                    Pusat Bantuan &amp; FAQ
-                  </Link>
-                </li>
-              </ul>
-            </div>
+          {/* COL 3: ARTIKEL & PANDUAN (3 cols) */}
+          <div className="lg:col-span-3 space-y-3.5">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-main">
+              Edukasi &amp; Bantuan
+            </h4>
+            <ul className="space-y-2.5 text-xs text-muted">
+              <li>
+                <Link
+                  href="/blog"
+                  className="hover:text-main transition-colors block"
+                >
+                  Blog &amp; Analisis Pasar
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/faq"
+                  className="hover:text-main transition-colors block"
+                >
+                  Pusat Bantuan &amp; FAQ
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/#panduan"
+                  className="hover:text-main transition-colors block"
+                >
+                  Panduan Rumus Saham
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* BOTTOM SECTION (LEFT-ALIGNED COPYRIGHT & DISCLAIMER) */}
-        <div className="pt-6 border-t border-border-custom/40 flex flex-col items-start justify-start text-left space-y-2.5 text-[11px] text-muted font-medium">
-          <div>&copy; {year} HitungSaham.com</div>
-          <div className="max-w-3xl text-[10px] leading-relaxed text-left">
-            <DynamicDisclaimer />
-          </div>
+        {/* DISCLAIMER BOX */}
+        <div className="rounded-xl">
+          <DynamicDisclaimer />
+        </div>
+
+        {/* COPYRIGHT & BOTTOM BAR */}
+        <div className="pt-2 border-t border-border-custom/50 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted">
+          <p>© {year} HitungSaham.com. Hak cipta dilindungi undang-undang.</p>
         </div>
       </div>
     </footer>

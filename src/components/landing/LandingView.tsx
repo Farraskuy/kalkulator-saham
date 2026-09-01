@@ -70,34 +70,12 @@ export default function LandingView({
           </div>
         </section>
 
-        {/* HERO BANNER IMAGE CONTAINER */}
-        <div className="max-w-[1200px] mx-auto mt-4 px-4 sm:px-8 md:px-16">
-          <div className="relative w-full h-[clamp(320px,32vw,480px)] rounded-xl overflow-hidden bg-(--landing-inverse-bg) after:content-[''] after:absolute after:inset-0 after:z-10 after:bg-(--landing-image-scrim) after:pointer-events-none">
-            <Image
-              src="/assets/images/img.png"
-              alt="Grafik dan Pasar Saham Indonesia"
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover object-[center_40%]"
-            />
-            <div className="absolute z-20 left-[clamp(24px,4vw,48px)] bottom-9 flex flex-col text-(--landing-inverse-text) drop-shadow-md">
-              <span className="text-[11px] font-semibold uppercase tracking-[2px]">
-                Analisis Presisi
-              </span>
-              <strong className="mt-1 text-[clamp(20px,2.4vw,32px)] font-medium tracking-[-0.5px]">
-                Keputusan Investasi Lebih Percaya Diri.
-              </strong>
-            </div>
-          </div>
-        </div>
-
         {/* CALCULATOR SECTION */}
         <section
           className="max-w-[1200px] mx-auto py-14 px-4 sm:px-8 md:px-16 pb-18"
           id="calculator"
         >
-          <div className="bg-(--landing-card) rounded-2xl p-4 sm:p-[36px_32px] border border-(--landing-border) min-w-0">
+          <div className="bg-(--landing-card) rounded-2xl p-4 sm:p-[36px_32px]  min-w-0">
             {/* Segmented Tab Controller */}
             <div
               className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 bg-(--landing-soft-strong) p-1.5 rounded-2xl w-full max-w-2xl mx-auto mb-7 sm:mb-9"
@@ -147,7 +125,7 @@ export default function LandingView({
         </section>
 
         {/* SEO EDUCATIONAL & RUMUS SECTION */}
-        <LandingSeoSection />
+        <LandingSeoSection fractionRules={fractionRules} />
 
         {/* FAQ ACCORDION SECTION */}
         <div

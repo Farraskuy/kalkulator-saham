@@ -404,7 +404,6 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
   const wordCount = form.content.trim()
     ? form.content.trim().split(/\s+/).length
     : 0;
-  const imageSource = form.coverImage.trim() || "/assets/images/img.png";
 
   return (
     <form
@@ -482,10 +481,10 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
               </div>
             </div>
           </section>
-
-          <section className="overflow-hidden rounded-2xl border border-border-custom bg-card">
+  
+          <section className="rounded-2xl border border-border-custom bg-card">
             {/* STICKY HEADER & TOOLBAR CONTAINER */}
-            <div className="sticky top-0 z-20 border-b border-border-custom bg-card shadow-xs">
+            <div className="sticky top-0 z-20 rounded-t-2xl border-b border-border-custom bg-card shadow-xs">
               <div className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
                 <div>
                   <h2 className="text-sm font-bold text-main">
@@ -609,12 +608,9 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
 
                   {/* EMPTY STATE TEMPLATE CARDS IN CENTER OF EDITOR */}
                   {!form.content.trim() && (
-                    <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-6 text-center">
-                      <div className="pointer-events-auto max-w-xl w-full space-y-4 rounded-2xl border border-dashed border-border-custom bg-card/95 p-5 sm:p-6 backdrop-blur-xs shadow-sm">
+                    <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-6">
+                      <div className="pointer-events-auto max-w-xl w-full space-y-4 rounded-2xl bg-card/95 p-5 sm:p-6">
                         <div className="space-y-1">
-                          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sub-blue text-[11px] font-bold text-acc-blue">
-                            <Sparkles size={13} /> Mulai Menulis Cepat
-                          </div>
                           <h3 className="text-sm sm:text-base font-bold text-main">
                             Pilih Template atau Mulai Mengetik
                           </h3>
@@ -765,7 +761,7 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
                 )}
               </article>
             )}
-            <div className="flex items-center justify-between border-t border-border-custom px-5 py-3 text-xs text-muted">
+            <div className="flex items-center justify-between rounded-b-2xl border-t border-border-custom px-5 py-3 text-xs text-muted">
               <span>{wordCount} kata</span>
               <span>
                 {form.content.length.toLocaleString("id-ID")} karakter
@@ -899,17 +895,21 @@ export default function ArticleEditorForm({ mode, initialData }: Props) {
             </div>
             <div className="space-y-4 p-5">
               <div className="relative aspect-video overflow-hidden rounded-xl border border-border-custom bg-sub-slate">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={imageSource}
-                  alt="Preview gambar sampul"
-                  className="h-full w-full object-cover"
-                />
-                {!form.coverImage && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 text-white">
-                    <div className="flex items-center gap-2 rounded-lg bg-black/55 px-3 py-2 text-xs font-semibold">
-                      <ImageIcon size={15} /> Gambar bawaan
+                {form.coverImage.trim() ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={form.coverImage.trim()}
+                    alt="Preview gambar sampul"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-4 text-muted">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-card border border-border-custom shadow-2xs">
+                      <ImageIcon size={20} className="text-muted" />
                     </div>
+                    <span className="text-[11px] font-medium text-muted">
+                      Belum ada gambar sampul
+                    </span>
                   </div>
                 )}
               </div>

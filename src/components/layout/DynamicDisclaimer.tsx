@@ -23,8 +23,8 @@ export default function DynamicDisclaimer() {
   }, []);
 
   return (
-    <p className="text-[10px] leading-relaxed text-muted max-w-xl">
-      <strong className="text-main font-bold">Sanggahan / Disclaimer:</strong>{" "}
+    <p className="text-[11px] leading-relaxed text-muted">
+      <strong className="text-main font-semibold">Disclaimer:</strong>{" "}
       {terms}
     </p>
   );
